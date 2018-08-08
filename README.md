@@ -1,112 +1,164 @@
-The minimum PaddlePaddle version needed for the code sample in this directory is the lastest develop branch. If you are on a version of PaddlePaddle earlier than this, [please update your installation](http://www.paddlepaddle.org/docs/develop/documentation/en/build_and_install/pip_install_en.html).
+# 项目简介
+AdvBox是一款支持PaddlePaddle的针对深度学习模型生成对抗样本(Adversarial Example Attack)的工具包。对抗样本是深度学习领域的一个重要问题，比如在图像上叠加肉眼难以识别的修改，就可以欺骗主流的深度学习图像模型，产生分类错误，指鹿为马，或者无中生有。对抗样本表现出来的显著反直观特点吸引了越来越多的研究者进入对抗样本检测、生成与防御研究领域。这些问题对于特定领域（比如无人车、人脸识别）会产生严重的后果，尤为重要。TensorFlow平台上也推出了相应的工具包CleverHans。为此，百度安全实验室研发了AdvBox，它能够为研究者在PaddlePaddle平台上研究模型安全性提供极大的便利，免去重复造轮子的精力与时间消耗，可以高效地使用最新的生成方法构造对抗样本数据集用于对抗样本的特征统计、攻击全新的AI应用，加固业务AI模型，为模型安全性研究和应用提供重要的支持。之前AdvBox作为PaddlePaddle开源项目的一个模块，获得了广泛好评。这次因为项目发展的需要，特此作为独立项目开源。
+目前AdvBox支持的算法包含以下几种：
 
----
+- L-BFGS
+- FGSM
+- BIM
+- ILCM
+- MI-FGSM
+- JSMA
+- DeepFool
+- C/W
 
-# Advbox
+# 安装AdvBox
+## 安装paddlepaddle
+### 创建paddlepaddle环境
+通常使用anaconda创建不同的python环境，解决python多版本不兼容的问题。目前advbox仅支持python 2.*, paddlepaddle 0.12以上。
 
-Advbox is a toolbox to generate adversarial examples that fool neural networks and Advbox can benchmark the robustness of machine learning models.
+	conda create --name pp python=2.7
+	
+通过下列命令激活paddlepaddle环境	
+	
+	source activate pp
+	
+如果没有安装anaconda，可以通过下载安装脚本并执行。
 
-The Advbox is based on [PaddlePaddle](https://github.com/PaddlePaddle/Paddle) Fluid and is under continual development, always welcoming contributions of the latest method of adversarial attacks and defenses.
+	wget https://repo.anaconda.com/archive/Anaconda2-5.2.0-Linux-x86_64.sh
+	
+### 安装paddlepaddle包
+最简化的安装可以直接使用pip工具。
+
+	pip install paddlepaddle
+
+如果有特殊需求希望指定版本进行安装，可以使用参数。
+
+	pip install paddlepaddle==0.12.0
+
+如果希望使用GPU加速训练过程，可以安装GPU版本。
+
+	pip install paddlepaddle-gpu
+
+需要特别指出的是，paddlepaddle-gpu针对不同的cuDNN和CUDA具有不同的编译版本。一百度云上的GPU服务器为例，CUDA为8.0.61，cuDNN为5.0.21，对应的编译版本为paddlepaddle-gpu为paddlepaddle-gpu==0.14.0.post85。
+
+	pip install paddlepaddle-gpu==0.14.0.post85
+
+查看服务器的cuDNN和CUDA版本的方法为：
+
+	#cuda 版本
+	cat /usr/local/cuda/version.txt
+	#cudnn 版本 
+	cat /usr/local/cuda/include/cudnn.h | grep CUDNN_MAJOR -A 2
+	#或者
+	cat /usr/include/cudnn.h | grep CUDNN_MAJOR -A 2
+
+详细支持列表可以参考链接。
+
+	http://paddlepaddle.org/docs/0.14.0/documentation/fluid/zh/new_docs/beginners_guide/install/install_doc.html
+
+## mac下安装paddlepaddle包
+mac下安装paddlepaddle包方式比较特殊，相当于在docker镜像直接运行。
+
+	docker pull paddlepaddle/paddle
+	docker run --name paddle-test -v $PWD:/paddle --network=host -it paddlepaddle/paddle /bin/bash
+
+如果mac上没有装docker，需要提前下载并安装。
+
+	https://download.docker.com/mac/stable/Docker.dmg
+	
+## 多GPU支持
+部分场景需要使用多GPU加速，这个时候需要安装nccl2库，对应的下载地址为：
+
+	https://developer.nvidia.com/nccl/nccl-download
+
+下载对应的版本，以百度云为例，需要下载安装NCCL 2.2.13 for Ubuntu 16.04 and CUDA 8。下载完毕后，进行安装。
+
+	apt-get install libnccl2=2.2.13-1+cuda8.0 libnccl-dev=2.2.13-1+cuda8.0
+	
+设置环境变量。
+
+	export NCCL_P2P_DISABLE=1  
+	export NCCL_IB_DISABLE=1
+
+## 部署AdvBox代码
+直接同步advbox的代码。
+
+	git clone https://github.com/baidu/AdvBox.git        
+
+advbox的目录结果如下所示，其中示例代码在tutorials目录下。
+
+	.
+	├── advbox
+	|   ├── __init__.py
+	|   ├── attack
+	|        ├── __init__.py
+	|        ├── base.py
+	|        ├── deepfool.py
+	|        ├── gradient_method.py
+	|        ├── lbfgs.py
+	|        └── saliency.py
+	|   ├── models
+	|        ├── __init__.py
+	|        ├── base.py
+	|        └── paddle.py
+	|   └── adversary.py
+	├── tutorials
+	|   ├── __init__.py
+	|   ├── mnist_model.py
+	|   ├── mnist_tutorial_lbfgs.py
+	|   ├── mnist_tutorial_fgsm.py
+	|   ├── mnist_tutorial_bim.py
+	|   ├── mnist_tutorial_ilcm.py
+	|   ├── mnist_tutorial_mifgsm.py
+	|   ├── mnist_tutorial_jsma.py
+	|   └── mnist_tutorial_deepfool.py
+	└── README.md
+
+## hello world
+安装完advbox后，可以运行自带的hello world示例代码。
+### 生成测试模型
+首先需要生成攻击用的模型，advbox的测试模型是一个识别mnist的cnn模型。
+
+	cd tutorials/
+	python mnist_model.py
+
+运行完模型后，会将模型的参数保留在当前目录的mnist目录下。查看该目录，可以看到对应的cnn模型的每层的参数，可见有两个卷积层和两个全连接层构成。
+
+	conv2d_0.b_0  
+	conv2d_0.w_0  
+	conv2d_1.b_0  
+	conv2d_1.w_0  
+	fc_0.b_0  
+	fc_0.w_0  
+	fc_1.b_0  
+	fc_1.w_0
+
+### 运行攻击代码
+这里我们运行下基于FGSM算法的演示代码。
+
+	python mnist_tutorial_fgsm.py
+
+运行攻击脚本，对mnist数据集进行攻击，测试样本数量为500，其中攻击成功394个，占78.8%。
+
+	attack success, original_label=4, adversarial_label=9, count=498
+	attack success, original_label=8, adversarial_label=3, count=499
+	attack success, original_label=6, adversarial_label=1, count=500
+	[TEST_DATASET]: fooling_count=394, total_count=500, fooling_rate=0.788000
+	fgsm attack done
+
+# 参考文献
+
+- http://www.paddlepaddle.org/docs/develop/documentation/en/build_and_install/pip_install_en.html
+- http://paddlepaddle.org/docs/0.14.0/documentation/fluid/zh/new_docs/beginners_guide/install/install_doc.html
+- https://github.com/PaddlePaddle/models/tree/develop/fluid/adversarial
+- [Intriguing properties of neural networks](https://arxiv.org/abs/1312.6199), C. Szegedy et al., arxiv 2014
+- [Explaining and Harnessing Adversarial Examples](https://arxiv.org/abs/1412.6572), I. Goodfellow et al., ICLR 2015
+- [Adversarial Examples In The Physical World](https://arxiv.org/pdf/1607.02533v3.pdf), A. Kurakin et al., ICLR workshop 2017
+- [Boosting Adversarial Attacks with Momentum](https://arxiv.org/abs/1710.06081), Yinpeng Dong et al., arxiv 2018
+- [The Limitations of Deep Learning in Adversarial Settings](https://arxiv.org/abs/1511.07528), N. Papernot et al., ESSP 2016
+- [DeepFool: a simple and accurate method to fool deep neural networks](https://arxiv.org/abs/1511.04599), S. Moosavi-Dezfooli et al., CVPR 2016
+- [Foolbox: A Python toolbox to benchmark the robustness of machine learning models](https://arxiv.org/abs/1707.04131), Jonas Rauber et al., arxiv 2018
+- [CleverHans: An adversarial example library for constructing attacks, building defenses, and benchmarking both](https://github.com/tensorflow/cleverhans#setting-up-cleverhans)
+- [Threat of Adversarial Attacks on Deep Learning in Computer Vision: A Survey](https://arxiv.org/abs/1801.00553), Naveed Akhtar, Ajmal Mian, arxiv 2018
 
 
-## Overview
-[Szegedy et al.](https://arxiv.org/abs/1312.6199) discovered an intriguing properties of deep neural networks in the context of image classification for the first time. They showed that despite the state-of-the-art deep networks are surprisingly susceptible to adversarial attacks in the form of small perturbations to images that remain (almost) imperceptible to human vision system. These perturbations are found by optimizing the input to maximize the prediction error and the images modified by these perturbations are called as `adversarial examples`. The profound implications of these results triggered a wide interest of researchers in adversarial attacks and their defenses for deep learning in general.
-
-Advbox is similar to [Foolbox](https://github.com/bethgelab/foolbox) and [CleverHans](https://github.com/tensorflow/cleverhans). CleverHans only supports TensorFlow framework while foolbox interfaces with many popular machine learning frameworks such as PyTorch, Keras, TensorFlow, Theano, Lasagne and MXNet. However, these two great libraries don't support PaddlePaddle, an easy-to-use, efficient, flexible and scalable deep learning platform which is originally developed by Baidu scientists and engineers for the purpose of applying deep learning to many products at Baidu.
-
-## Usage
-Advbox provides many stable reference implementations of modern methods to generate adversarial examples such as FGSM, DeepFool, JSMA. When you want to benchmark the robustness of your neural networks , you can use the advbox to generate some adversarial examples and benchmark the networks. Some tips of using Advbox:
-
-1. Train a model and save the parameters.
-2. Load the parameters which has been trained，then reconstruct the model.
-3. Use advbox to generate the adversarial samples.
-
-
-#### Dependencies
-* PaddlePaddle: [the lastest develop branch](http://www.paddlepaddle.org/docs/develop/documentation/en/build_and_install/pip_install_en.html)
-* Python 2.x
-
-#### Structure
-
-Network models, attack method's implements and the criterion that defines adversarial examples are three essential elements to generate adversarial examples. Misclassification is adopted as the adversarial criterion for briefness in Advbox.
-
-The structure of Advbox module are as follows:
-
-    .
-    ├── advbox
-    |   ├── __init__.py
-    |   ├── attack
-    |        ├── __init__.py
-    |        ├── base.py
-    |        ├── deepfool.py
-    |        ├── gradient_method.py
-    |        ├── lbfgs.py
-    |        └── saliency.py
-    |   ├── models
-    |        ├── __init__.py
-    |        ├── base.py
-    |        └── paddle.py
-    |   └── adversary.py
-    ├── tutorials
-    |   ├── __init__.py
-    |   ├── mnist_model.py
-    |   ├── mnist_tutorial_lbfgs.py
-    |   ├── mnist_tutorial_fgsm.py
-    |   ├── mnist_tutorial_bim.py
-    |   ├── mnist_tutorial_ilcm.py
-    |   ├── mnist_tutorial_mifgsm.py
-    |   ├── mnist_tutorial_jsma.py
-    |   └── mnist_tutorial_deepfool.py
-    └── README.md
-
-**advbox.attack**
-
-Advbox implements several popular adversarial attacks which search adversarial examples. Each attack method uses a distance measure(L1, L2, etc.) to quantify the size of adversarial perturbations. Advbox is easy to craft adversarial example as some attack methods could perform internal hyperparameter tuning to find the minimum perturbation.
-
-**advbox.model**
-
-Advbox implements interfaces to PaddlePaddle. Additionally, other deep learning framworks such as TensorFlow can also be defined and employed. The module is use to compute predictions and gradients for given inputs in a specific framework.
-
-**advbox.adversary**
-
-Adversary contains the original object, the target and the adversarial examples. It provides the misclassification as the criterion to accept a adversarial example.
-
-## Tutorials
-The `./tutorials/` folder provides some tutorials to generate adversarial examples on the MNIST dataset. You can slightly modify the code to apply to other dataset. These attack methods are supported in Advbox:
-
-* [L-BFGS](https://arxiv.org/abs/1312.6199)
-* [FGSM](https://arxiv.org/abs/1412.6572)
-* [BIM](https://arxiv.org/abs/1607.02533)
-* [ILCM](https://arxiv.org/abs/1607.02533)
-* [MI-FGSM](https://arxiv.org/pdf/1710.06081.pdf)
-* [JSMA](https://arxiv.org/pdf/1511.07528)
-* [DeepFool](https://arxiv.org/abs/1511.04599)
-
-## Testing
-Benchmarks on a vanilla CNN model.
-
-> MNIST
-
-|  adversarial attacks  |  fooling rate (non-targeted)  | fooling rate (targeted) | max_epsilon | iterations | Strength |
-|:-----:| :----: | :---: | :----: | :----: | :----: |
-|L-BFGS| --- | 89.2% | --- | One shot | *** |
-|FGSM| 57.8% | 26.55% | 0.3 | One shot| *** |
-|BIM| 97.4% | --- | 0.1 | 100 | **** |
-|ILCM| ---  | 100.0% | 0.1 | 100 | **** |
-|MI-FGSM| 94.4% | 100.0% | 0.1 | 100 | **** |
-|JSMA| 96.8% | 90.4%| 0.1 | 2000 | *** |
-|DeepFool| 97.7% | 51.3% | --- | 100 | **** |
-
-* The strength (higher for more asterisks) is based on the impression from the reviewed literature.
-
----
-## References
-* [Intriguing properties of neural networks](https://arxiv.org/abs/1312.6199), C. Szegedy et al., arxiv 2014
-* [Explaining and Harnessing Adversarial Examples](https://arxiv.org/abs/1412.6572), I. Goodfellow et al., ICLR 2015
-* [Adversarial Examples In The Physical World](https://arxiv.org/pdf/1607.02533v3.pdf), A. Kurakin et al., ICLR workshop 2017
-* [Boosting Adversarial Attacks with Momentum](https://arxiv.org/abs/1710.06081), Yinpeng Dong et al., arxiv 2018
-* [The Limitations of Deep Learning in Adversarial Settings](https://arxiv.org/abs/1511.07528), N. Papernot et al., ESSP 2016
-* [DeepFool: a simple and accurate method to fool deep neural networks](https://arxiv.org/abs/1511.04599), S. Moosavi-Dezfooli et al., CVPR 2016
-* [Foolbox: A Python toolbox to benchmark the robustness of machine learning models](https://arxiv.org/abs/1707.04131), Jonas Rauber et al., arxiv 2018
-* [CleverHans: An adversarial example library for constructing attacks, building defenses, and benchmarking both](https://github.com/tensorflow/cleverhans#setting-up-cleverhans)
-* [Threat of Adversarial Attacks on Deep Learning in Computer Vision: A Survey](https://arxiv.org/abs/1801.00553), Naveed Akhtar, Ajmal Mian, arxiv 2018
