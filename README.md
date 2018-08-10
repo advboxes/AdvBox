@@ -15,7 +15,7 @@
 如何高效的生成对抗样本，且让人类感官难以察觉，正是对抗样本生成算法研究领域的热点。
 ## AdvBox简介
 
-AdvBox是一款支持PaddlePaddle的针对深度学习模型生成对抗样本的工具包。对抗样本是深度学习领域的一个重要问题，比如在图像上叠加肉眼难以识别的修改，就可以欺骗主流的深度学习图像模型，产生分类错误，指鹿为马，或者无中生有。对抗样本表现出来的显著反直观特点吸引了越来越多的研究者进入对抗样本检测、生成与防御研究领域。这些问题对于特定领域（比如无人车、人脸识别）会产生严重的后果，尤为重要。TensorFlow平台上也推出了相应的工具包CleverHans。为此，百度安全实验室研发了AdvBox，它能够为研究者在PaddlePaddle平台上研究模型安全性提供极大的便利，免去重复造轮子的精力与时间消耗，可以高效地使用最新的生成方法构造对抗样本数据集用于对抗样本的特征统计、攻击全新的AI应用，加固业务AI模型，为模型安全性研究和应用提供重要的支持。之前AdvBox作为PaddlePaddle开源项目的一个模块，获得了广泛好评。这次因为项目发展的需要，特此作为独立项目开源。
+AdvBox是一款支持PaddlePaddle、Caffe2以及TensorFlow的针对深度学习模型生成对抗样本的工具包。对抗样本是深度学习领域的一个重要问题，比如在图像上叠加肉眼难以识别的修改，就可以欺骗主流的深度学习图像模型，产生分类错误，指鹿为马，或者无中生有。对抗样本表现出来的显著反直观特点吸引了越来越多的研究者进入对抗样本检测、生成与防御研究领域。这些问题对于特定领域（比如无人车、人脸识别）会产生严重的后果，尤为重要。TensorFlow平台上也推出了相应的工具包CleverHans。为此，百度安全实验室研发了AdvBox，它能够为研究者在PaddlePaddle平台上研究模型安全性提供极大的便利，免去重复造轮子的精力与时间消耗，可以高效地使用最新的生成方法构造对抗样本数据集用于对抗样本的特征统计、攻击全新的AI应用，加固业务AI模型，为模型安全性研究和应用提供重要的支持。之前AdvBox作为PaddlePaddle开源项目的一个模块，获得了广泛好评。这次因为项目发展的需要，特此作为独立项目开源。
 目前AdvBox支持的算法包含以下几种：
 
 - L-BFGS
@@ -28,6 +28,8 @@ AdvBox是一款支持PaddlePaddle的针对深度学习模型生成对抗样本�
 - C/W
 
 ## AdvBox特点
+### 多平台支持
+原生支持PaddlePaddle平台，同时提供了专门的工具，将Caffe以及TensorFlow平台生成的模型转换成PaddlePaddle识别的格式，从而实现了对Caffe以及TensorFlow平台的支持。
 ### 支持多种算法
 支持常见的对抗样本生成算法，包括但不不限于L-BFGS、FGSM、BIM、ILCM、MI-FGSM、JSMA、 DeepFool和C/W等。
 ### 支持多种攻击模式
@@ -139,6 +141,17 @@ advbox的目录结果如下所示，其中示例代码在tutorials目录下。
 	|   ├── mnist_tutorial_jsma.py
 	|   └── mnist_tutorial_deepfool.py
 	└── README.md
+
+## 对Caffe以及TensorFlow平台的支持
+### 如何将Caffe平台的模型转换成PaddlePaddle格式
+提供了转换工具[caffe2paddle](https://github.com/PaddlePaddle/models/tree/develop/image_classification/caffe2paddle)，使用方法如下：
+
+	https://github.com/PaddlePaddle/models/tree/develop/image_classification/caffe2paddle
+
+### 如何将TensorFlow平台的模型转换成PaddlePaddle格式
+提供了转换工具[tf2paddle](https://github.com/PaddlePaddle/models/tree/develop/image_classification/tf2paddle)，使用方法如下：
+
+	https://github.com/PaddlePaddle/models/tree/develop/image_classification/tf2paddle
 
 ## hello world
 安装完advbox后，可以运行自带的hello world示例代码。
