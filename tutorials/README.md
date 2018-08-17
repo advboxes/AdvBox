@@ -1,4 +1,9 @@
 # 使用示例
+## 概述
+主流的深度学习平台都提供了大量的预训练模型，以PaddlePaddle为例，基于ImageNet 2012数据集提供了AlexNet、ResNet50和SE_ResNeXt50_32x4d模型文件，完整的模型地址为：
+
+[https://github.com/PaddlePaddle/models/tree/develop/fluid/image_classification#supported-models-and-performances](https://github.com/PaddlePaddle/models/tree/develop/fluid/image_classification#supported-models-and-performances)
+
 ## 示例1：攻击基于MNIST数据集的CNN模型
 首先需要生成攻击用的模型，advbox的测试模型是一个识别MNIST的cnn模型。
 
