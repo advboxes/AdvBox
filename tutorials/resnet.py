@@ -19,6 +19,7 @@
 定义ResNet
 """
 import paddle.fluid as fluid
+import math
 
 __all__ = ["resnet_cifar10","ResNet", "ResNet50", "ResNet101", "ResNet152"]
 
