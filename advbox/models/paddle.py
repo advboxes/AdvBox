@@ -39,9 +39,13 @@ class PaddleModel(Model):
 
     def __init__(self,
                  program,
+                 start_up_program,
                  input_name,
                  logits_name,
+                 
+                 softmax_name,
                  predict_name,
+                 
                  cost_name,
                  bounds,
                  channel_axis=3,
@@ -53,21 +57,27 @@ class PaddleModel(Model):
             bounds=bounds, channel_axis=channel_axis, preprocess=preprocess)
 
         self._program = program
+        self._start_up_program = start_up_program
         self._place = fluid.CPUPlace()
         self._exe = fluid.Executor(self._place)
 
         self._input_name = input_name
-        self._logits_name = logits_name
-        self._predict_name = predict_name
+        self._logits_name = logits_name # wrong name man!
+        
+        self._softmax_name = softmax_name # this is actually output after softmax
+        self._predict_name = predict_name # this is actually logit
+        
         self._cost_name = cost_name
 
         # gradient
         loss = self._program.block(0).var(self._cost_name)
         param_grads = fluid.backward.append_backward(
             loss, parameter_list=[self._input_name])
+        print(param_grads)
+        
         self._gradient = filter(lambda p: p[0].name == self._input_name,
                                 param_grads)[0][1]
-
+        
     def predict(self, data):
         """
         Calculate the prediction of the data.
@@ -82,12 +92,13 @@ class PaddleModel(Model):
         """
         scaled_data = self._process_input(data)
         feeder = fluid.DataFeeder(
-            feed_list=[self._input_name, self._logits_name],
+            feed_list=[self._input_name,
+                       self._logits_name],
             place=self._place,
             program=self._program)
-        predict_var = self._program.block(0).var(self._predict_name)
+        predict_var = self._program.block(0).var(self._softmax_name)# this is the output
         predict = self._exe.run(self._program,
-                                feed=feeder.feed([(scaled_data, 0)]),
+                                feed=feeder.feed([(scaled_data,0)]),
                                 fetch_list=[predict_var])
         predict = np.squeeze(predict, axis=0)
         return predict
@@ -103,6 +114,32 @@ class PaddleModel(Model):
         assert len(predict_var.shape) == 2
         return predict_var.shape[1]
 
+    # add a new function in model to get logits
+    def get_logits(self, data):
+        """
+        Calculate the logits of the data.
+
+        Args:
+            data(numpy.ndarray): input data with shape (size,
+            height, width, channels).
+
+        Return:
+            numpy.ndarray: logits predictions of the data with shape (batch_size,
+                num_of_classes).
+        """
+        scaled_data = self._process_input(data)
+        feeder = fluid.DataFeeder(
+            feed_list=[self._input_name, self._logits_name],
+            place=self._place,
+            program=self._program)
+        softmax_var = self._program.block(0).var(self._predict_name)# this is actually logit
+        logits = self._exe.run(self._program,
+                                feed=feeder.feed([(scaled_data, 0)]),
+                                fetch_list=[softmax_var])
+        logits = np.squeeze(logits, axis=0)
+        
+        return logits
+    
     def gradient(self, data, label):
         """
         Calculate the gradient of the cross-entropy loss w.r.t the image.
@@ -127,7 +164,7 @@ class PaddleModel(Model):
                               feed=feeder.feed([(scaled_data, label)]),
                               fetch_list=[self._gradient])
         return grad.reshape(data.shape)
-
+    
     def predict_name(self):
         """
         Get the predict name, such as "softmax",etc.
