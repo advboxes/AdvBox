@@ -22,6 +22,7 @@ from collections import Iterable
 
 import numpy as np
 
+
 from .base import Attack
 
 __all__ = [
@@ -31,6 +32,8 @@ __all__ = [
     'IterativeLeastLikelyClassMethodAttack', 'ILCM', 'MomentumIteratorAttack',
     'MIFGSM'
 ]
+
+
 
 
 class GradientMethodAttack(Attack):

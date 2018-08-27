@@ -1,3 +1,4 @@
+#coding=utf-8
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +18,14 @@ Paddle model
 from __future__ import absolute_import
 
 import numpy as np
+import os
 import paddle.fluid as fluid
 
 from .base import Model
+
+#通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
+#比如在mac上不设置该环境变量，在GPU服务器上设置 export WITH_GPU=1
+with_gpu = os.getenv('WITH_GPU', '0') != '0'
 
 
 class PaddleModel(Model):
@@ -56,7 +62,7 @@ class PaddleModel(Model):
         self._program = program
         #仅用于预测
         self._predict_program = program.clone(for_test=True)
-        self._place = fluid.CPUPlace()
+        self._place = fluid.CUDAPlace(0) if with_gpu else fluid.CPUPlace()
         self._exe = fluid.Executor(self._place)
 
         self._input_name = input_name
