@@ -152,7 +152,7 @@ class FastGradientSignMethodTargetedAttack(GradientMethodAttack):
             adversary=adversary,
             norm_ord=np.inf,
             epsilons=epsilons,
-            steps=1)
+            steps=10)
 
 
 class FastGradientSignMethodAttack(FastGradientSignMethodTargetedAttack):
@@ -253,7 +253,9 @@ class MomentumIteratorAttack(GradientMethodAttack):
                 self.model.channel_axis() == adversary.original.shape[-1])
 
         if not isinstance(epsilons, Iterable):
-            epsilons = np.linspace(0, epsilons, num=epsilon_steps)
+            #epsilons = np.linspace(0, epsilons, num=epsilon_steps)
+            #从epsilons到0.5逐步增大
+            epsilons = np.linspace(epsilons, 0.5, num=epsilon_steps)
 
         min_, max_ = self.model.bounds()
         pre_label = adversary.original_label
