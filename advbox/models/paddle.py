@@ -52,7 +52,10 @@ class PaddleModel(Model):
         super(PaddleModel, self).__init__(
             bounds=bounds, channel_axis=channel_axis, preprocess=preprocess)
 
+        #用于计算梯度
         self._program = program
+        #仅用于预测
+        self._predict_program = program.clone(for_test=True)
         self._place = fluid.CPUPlace()
         self._exe = fluid.Executor(self._place)
 
@@ -60,6 +63,15 @@ class PaddleModel(Model):
         self._logits_name = logits_name
         self._predict_name = predict_name
         self._cost_name = cost_name
+
+        #change all `is_test` attributes to True 使_program只计算梯度 不自动更新参数 单纯clone后不计算梯度的
+        import six
+        for i in six.moves.range(self._program.desc.num_blocks()):
+            block = self._program.desc.block(i)
+            for j in six.moves.range(block.op_size()):
+                op = block.op(j)
+                if op.has_attr('is_test') and op.type != 'batch_norm_grad':
+                    op.set_attr('is_test', True)
 
         # gradient
         loss = self._program.block(0).var(self._cost_name)
@@ -84,9 +96,9 @@ class PaddleModel(Model):
         feeder = fluid.DataFeeder(
             feed_list=[self._input_name, self._logits_name],
             place=self._place,
-            program=self._program)
-        predict_var = self._program.block(0).var(self._predict_name)
-        predict = self._exe.run(self._program,
+            program=self._predict_program)
+        predict_var = self._predict_program.block(0).var(self._predict_name)
+        predict = self._exe.run(self._predict_program,
                                 feed=feeder.feed([(scaled_data, 0)]),
                                 fetch_list=[predict_var])
         predict = np.squeeze(predict, axis=0)
@@ -133,4 +145,4 @@ class PaddleModel(Model):
         Get the predict name, such as "softmax",etc.
         :return: string
         """
-        return self._program.block(0).var(self._predict_name).op.type
+        return self._predict_program.block(0).var(self._predict_name).op.type
