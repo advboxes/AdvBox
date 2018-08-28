@@ -48,7 +48,7 @@ class LBFGSAttack(Attack):
         # finding initial c
         logging.info('finding initial c...')
         c = epsilon
-        x0 = adversary.original.flatten()
+        x0 = np.copy(adversary.original.flatten())
         for i in range(30):
             c = 2 * c
             logging.info('c={}'.format(c))
