@@ -75,7 +75,7 @@ def main(use_cuda):
         channel_axis=1)
     attack = SinglePixelAttack(m)
 
-    attack_config = {"epsilons": 0.3}
+    attack_config = {"max_pixels": 28*28}
 
     # use test data to generate adversarial examples
     total_count = 0
