@@ -39,7 +39,7 @@ from advbox.adversary import Adversary
 from advbox.attacks.gradient_method import FGSM
 from advbox.attacks.gradient_method import FGSMT
 from advbox.models.paddle import PaddleModel
-from lenet import LeNet
+from image_classification.lenet import LeNet
 
 #通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
 #比如在mac上不设置该环境变量，在GPU服务器上设置 export WITH_GPU=1
