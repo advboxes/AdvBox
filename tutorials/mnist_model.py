@@ -21,7 +21,11 @@ from __future__ import print_function
 
 import paddle.v2 as paddle
 import paddle.fluid as fluid
+import os
 
+#通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
+#比如在mac上不设置该环境变量，在GPU服务器上设置 export WITH_GPU=1
+with_gpu = os.getenv('WITH_GPU', '0') != '0'
 
 def mnist_cnn_model(img):
     """
@@ -54,7 +58,7 @@ def mnist_cnn_model(img):
     return logits
 
 
-def main():
+def main(use_cuda):
     """
     Train the cnn model on mnist datasets
     """
@@ -79,8 +83,8 @@ def main():
             paddle.dataset.mnist.train(), buf_size=500),
         batch_size=BATCH_SIZE)
 
-    # use CPU
-    place = fluid.CPUPlace()
+    #根据配置选择使用CPU资源还是GPU资源
+    place = fluid.CUDAPlace(0) if use_cuda else fluid.CPUPlace()
     # use GPU
     # place = fluid.CUDAPlace(0)
     exe = fluid.Executor(place)
@@ -111,4 +115,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    main(use_cuda=with_gpu)
