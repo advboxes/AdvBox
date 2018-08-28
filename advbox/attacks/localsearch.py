@@ -32,13 +32,11 @@ __all__ = [
 
 class SinglePixelAttack(Attack):
 
-
     def __init__(self, model, support_targeted=True):
-
+        super(SinglePixelAttack, self).__init__(model)
         self.support_targeted = support_targeted
 
-    def _apply(self,
-               adversary):
+    def _apply(self,adversary,max_pixels=1000):
 
         if not self.support_targeted:
             if adversary.is_targeted_attack:
