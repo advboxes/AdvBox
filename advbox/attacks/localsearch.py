@@ -63,9 +63,15 @@ class SinglePixelAttack(Attack):
         '''
 
         axes = [i for i in range(adversary.original.ndim) if i != self.model.channel_axis()]
-        assert len(axes) == 2
-        h = adv_img.shape[axes[0]]
-        w = adv_img.shape[axes[1]]
+
+        if len(axes) == 2:
+            h = adv_img.shape[axes[0]]
+            w = adv_img.shape[axes[1]]
+        else:
+            h=adv_img.shape[-1]
+            w=1
+
+        print("w={0},h={1}".format(w,h))
 
         #攻击点的最多个数 目前先硬编码
         max_pixels = 28*28

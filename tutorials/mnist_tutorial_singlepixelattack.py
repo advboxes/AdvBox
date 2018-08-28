@@ -13,8 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-FGSM tutorial on mnist using advbox tool.
-FGSM method is non-targeted attack while FGSMT is targeted attack.
+SinglePixelAttack tutorial on mnist using advbox tool.
 """
 import sys
 import os
