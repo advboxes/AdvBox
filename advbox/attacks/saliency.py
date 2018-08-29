@@ -56,7 +56,7 @@ class SaliencyMapAttack(Attack):
             target_labels = [adversary.target_label]
 
         for target in target_labels:
-            original_image = adversary.original
+            original_image = np.copy(adversary.original)
 
             # the mask defines the search domain
             # each modified pixel with border value is set to zero in mask

@@ -1,3 +1,4 @@
+#coding=utf-8
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +17,7 @@ Defines a class that contains the original object, the target and the
 adversarial example.
 
 """
-
+import numpy as np
 
 class Adversary(object):
     """
@@ -32,12 +33,14 @@ class Adversary(object):
         assert original is not None
 
         self.original_label = original_label
+        #定向攻击的目标
         self.target_label = None
         self.adversarial_label = None
-
-        self.__original = original
+        #保存原始数据 强制拷贝
+        self.__original = np.copy(original)
         self.__target = None
         self.__is_targeted_attack = False
+        #保存生成的对抗样本
         self.__adversarial_example = None
         self.__bad_adversarial_example = None
 
@@ -108,10 +111,10 @@ class Adversary(object):
 
         ok = self._is_successful(adversarial_label)
         if ok:
-            self.__adversarial_example = adversarial_example
+            self.__adversarial_example = np.copy(adversarial_example)
             self.adversarial_label = adversarial_label
         else:
-            self.__bad_adversarial_example = adversarial_example
+            self.__bad_adversarial_example = np.copy(adversarial_example)
         return ok
 
     def perturbation(self, multiplying_factor=1.0):

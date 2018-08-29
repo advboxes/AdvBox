@@ -1,3 +1,4 @@
+#coding=utf-8
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +22,7 @@ from collections import Iterable
 
 import numpy as np
 
+
 from .base import Attack
 
 __all__ = [
@@ -30,6 +32,8 @@ __all__ = [
     'IterativeLeastLikelyClassMethodAttack', 'ILCM', 'MomentumIteratorAttack',
     'MIFGSM'
 ]
+
+
 
 
 class GradientMethodAttack(Attack):
@@ -50,7 +54,7 @@ class GradientMethodAttack(Attack):
                adversary,
                norm_ord=np.inf,
                epsilons=0.01,
-               steps=1,
+               steps=10,
                epsilon_steps=100):
         """
         Apply the gradient attack method.
@@ -77,7 +81,8 @@ class GradientMethodAttack(Attack):
                     "This attack method doesn't support targeted attack!")
 
         if not isinstance(epsilons, Iterable):
-            epsilons = np.linspace(0, epsilons, num=epsilon_steps)
+            #从epsilons到0.5逐步增大
+            epsilons = np.linspace(epsilons, 0.5, num=epsilon_steps)
 
         pre_label = adversary.original_label
         min_, max_ = self.model.bounds()
@@ -87,9 +92,11 @@ class GradientMethodAttack(Attack):
                 self.model.channel_axis() == adversary.original.shape[0] or
                 self.model.channel_axis() == adversary.original.shape[-1])
 
+        #从[epsilon,0.5]动态调整epsilon 直到攻击成功
         for epsilon in epsilons[:]:
             step = 1
-            adv_img = adversary.original
+            #强制拷贝 避免针对adv_img的修改也影响adversary.original
+            adv_img = np.copy(adversary.original)
             if epsilon == 0.0:
                 continue
             for i in range(steps):
@@ -138,13 +145,14 @@ class FastGradientSignMethodTargetedAttack(GradientMethodAttack):
     Paper link: https://arxiv.org/abs/1412.6572
     """
 
+    #硬编码了epsilons=0.01
     def _apply(self, adversary, epsilons=0.01):
         return GradientMethodAttack._apply(
             self,
             adversary=adversary,
             norm_ord=np.inf,
             epsilons=epsilons,
-            steps=1)
+            steps=10)
 
 
 class FastGradientSignMethodAttack(FastGradientSignMethodTargetedAttack):
@@ -245,7 +253,9 @@ class MomentumIteratorAttack(GradientMethodAttack):
                 self.model.channel_axis() == adversary.original.shape[-1])
 
         if not isinstance(epsilons, Iterable):
-            epsilons = np.linspace(0, epsilons, num=epsilon_steps)
+            #epsilons = np.linspace(0, epsilons, num=epsilon_steps)
+            #从epsilons到0.5逐步增大
+            epsilons = np.linspace(epsilons, 0.5, num=epsilon_steps)
 
         min_, max_ = self.model.bounds()
         pre_label = adversary.original_label

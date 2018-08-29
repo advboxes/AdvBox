@@ -1,3 +1,4 @@
+#coding=utf-8
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +18,14 @@ Paddle model
 from __future__ import absolute_import
 
 import numpy as np
+import os
 import paddle.fluid as fluid
 
 from .base import Model
+
+#通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
+#比如在mac上不设置该环境变量，在GPU服务器上设置 export WITH_GPU=1
+with_gpu = os.getenv('WITH_GPU', '0') != '0'
 
 
 class PaddleModel(Model):
@@ -27,7 +33,6 @@ class PaddleModel(Model):
     Create a PaddleModel instance.
     When you need to generate a adversarial sample, you should construct an
     instance of PaddleModel.
-
     Args:
         program(paddle.fluid.framework.Program): The program of the model
             which generate the adversarial sample.
@@ -56,9 +61,11 @@ class PaddleModel(Model):
         super(PaddleModel, self).__init__(
             bounds=bounds, channel_axis=channel_axis, preprocess=preprocess)
 
+        #用于计算梯度
         self._program = program
-        self._start_up_program = start_up_program
-        self._place = fluid.CPUPlace()
+        #仅用于预测
+        self._predict_program = program.clone(for_test=True)
+        self._place = fluid.CUDAPlace(0) if with_gpu else fluid.CPUPlace()
         self._exe = fluid.Executor(self._place)
 
         self._input_name = input_name
@@ -68,6 +75,15 @@ class PaddleModel(Model):
         self._predict_name = predict_name # this is actually logit
         
         self._cost_name = cost_name
+
+        #change all `is_test` attributes to True 使_program只计算梯度 不自动更新参数 单纯clone后不计算梯度的
+        import six
+        for i in six.moves.range(self._program.desc.num_blocks()):
+            block = self._program.desc.block(i)
+            for j in six.moves.range(block.op_size()):
+                op = block.op(j)
+                if op.has_attr('is_test') and op.type != 'batch_norm_grad':
+                    op.set_attr('is_test', True)
 
         # gradient
         loss = self._program.block(0).var(self._cost_name)
@@ -81,11 +97,9 @@ class PaddleModel(Model):
     def predict(self, data):
         """
         Calculate the prediction of the data.
-
         Args:
             data(numpy.ndarray): input data with shape (size,
             height, width, channels).
-
         Return:
             numpy.ndarray: predictions of the data with shape (batch_size,
                 num_of_classes).
@@ -95,10 +109,11 @@ class PaddleModel(Model):
             feed_list=[self._input_name,
                        self._logits_name],
             place=self._place,
-            program=self._program)
-        predict_var = self._program.block(0).var(self._softmax_name)# this is the output
-        predict = self._exe.run(self._program,
-                                feed=feeder.feed([(scaled_data,0)]),
+
+            program=self._predict_program)
+        predict_var = self._predict_program.block(0).var(self._predict_name)
+        predict = self._exe.run(self._predict_program,
+                                feed=feeder.feed([(scaled_data, 0)]),
                                 fetch_list=[predict_var])
         predict = np.squeeze(predict, axis=0)
         return predict
@@ -106,7 +121,6 @@ class PaddleModel(Model):
     def num_classes(self):
         """
             Calculate the number of classes of the output label.
-
         Return:
             int: the number of classes
         """
@@ -143,12 +157,10 @@ class PaddleModel(Model):
     def gradient(self, data, label):
         """
         Calculate the gradient of the cross-entropy loss w.r.t the image.
-
         Args:
             data(numpy.ndarray): input data with shape (size, height, width,
             channels).
             label(int): Label used to calculate the gradient.
-
         Return:
             numpy.ndarray: gradient of the cross-entropy loss w.r.t the image
                 with the shape (height, width, channel).
@@ -170,4 +182,4 @@ class PaddleModel(Model):
         Get the predict name, such as "softmax",etc.
         :return: string
         """
-        return self._program.block(0).var(self._predict_name).op.type
+        return self._predict_program.block(0).var(self._predict_name).op.type::W
