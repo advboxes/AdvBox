@@ -111,6 +111,7 @@ class LocalSearchAttack(Attack):
         #r的范围
         assert 0 <= r <= 2
 
+        min_, max_ = self.model.bounds()
 
         # 强制拷贝 避免针对adv_img的修改也影响adversary.original
         adv_img = np.copy(adversary.original)
@@ -135,7 +136,6 @@ class LocalSearchAttack(Attack):
         #print("w={0},h={1}".format(w,h))
 
         def normalize(im):
-            min_, max_ = self.model.bounds()
 
             im = im - (min_ + max_) / 2
             im = im / (max_ - min_)
@@ -145,7 +145,6 @@ class LocalSearchAttack(Attack):
             return im, LB, UB
 
         def unnormalize(im):
-            min_, max_ = self.model.bounds()
 
             im = im * (max_ - min_)
             im = im + (min_ + max_) / 2
