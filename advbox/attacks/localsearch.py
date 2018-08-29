@@ -46,10 +46,10 @@ class SinglePixelAttack(Attack):
         pre_label = adversary.original_label
         min_, max_ = self.model.bounds()
 
-        assert self.model.channel_axis() == adversary.original.ndim
-        assert (self.model.channel_axis() == 1 or
-                self.model.channel_axis() == adversary.original.shape[0] or
-                self.model.channel_axis() == adversary.original.shape[-1])
+        #assert self.model.channel_axis() == adversary.original.ndim
+        #assert (self.model.channel_axis() == 1 or
+        #        self.model.channel_axis() == adversary.original.shape[0] or
+        #        self.model.channel_axis() == adversary.original.shape[-1])
 
         # 强制拷贝 避免针对adv_img的修改也影响adversary.original
         adv_img = np.copy(adversary.original)
@@ -73,8 +73,7 @@ class SinglePixelAttack(Attack):
 
         print("w={0},h={1}".format(w,h))
 
-        #攻击点的最多个数 目前先硬编码
-        max_pixels = 28*28
+        #max_pixel为攻击点的最多个数
 
         pixels = np.random.permutation(h * w)
         pixels = pixels[:max_pixels]
