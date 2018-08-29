@@ -44,13 +44,18 @@ def main(use_cuda):
     IMG_NAME = 'img'
     LABEL_NAME = 'label'
 
-    img = fluid.layers.data(name=IMG_NAME, shape=[1, 28, 28], dtype='float32')
-    # gradient should flow
-    img.stop_gradient = False
-    label = fluid.layers.data(name=LABEL_NAME, shape=[1], dtype='int64')
-    logits = mnist_cnn_model(img)
-    cost = fluid.layers.cross_entropy(input=logits, label=label)
-    avg_cost = fluid.layers.mean(x=cost)
+    # create two empty program for training and variable init 
+    cnn_main_program = fluid.Program()
+    cnn_startup_program = fluid.Program()
+    
+    with fluid.program_guard(main_program=cnn_main_program, startup_program=cnn_startup_program):
+        img = fluid.layers.data(name=IMG_NAME, shape=[1, 28, 28], dtype='float32')
+        # gradient should flow
+        img.stop_gradient = False
+        label = fluid.layers.data(name=LABEL_NAME, shape=[1], dtype='int64')
+        softmax, logits = mnist_cnn_model(img)
+        cost = fluid.layers.cross_entropy(input=softmax, label=label)
+        avg_cost = fluid.layers.mean(x=cost)
 
     #根据配置选择使用CPU资源还是GPU资源
     place = fluid.CUDAPlace(0) if use_cuda else fluid.CPUPlace()
@@ -65,17 +70,22 @@ def main(use_cuda):
         batch_size=BATCH_SIZE)
 
     fluid.io.load_params(
-        exe, "./mnist/", main_program=fluid.default_main_program())
+        exe, "./mnist/", main_program=cnn_main_program)
 
     # advbox demo
     m = PaddleModel(
-        fluid.default_main_program(),
+        cnn_main_program,
+        place,
+        exe,
         IMG_NAME,
         LABEL_NAME,
+        
+        softmax.name,
         logits.name,
+        
         avg_cost.name, (-1, 1),
         channel_axis=1,
-        preprocess=(-1, 2))  # x within(0,1) so we should do some transformation
+        preprocess = (-1, 2)) # x within(0,1) so we should do some transformation
 
     attack = CW_L2(m, learning_rate=0.1)
     #######

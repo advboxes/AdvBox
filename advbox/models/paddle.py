@@ -44,7 +44,8 @@ class PaddleModel(Model):
 
     def __init__(self,
                  program,
-                 start_up_program,
+                 place,
+                 exe,
                  input_name,
                  logits_name,
                  
@@ -63,6 +64,8 @@ class PaddleModel(Model):
 
         #用于计算梯度
         self._program = program
+        self.place = place
+        self.exe = exe
         #仅用于预测
         self._predict_program = program.clone(for_test=True)
         self._place = fluid.CUDAPlace(0) if with_gpu else fluid.CPUPlace()
@@ -182,4 +185,4 @@ class PaddleModel(Model):
         Get the predict name, such as "softmax",etc.
         :return: string
         """
-        return self._predict_program.block(0).var(self._predict_name).op.type::W
+        return self._predict_program.block(0).var(self._predict_name)

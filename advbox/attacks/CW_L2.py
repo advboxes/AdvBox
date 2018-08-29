@@ -53,12 +53,8 @@ class CW_L2_Attack(Attack):
         self._adversary = None  # type: Adversary
         #########################################
         # build cw attack computation graph
-        # use CPU
-        self.place = fluid.CPUPlace()
-        # use GPU
-        # place = fluid.CUDAPlace(0)
-        self.exe = fluid.Executor(self.place)
-
+        self.place = self.model.place
+        self.exe = self.model.exe
 
         # clone the prebuilt program that has cnn to attack
         self.attack_main_program = fluid.Program()  # prebuilt_program.clone(for_test=False)
