@@ -112,9 +112,8 @@ class PaddleModel(Model):
             feed_list=[self._input_name,
                        self._logits_name],
             place=self._place,
-
             program=self._predict_program)
-        predict_var = self._predict_program.block(0).var(self._predict_name)
+        predict_var = self._predict_program.block(0).var(self._softmax_name)
         predict = self._exe.run(self._predict_program,
                                 feed=feeder.feed([(scaled_data, 0)]),
                                 fetch_list=[predict_var])
@@ -185,4 +184,4 @@ class PaddleModel(Model):
         Get the predict name, such as "softmax",etc.
         :return: string
         """
-        return self._predict_program.block(0).var(self._predict_name)
+        return self._predict_program.block(0).var(self._predict_name).op.type
