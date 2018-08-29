@@ -145,4 +145,4 @@ class PaddleModel(Model):
         Get the predict name, such as "softmax",etc.
         :return: string
         """
-        return self._predict_program.block(0).var(self._predict_name).op.type::W
+        return self._predict_program.block(0).var(self._predict_name).op.type
