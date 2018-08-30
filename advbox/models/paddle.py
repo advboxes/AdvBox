@@ -78,12 +78,16 @@ class PaddleModel(Model):
                 if op.has_attr('is_test') and op.type != 'batch_norm_grad':
                     op.set_attr('is_test', True)
 
-        # gradient
-        loss = self._program.block(0).var(self._cost_name)
-        param_grads = fluid.backward.append_backward(
-            loss, parameter_list=[self._input_name])
-        self._gradient = filter(lambda p: p[0].name == self._input_name,
-                                param_grads)[0][1]
+
+        #白盒攻击会设置_cost_name 黑盒设置为None
+
+        if self._cost_name:
+            # gradient
+            loss = self._program.block(0).var(self._cost_name)
+            param_grads = fluid.backward.append_backward(
+                loss, parameter_list=[self._input_name])
+            self._gradient = filter(lambda p: p[0].name == self._input_name,
+                                    param_grads)[0][1]
 
     def predict(self, data):
         """

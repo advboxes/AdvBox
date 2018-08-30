@@ -29,14 +29,16 @@ __all__ = [
     'SinglePixelAttack','LocalSearchAttack'
 ]
 
-
+#Simple Black-Box Adversarial Perturbations for Deep Networks
+#随机在图像中选择max_pixels个点 在多个信道中同时进行修改，修改范围通常为0-255
 class SinglePixelAttack(Attack):
 
     def __init__(self, model, support_targeted=True):
         super(SinglePixelAttack, self).__init__(model)
         self.support_targeted = support_targeted
 
-    def _apply(self,adversary,max_pixels=1000):
+    #如果输入的原始数据，isPreprocessed为False，如果驶入的图像数据被归一化了，设置为True
+    def _apply(self,adversary,max_pixels=1000,isPreprocessed=True):
 
         if not self.support_targeted:
             if adversary.is_targeted_attack:
@@ -59,12 +61,11 @@ class SinglePixelAttack(Attack):
 
         axes = [i for i in range(adversary.original.ndim) if i != self.model.channel_axis()]
 
-        if len(axes) == 2:
-            h = adv_img.shape[axes[0]]
-            w = adv_img.shape[axes[1]]
-        else:
-            h=adv_img.shape[-1]
-            w=1
+        #输入的图像必须具有长和宽属性
+        assert len(axes) == 2
+
+        h = adv_img.shape[axes[0]]
+        w = adv_img.shape[axes[1]]
 
         #print("w={0},h={1}".format(w,h))
 
@@ -81,16 +82,31 @@ class SinglePixelAttack(Attack):
             location.insert(self.model.channel_axis(), slice(None))
             location = tuple(location)
 
-            for value in [min_, max_]:
-                perturbed = np.copy(adv_img)
-                perturbed[location] = value
 
-                f = self.model.predict(perturbed)
-                adv_label = np.argmax(f)
-                #print("adv_label={0}".format(adv_label))
-                if adversary.try_accept_the_example(adv_img, adv_label):
-                    return adversary
+            if not isPreprocessed:
+                #图像没有经过预处理 取值为整数 范围为0-255
+                for value in [min_, max_]:
+                    perturbed = np.copy(adv_img)
+                    #针对图像的每个信道的点[x,y]同时进行修改
+                    perturbed[location] = value
 
+                    f = self.model.predict(perturbed)
+                    adv_label = np.argmax(f)
+
+                    if adversary.try_accept_the_example(adv_img, adv_label):
+                        return adversary
+            else:
+                # 图像经过预处理 取值为整数 通常范围为0-1
+                for value in np.linspace(min_, max_, num=256):
+                    perturbed = np.copy(adv_img)
+                    #针对图像的每个信道的点[x,y]同时进行修改
+                    perturbed[location] = value
+
+                    f = self.model.predict(perturbed)
+                    adv_label = np.argmax(f)
+
+                    if adversary.try_accept_the_example(adv_img, adv_label):
+                        return adversary
 
         return adversary
 
