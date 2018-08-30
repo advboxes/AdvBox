@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Paddle model
+Paddle BlackBox model
 """
 from __future__ import absolute_import
 
@@ -28,7 +28,7 @@ from .base import Model
 with_gpu = os.getenv('WITH_GPU', '0') != '0'
 
 
-class PaddleModel(Model):
+class PaddleBlackBoxModel(Model):
     """
     Create a PaddleModel instance.
     When you need to generate a adversarial sample, you should construct an
@@ -43,47 +43,30 @@ class PaddleModel(Model):
     """
 
     def __init__(self,
-                 program,
+                 _predict_program,
                  input_name,
                  logits_name,
                  predict_name,
-                 cost_name,
                  bounds,
                  channel_axis=3,
                  preprocess=None):
         if preprocess is None:
             preprocess = (0, 1)
 
-        super(PaddleModel, self).__init__(
+        super(PaddleBlackBoxModel, self).__init__(
             bounds=bounds, channel_axis=channel_axis, preprocess=preprocess)
 
-        #用于计算梯度
-        self._program = program
-        #仅用于预测
-        self._predict_program = program.clone(for_test=True)
+        #用于预测
+        self._predict_program = _predict_program
+
         self._place = fluid.CUDAPlace(0) if with_gpu else fluid.CPUPlace()
         self._exe = fluid.Executor(self._place)
 
         self._input_name = input_name
         self._logits_name = logits_name
         self._predict_name = predict_name
-        self._cost_name = cost_name
 
-        #change all `is_test` attributes to True 使_program只计算梯度 不自动更新参数 单纯clone后不计算梯度的
-        import six
-        for i in six.moves.range(self._program.desc.num_blocks()):
-            block = self._program.desc.block(i)
-            for j in six.moves.range(block.op_size()):
-                op = block.op(j)
-                if op.has_attr('is_test') and op.type != 'batch_norm_grad':
-                    op.set_attr('is_test', True)
 
-        # gradient
-        loss = self._program.block(0).var(self._cost_name)
-        param_grads = fluid.backward.append_backward(
-            loss, parameter_list=[self._input_name])
-        self._gradient = filter(lambda p: p[0].name == self._input_name,
-                                param_grads)[0][1]
 
     def predict(self, data):
         """
@@ -113,32 +96,10 @@ class PaddleModel(Model):
         Return:
             int: the number of classes
         """
-        predict_var = self._program.block(0).var(self._predict_name)
+        predict_var = self._predict_program.block(0).var(self._predict_name)
         assert len(predict_var.shape) == 2
         return predict_var.shape[1]
 
-    def gradient(self, data, label):
-        """
-        Calculate the gradient of the cross-entropy loss w.r.t the image.
-        Args:
-            data(numpy.ndarray): input data with shape (size, height, width,
-            channels).
-            label(int): Label used to calculate the gradient.
-        Return:
-            numpy.ndarray: gradient of the cross-entropy loss w.r.t the image
-                with the shape (height, width, channel).
-        """
-        scaled_data = self._process_input(data)
-
-        feeder = fluid.DataFeeder(
-            feed_list=[self._input_name, self._logits_name],
-            place=self._place,
-            program=self._program)
-
-        grad, = self._exe.run(self._program,
-                              feed=feeder.feed([(scaled_data, label)]),
-                              fetch_list=[self._gradient])
-        return grad.reshape(data.shape)
 
     def predict_name(self):
         """
@@ -146,3 +107,8 @@ class PaddleModel(Model):
         :return: string
         """
         return self._predict_program.block(0).var(self._predict_name).op.type
+
+
+    def gradient(self, data, label):
+
+        return None

@@ -38,7 +38,7 @@ class SinglePixelAttack(Attack):
         self.support_targeted = support_targeted
 
     #如果输入的原始数据，isPreprocessed为False，如果驶入的图像数据被归一化了，设置为True
-    def _apply(self,adversary,max_pixels=1000,isPreprocessed=True):
+    def _apply(self,adversary,max_pixels=1000,isPreprocessed=False):
 
         if not self.support_targeted:
             if adversary.is_targeted_attack:
@@ -79,6 +79,9 @@ class SinglePixelAttack(Attack):
             y = pixel // w
 
             location = [x, y]
+
+            logging.info("x={0} y={1}".format(x,y))
+
             location.insert(self.model.channel_axis(), slice(None))
             location = tuple(location)
 

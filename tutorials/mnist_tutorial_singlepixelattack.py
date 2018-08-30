@@ -25,7 +25,7 @@ import paddle.v2 as paddle
 
 from advbox.adversary import Adversary
 from advbox.attacks.localsearch import SinglePixelAttack
-from advbox.models.paddle import PaddleModel
+from advbox.models.paddleBlackBox import PaddleBlackBoxModel
 from tutorials.mnist_model import mnist_cnn_model
 
 #通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
@@ -65,12 +65,12 @@ def main(use_cuda):
         exe, "./mnist/", main_program=fluid.default_main_program())
 
     # advbox demo
-    m = PaddleModel(
-        fluid.default_main_program(),
+    # advbox demo 黑盒攻击 直接传入测试版本的program
+    m = PaddleBlackBoxModel(
+        fluid.default_main_program().clone(for_test=True),
         IMG_NAME,
         LABEL_NAME,
-        logits.name,
-        avg_cost.name, (0, 255),
+        logits.name, (0, 255),
         channel_axis=0)
 
     #形状为[1,28,28] channel_axis=0  形状为[28,28,1] channel_axis=2

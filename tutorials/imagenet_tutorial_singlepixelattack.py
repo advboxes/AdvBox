@@ -22,6 +22,10 @@ import sys
 
 
 import logging
+logging.basicConfig(level=logging.INFO,format="%(filename)s[line:%(lineno)d] %(levelname)s %(message)s")
+logger=logging.getLogger(__name__)
+
+
 import os
 import numpy as np
 import math
@@ -40,7 +44,9 @@ from advbox.attacks.localsearch import SinglePixelAttack
 
 from image_classification.alexnet import AlexNet
 
-from advbox.models.paddle import PaddleModel
+#from advbox.models.paddle import PaddleModel
+from advbox.models.paddleBlackBox import PaddleBlackBoxModel
+
 
 
 #通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
@@ -113,8 +119,6 @@ def main(use_cuda):
 
     out = model.net(input=image, class_dim=class_dim)
 
-    print(image.name)
-
     # 根据配置选择使用CPU资源还是GPU资源
     place = fluid.CUDAPlace(0) if use_cuda else fluid.CPUPlace()
     exe = fluid.Executor(place)
@@ -126,22 +130,21 @@ def main(use_cuda):
         def if_exist(var):
             return os.path.exists(os.path.join(pretrained_model, var.name))
 
-        print("Load pretrained_model")
+        logger.info("Load pretrained_model")
         fluid.io.load_vars(exe, pretrained_model, predicate=if_exist)
 
 
-    #cost = fluid.layers.cross_entropy(input=out, label=label)
-    #avg_cost = fluid.layers.mean(x=cost)
+    cost = fluid.layers.cross_entropy(input=out, label=label)
+    avg_cost = fluid.layers.mean(x=cost)
 
 
-    print("Build advbox")
-    # advbox demo
-    m = PaddleModel(
-        fluid.default_main_program(),
+    logging.info("Build advbox")
+    # advbox demo 黑盒攻击 直接传入测试版本的program
+    m = PaddleBlackBoxModel(
+        fluid.default_main_program().clone(for_test=True),
         IMG_NAME,
         LABEL_NAME,
-        out.name,
-        None, (0, 1),
+        out.name, (0, 1),
         channel_axis=0)
 
     #不定向攻击
@@ -158,7 +161,7 @@ def main(use_cuda):
     original_label = 283
     adversary = Adversary(original_data, original_label)
 
-    print("Non-targeted Attack...")
+    logger.info("Non-targeted Attack...")
     adversary = attack(adversary, **attack_config)
 
     if adversary.is_successful():
@@ -170,7 +173,7 @@ def main(use_cuda):
         #对抗样本保存在adversary.adversarial_example
         adversary_image=np.copy(adversary.adversarial_example)
 
-        print(adversary_image-original_data)
+        #print(adversary_image-original_data)
 
 
         #从[3,224,224]转换成[224,224，3]
@@ -187,7 +190,7 @@ def main(use_cuda):
     else:
         print('attack failed, original_label=%d' % (adversary.original_label))
 
-    print("fgsm attack done")
+    logger.info("SinglePixelAttack attack done")
 
     #print(adversary.bad_adversarial_example - original_data)
 
