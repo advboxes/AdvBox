@@ -19,6 +19,7 @@ from __future__ import division
 
 import logging
 from collections import Iterable
+logger=logging.getLogger(__name__)
 
 import numpy as np
 
@@ -80,13 +81,14 @@ class SinglePixelAttack(Attack):
 
             location = [x, y]
 
-            logging.info("x={0} y={1}".format(x,y))
+            logging.info("Attack x={0} y={1}".format(x,y))
 
             location.insert(self.model.channel_axis(), slice(None))
             location = tuple(location)
 
 
             if not isPreprocessed:
+                #logger.info("value in [min_={0}, max_={1}]".format(min_, max_))
                 #图像没有经过预处理 取值为整数 范围为0-255
                 for value in [min_, max_]:
                     perturbed = np.copy(adv_img)
@@ -101,6 +103,7 @@ class SinglePixelAttack(Attack):
             else:
                 # 图像经过预处理 取值为整数 通常范围为0-1
                 for value in np.linspace(min_, max_, num=256):
+                    #logger.info("value in [min_={0}, max_={1},step num=256]".format(min_, max_))
                     perturbed = np.copy(adv_img)
                     #针对图像的每个信道的点[x,y]同时进行修改
                     perturbed[location] = value

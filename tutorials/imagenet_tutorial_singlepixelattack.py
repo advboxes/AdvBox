@@ -37,7 +37,6 @@ import paddle.fluid as fluid
 import paddle.v2 as paddle
 from PIL import Image
 
-from image_classification.alexnet import AlexNet
 
 from advbox.adversary import Adversary
 from advbox.attacks.localsearch import SinglePixelAttack
@@ -53,6 +52,8 @@ from advbox.models.paddleBlackBox import PaddleBlackBoxModel
 #比如在mac上不设置该环境变量，在GPU服务器上设置 export WITH_GPU=1
 with_gpu = os.getenv('WITH_GPU', '0') != '0'
 
+img_mean = np.array([0.485, 0.456, 0.406]).reshape((3, 1, 1))
+img_std = np.array([0.229, 0.224, 0.225]).reshape((3, 1, 1))
 
 #图像预处理
 def resize_short(img, target_size):
@@ -78,8 +79,7 @@ def crop_image(img, target_size, center):
     return img
 
 def get_image(image_file):
-    img_mean = np.array([0.485, 0.456, 0.406]).reshape((3, 1, 1))
-    img_std = np.array([0.229, 0.224, 0.225]).reshape((3, 1, 1))
+
     img = Image.open(image_file)
     if img.mode != 'RGB':
         img = img.convert('RGB')
@@ -158,7 +158,7 @@ def main(use_cuda):
     test_data = get_image("cat.jpg")
     original_data=np.copy(test_data)
     # 猫对应的标签 imagenet 2012 对应链接https://blog.csdn.net/LegenDavid/article/details/73335578
-    original_label = 283
+    original_label = None
     adversary = Adversary(original_data, original_label)
 
     logger.info("Non-targeted Attack...")
@@ -177,6 +177,9 @@ def main(use_cuda):
 
 
         #从[3,224,224]转换成[224,224，3]
+        adversary_image*=img_std
+        adversary_image+=img_mean
+
         adversary_image = np.array(adversary_image * 255).astype("uint8").transpose([1, 2, 0])
 
         #print(adversary_image.shape)
