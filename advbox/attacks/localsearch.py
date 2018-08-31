@@ -30,6 +30,19 @@ __all__ = [
     'SinglePixelAttack','LocalSearchAttack'
 ]
 
+'''
+LocalSearchAttack算法实现参考了Foolbox的实现，修改后移植到paddle平台
+@article{rauber2017foolbox,
+  title={Foolbox: A Python toolbox to benchmark the robustness of machine learning models},
+  author={Rauber, Jonas and Brendel, Wieland and Bethge, Matthias},
+  journal={arXiv preprint arXiv:1707.04131},
+  year={2017},
+  url={http://arxiv.org/abs/1707.04131},
+  archivePrefix={arXiv},
+  eprint={1707.04131},
+}
+'''
+
 #Simple Black-Box Adversarial Perturbations for Deep Networks
 #随机在图像中选择max_pixels个点 在多个信道中同时进行修改，修改范围通常为0-255
 class SinglePixelAttack(Attack):
@@ -116,7 +129,14 @@ class SinglePixelAttack(Attack):
 
         return adversary
 
-
+#Simple Black-Box Adversarial Perturbations for Deep Networks 函数命名也完全和论文一致
+# perturbation factor p 扰动系数
+# two perturbation parameters p ∈ R and r ∈ [0,2],
+# a budget U ∈ N on the number of trials
+# the half side length of the neighborhood square d ∈ N,
+# the number of pixels perturbed at each round t ∈ N,
+# and an upper bound on the number of rounds R ∈ N.
+#
 class LocalSearchAttack(Attack):
 
     def __init__(self, model, support_targeted=True):
@@ -138,6 +158,10 @@ class LocalSearchAttack(Attack):
         # 强制拷贝 避免针对adv_img的修改也影响adversary.original
         adv_img = np.copy(adversary.original)
 
+        original_label=adversary.original_label
+
+        logger.info("LocalSearchAttack parameter:r={0}, p={1}, d={2}, t={3}, R={4}".format(r, p, d, t, R))
+
         '''
         adversary.original  原始数据
         adversary.original_label  原始数据的标签
@@ -157,6 +181,7 @@ class LocalSearchAttack(Attack):
 
         #print("w={0},h={1}".format(w,h))
 
+        #正则化到[-0.5,0.5]区间内
         def normalize(im):
 
             im = im - (min_ + max_) / 2
@@ -176,6 +201,7 @@ class LocalSearchAttack(Attack):
         adv_img, LB, UB = normalize(adv_img)
         channels = adv_img.shape[self.model.channel_axis()]
 
+        #随机选择一部分像素点 总数不超过全部的10% 最大为128个点
         def random_locations():
             n = int(0.1 * h * w)
             n = min(n, 128)
@@ -186,6 +212,8 @@ class LocalSearchAttack(Attack):
             pxy = np.array(pxy)
             return pxy
 
+        #针对图像的每个信道的点[x,y]同时进行修改 修改的值为p * np.sign(Im[location]) 类似FGSM的一次迭代
+        #不修改Ii的图像 返回修改后的图像
         def pert(Ii, p, x, y):
             Im = Ii.copy()
             location = [x, y]
@@ -194,36 +222,53 @@ class LocalSearchAttack(Attack):
             Im[location] = p * np.sign(Im[location])
             return Im
 
+        #截断 确保assert LB <= r * Ibxy <= UB 但是也有可能阶段失败退出 因此可以适当扩大配置的原始数据范围
+        # 这块的实现没有完全参考论文
         def cyclic(r, Ibxy):
+
             result = r * Ibxy
             if result < LB:
                 result = result + (UB - LB)
+                #result=LB
             elif result > UB:
                 result = result - (UB - LB)
+                #result=UB
             assert LB <= result <= UB
             return result
 
         Ii = adv_img
         PxPy = random_locations()
 
+        #循环攻击轮
         for _ in range(R):
+            #重新排序 随机选择不不超过128个点
             PxPy = PxPy[np.random.permutation(len(PxPy))[:128]]
             L = [pert(Ii, p, x, y) for x, y in PxPy]
 
+            #批量返回预测结果 获取原始图像标签的概率
             def score(Its):
                 Its = np.stack(Its)
                 Its = unnormalize(Its)
+                """
                 batch_logits, _ = a.batch_predictions(Its, strict=False)
                 scores = [softmax(logits)[cI] for logits in batch_logits]
+                其中original_label为原始图像的标签
+                """
+                scores=[ self.model.predict(unnormalize(Ii))[original_label] for It in Its ]
+
                 return scores
 
+
+            #选择影响力最大的t个点进行扰动 抓主要矛盾
             scores = score(L)
 
             indices = np.argsort(scores)[:t]
+            logger.info("selected pixel indices:"+str(indices))
 
             PxPy_star = PxPy[indices]
 
             for x, y in PxPy_star:
+                #每个颜色通道的[x，y]点进行扰动并截断 扰动算法即放大r倍
                 for b in range(channels):
                     location = [x, y]
                     location.insert(self.model.channel_axis(), b)
@@ -232,9 +277,13 @@ class LocalSearchAttack(Attack):
 
             f = self.model.predict(unnormalize(Ii))
             adv_label = np.argmax(f)
+            logger.info("adv_label={0}".format(adv_label))
             # print("adv_label={0}".format(adv_label))
             if adversary.try_accept_the_example(adv_img, adv_label):
                 return adversary
+
+            #扩大搜索范围，把原有点周围2d乘以2d范围内的点都拉进来 去掉超过【w，h】的点
+            #"{Update a neighborhood of pixel locations for the next round}"
 
             PxPy = [
                 (x, y)
