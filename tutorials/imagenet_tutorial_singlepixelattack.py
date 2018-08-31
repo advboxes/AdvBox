@@ -107,22 +107,17 @@ def main(use_cuda):
     image_shape = [3,224,224]
 
     image = fluid.layers.data(name=IMG_NAME, shape=image_shape, dtype='float32')
-    # gradient should flow
-    #image.stop_gradient = False
-
     label = fluid.layers.data(name=LABEL_NAME, shape=[1], dtype='int64')
 
     # model definition
 
     model = AlexNet()
-    #model = resnet.ResNet50()
 
     out = model.net(input=image, class_dim=class_dim)
 
     # 根据配置选择使用CPU资源还是GPU资源
     place = fluid.CUDAPlace(0) if use_cuda else fluid.CPUPlace()
     exe = fluid.Executor(place)
-    #exe.run(fluid.default_startup_program())
 
     #加载模型参数
     if pretrained_model:
@@ -153,8 +148,6 @@ def main(use_cuda):
 
     attack_config = {"max_pixels": 224 * 224,"isPreprocessed":True}
 
-
-
     test_data = get_image("cat.jpg")
     original_data=np.copy(test_data)
     # 猫对应的标签 imagenet 2012 对应链接https://blog.csdn.net/LegenDavid/article/details/73335578
@@ -173,21 +166,14 @@ def main(use_cuda):
         #对抗样本保存在adversary.adversarial_example
         adversary_image=np.copy(adversary.adversarial_example)
 
-        #print(adversary_image-original_data)
-
-
         #从[3,224,224]转换成[224,224，3]
         adversary_image*=img_std
         adversary_image+=img_mean
 
         adversary_image = np.array(adversary_image * 255).astype("uint8").transpose([1, 2, 0])
 
-        #print(adversary_image.shape)
-
         im = Image.fromarray(adversary_image)
         im.save("adversary_image.jpg")
-
-
 
 
     else:
@@ -195,14 +181,6 @@ def main(use_cuda):
 
     logger.info("SinglePixelAttack attack done")
 
-    #print(adversary.bad_adversarial_example - original_data)
-
-    #debug = np.array(adversary.bad_adversarial_example * 255).astype("uint8").transpose([1, 2, 0])
-
-
-
-    #im = Image.fromarray(debug)
-    #im.save("debug_image.jpg")
 
 
 if __name__ == '__main__':
