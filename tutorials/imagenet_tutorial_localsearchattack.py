@@ -146,7 +146,7 @@ def main(use_cuda):
     # 形状为[1,28,28] channel_axis=0  形状为[28,28,1] channel_axis=2
     attack = LocalSearchAttack(m)
 
-    attack_config = {"R": 200,"r":1.2}
+    attack_config = {"R": 200,"r":1.0}
 
     test_data = get_image("cat.jpg")
     original_data=np.copy(test_data)
