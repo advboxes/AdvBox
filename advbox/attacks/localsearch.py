@@ -228,19 +228,25 @@ class LocalSearchAttack(Attack):
 
             result = r * Ibxy
             if result < LB:
+                #result = result/r + (UB - LB)
                 result = result + (UB - LB)
                 #result=LB
             elif result > UB:
+                #result = result/r - (UB - LB)
                 result = result - (UB - LB)
                 #result=UB
-            assert LB <= result <= UB
+
+
+            if (result < LB) or (result > UB):
+                logger.info("assert LB <= result <= UB result={0}".format(result))
+                assert LB <= result <= UB
             return result
 
         Ii = adv_img
         PxPy = random_locations()
 
         #循环攻击轮
-        for _ in range(R):
+        for try_time in range(R):
             #重新排序 随机选择不不超过128个点
             PxPy = PxPy[np.random.permutation(len(PxPy))[:128]]
             L = [pert(Ii, p, x, y) for x, y in PxPy]
@@ -250,9 +256,7 @@ class LocalSearchAttack(Attack):
                 Its = np.stack(Its)
                 Its = unnormalize(Its)
                 """
-                batch_logits, _ = a.batch_predictions(Its, strict=False)
-                scores = [softmax(logits)[cI] for logits in batch_logits]
-                其中original_label为原始图像的标签
+                original_label为原始图像的标签
                 """
                 scores=[ self.model.predict(unnormalize(Ii))[original_label] for It in Its ]
 
@@ -263,7 +267,7 @@ class LocalSearchAttack(Attack):
             scores = score(L)
 
             indices = np.argsort(scores)[:t]
-            logger.info("selected pixel indices:"+str(indices))
+            logger.info("try {0} times  selected pixel indices:{1}".format(try_time,str(indices)))
 
             PxPy_star = PxPy[indices]
 
