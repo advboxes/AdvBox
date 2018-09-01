@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -86,7 +85,7 @@ class Attack(object):
                      '\n         is_targeted_attack: {}'
                      ''.format(adversary.original_label, adversary.target_label,
                                adversary.is_targeted_attack))
-=======
+
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -174,4 +173,3 @@ class Attack(object):
                      '\n         is_targeted_attack: {}'
                      ''.format(adversary.original_label, adversary.target_label,
                                adversary.is_targeted_attack))
->>>>>>> 08ee2771dcbd009587d910d33e682b746ed0b438
