@@ -1,10 +1,10 @@
 # 使用示例
 ## 概述
-主流的深度学习平台都提供了大量的预训练模型，以PaddlePaddle为例，基于ImageNet 2012数据集提供了AlexNet、ResNet50和SE_ResNeXt50_32x4d模型文件，完整的模型地址为：
+主流的深度学习平台都提供了大量的预训练模型，以PaddlePaddle为例，基于ImageNet 2012数据集提供了AlexNet、ResNet50和SE\_ResNeXt50\_32x4d模型文件，完整的模型地址为：
 
 [https://github.com/PaddlePaddle/models/tree/develop/fluid/image_classification#supported-models-and-performances](https://github.com/PaddlePaddle/models/tree/develop/fluid/image_classification#supported-models-and-performances)
 
-## 示例1：攻击基于MNIST数据集的CNN模型
+## 示例1：白盒攻击基于MNIST数据集的CNN模型
 首先需要生成攻击用的模型，advbox的测试模型是一个识别MNIST的cnn模型。
 
 	python mnist_model.py
@@ -34,7 +34,7 @@
 | deepfool | mnist\_tutorial\_deepfool.py | 
 
 
-## 示例2：攻击基于CIFAR10数据集的ResNet模型
+## 示例2：白盒攻击基于CIFAR10数据集的ResNet模型
 首先需要生成攻击用的模型，advbox的测试模型是一个识别CIFAR10的ResNet模型。
 
 	python cifar10_model.py
@@ -52,7 +52,7 @@
 | deepfool | cifar10\_tutorial\_deepfool.py | 
 | jsma | cifar10\_tutorial\_ jsma.py | 
 
-## 示例3：攻击caffe下基于MNIST数据集的LeNet模型
+## 示例3：白盒攻击caffe下基于MNIST数据集的LeNet模型
 首先使用Paddle提供的caffe2fluid工具把caffe下在MNIST数据集上训练好的LeNet模型转换成Paddle可以识别的格式。caffe2fluid的地址为[caffe2fluid](https://github.com/PaddlePaddle/models/blob/e7684f07505c172beb4c4d9febb4a48f9fa83b68/fluid/image_classification/caffe2fluid/README.md)
 
 Caffe2Fluid的安装非常简单，在Caffe2Fluid目录下执行。
@@ -81,3 +81,17 @@ caffe的模型文件通常有两个组成，假设保存到models.caffe/lenet/�
 
 	[TEST_DATASET]: fooling_count=458, total_count=500, fooling_rate=0.916000
 	fgsm attack done
+	
+## 示例4：黑盒攻击基于MNIST数据集的CNN模型
+首先需要生成攻击用的模型，advbox的测试模型是一个识别MNIST的cnn模型。
+
+	python mnist_model.py
+	
+运行攻击代码，以基于SinglePixelAttack算法的演示代码为例。
+
+	python mnist_tutorial_singlepixelattack.py
+	
+运行结果如下，基于SinglePixelAttack算法攻击成功率为100%。
+
+	[TEST_DATASET]: fooling_count=10, total_count=10, fooling_rate=1.000000
+	SinglePixelAttack attack done
