@@ -37,11 +37,11 @@ def main(use_cuda):
     """
     Advbox demo which demonstrate how to use advbox.
     """
-    TOTAL_NUM = 2
+    TOTAL_NUM = 10
     IMG_NAME = 'img'
     LABEL_NAME = 'label'
 
-    img = fluid.layers.data(name=IMG_NAME, shape=[1, 28, 28], dtype='float32')
+    img = fluid.layers.data(name=IMG_NAME, shape=[1,28, 28], dtype='float32')
     # gradient should flow
     img.stop_gradient = False
     label = fluid.layers.data(name=LABEL_NAME, shape=[1], dtype='int64')
@@ -74,9 +74,12 @@ def main(use_cuda):
         
         softmax.name,
         logits.name,
-        
-        avg_cost.name, (-1, 1),
-        channel_axis=1)
+
+        avg_cost.name, (0, 255),
+        channel_axis=0)
+
+    #形状为[1,28,28] channel_axis=0  形状为[28,28,1] channel_axis=2
+
     attack = SinglePixelAttack(m)
 
     attack_config = {"max_pixels": 28*28}
@@ -86,7 +89,11 @@ def main(use_cuda):
     fooling_count = 0
     for data in test_reader():
         total_count += 1
-        adversary = Adversary(data[0][0], data[0][1])
+        img=data[0][0]
+        img=np.reshape(img,[1,28,28])
+
+        adversary = Adversary(img, data[0][1])
+        #adversary = Adversary(data[0][0], data[0][1])
 
         # SinglePixelAttack non-targeted attack
         adversary = attack(adversary, **attack_config)
