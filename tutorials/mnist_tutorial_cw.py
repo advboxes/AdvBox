@@ -85,7 +85,7 @@ def main(use_cuda):
         channel_axis=1,
         preprocess = (-1, 2)) # x within(0,1) so we should do some transformation
     
-    learning_rate = 0.05
+    learning_rate = 0.01
     
     attack = CW_L2(m, learning_rate=learning_rate) # to init computation graph in attack.init(), we have to pass learning_rate here
     #######
@@ -93,32 +93,33 @@ def main(use_cuda):
     #######
     attack_config = {"nb_classes": 10,
                      "learning_rate": learning_rate, # learning_rate already passed in, this is only for printing
-                     "attack_iterations": 100,
-                     "epsilon": 0.2,
+                     "c_search_step":20,
+                     "c_range": (0.01,100),
+                     "attack_iterations": 1000,
+                     "multi_startpoints":10,
                      "targeted": True}
 
     # use test data to generate adversarial examples
     total_count = 0
     fooling_count = 0
+    # CW_L2 targeted attack
+    tlabel = 0
     for data in test_reader():
-        total_count += 1
-        adversary = Adversary(data[0][0], data[0][1])
-
-        # CW_L2 targeted attack
-        tlabel = 0
-        adversary.set_target(is_targeted_attack=True, target_label=tlabel)
-        adversary = attack(adversary, **attack_config)
-
-        if adversary.is_successful():
-            fooling_count += 1
-            print(
-                'attack success, original_label=%d, adversarial_label=%d, count=%d'
-                % (data[0][1], adversary.adversarial_label, total_count))
-
+        if data[0][1]!=tlabel:
+            total_count += 1
+            adversary = Adversary(data[0][0], data[0][1])
+            adversary.set_target(is_targeted_attack=True, target_label=tlabel)
+            adversary = attack(adversary, **attack_config)
+            if adversary.is_successful():
+                fooling_count += 1
+                print(
+                    'attack success, original_label=%d, adversarial_label=%d, count=%d'
+                    % (data[0][1], adversary.adversarial_label, total_count))
+            else:
+                print('attack failed, original_label=%d, count=%d' %
+                      (data[0][1], total_count))
         else:
-            print('attack failed, original_label=%d, count=%d' %
-                  (data[0][1], total_count))
-
+            pass
         if total_count >= TOTAL_NUM:
             print(
                 "[TEST_DATASET]: fooling_count=%d, total_count=%d, fooling_rate=%f"

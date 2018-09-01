@@ -87,10 +87,11 @@ class Adversary(object):
         :return: bool
         """
         if self.target_label is not None:
+            assert self.original_label != self.target_label
             return adversarial_label == self.target_label
         else:
-            return (adversarial_label is not None) and \
-                   (adversarial_label != self.original_label)
+            assert adversarial_label is not None
+            return adversarial_label != self.original_label
 
     def is_successful(self):
         """

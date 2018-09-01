@@ -114,58 +114,40 @@ class CW_L2_Attack(Attack):
                adversary,
                nb_classes=10,
                learning_rate=0.01,
-               attack_iterations=100,
-               epsilon=1,
+               c_search_step=20,
+               c_range=(0.01,100),
+               attack_iterations=10000,
+               multi_startpoints=10,
                targeted=True):
 
         # put adversary instance inside of the attack instance so all other function within can access
         self._adversary = adversary
-
-        if not adversary.is_targeted_attack:
+        if not self._adversary.is_targeted_attack:
             raise ValueError("This attack method only support targeted attack!")
+        
         print("Number of classes:",nb_classes,
               "Learning_rate:",learning_rate,
               "Attack_iterations:",attack_iterations,
-              "Epsilon:",epsilon,
+              "c_range:",c_range,
               "Targeted:",targeted)
-        # locate the range of c which makes the attack successful
-        c = epsilon
+        
         img = self._adversary.original  # original image to be attacked
-
-        '''
-        guess = self.model.predict(img)
-        print('guess img before preprocess:',guess)
-        '''
-        for i in range(10):
-            c = 2 * c
-            print('Checking if the range {0:f} include a successful c.'.format(c))
-
-            is_adversary, f6 = self._cwb(img,
-                                         c,
-                                         attack_steps=attack_iterations,
-                                         learning_rate=learning_rate,
-                                         nb_classes=nb_classes)
-
-            if is_adversary:
-                break
-        if not is_adversary:
-            logging.info('This CW attack failed!')
-            return adversary
-
-        # binary search for smaller c that makes fx<=0
-        print('searching for the smallest c that makes attack possible.')
-        c_low = 0
-        c_high = c
-        while c_high - c_low >= epsilon:
-            logging.info('c_high={}, c_low={}, diff={}, epsilon={}'.format(c_high, c_low, c_high - c_low, epsilon))
-
+        # binary search for smallest c that makes f6<=0
+        print('searching for the smallest c that makes attack possible within ({},{})'.format(c_range[0],c_range[1]))
+        c_low = c_range[0]
+        c_high = c_range[1]
+        for i in range(c_search_step):
+            logging.info('c_high={}, c_low={}, diff={}'.format(c_high, c_low, c_high - c_low))
             c_half = (c_low + c_high) / 2
-
-            is_adversary, f6 = self._cwb(img,
-                                         c,
-                                         attack_steps=attack_iterations,
-                                         learning_rate=learning_rate,
-                                         nb_classes=nb_classes)
+            print('Checking if {0:f} is a successful c.'.format(c_half))
+            # multi-point gradient descent
+            for j in range(multi_startpoints):
+                is_adversary, f6 = self._cwb(img,
+                                             c_half,
+                                             attack_steps=attack_iterations,
+                                             learning_rate=learning_rate,
+                                             nb_classes=nb_classes)
+                if is_adversary: break
             # pdb.set_trace()
             is_f6_smaller_than_0 = f6 <= 0
 
