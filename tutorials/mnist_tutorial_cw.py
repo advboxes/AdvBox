@@ -48,6 +48,7 @@ def main(use_cuda):
     cnn_main_program = fluid.Program()
     cnn_startup_program = fluid.Program()
     
+    # 可以改成default_main_program()
     with fluid.program_guard(main_program=cnn_main_program, startup_program=cnn_startup_program):
         img = fluid.layers.data(name=IMG_NAME, shape=[1, 28, 28], dtype='float32')
         # gradient should flow
@@ -59,7 +60,6 @@ def main(use_cuda):
 
     #根据配置选择使用CPU资源还是GPU资源
     place = fluid.CUDAPlace(0) if use_cuda else fluid.CPUPlace()
-
     exe = fluid.Executor(place)
 
     BATCH_SIZE = 1
@@ -75,8 +75,6 @@ def main(use_cuda):
     # advbox demo
     m = PaddleModel(
         cnn_main_program,
-        place,
-        exe,
         IMG_NAME,
         LABEL_NAME,
         
@@ -86,18 +84,18 @@ def main(use_cuda):
         avg_cost.name, (-1, 1),
         channel_axis=1,
         preprocess = (-1, 2)) # x within(0,1) so we should do some transformation
-
-    attack = CW_L2(m, learning_rate=0.1)
+    
+    learning_rate = 0.05
+    
+    attack = CW_L2(m, learning_rate=learning_rate) # to init computation graph in attack.init(), we have to pass learning_rate here
     #######
     # change parameter later
     #######
     attack_config = {"nb_classes": 10,
-                     "learning_rate": 0.1,
-                     "attack_iterations": 50,
-                     "epsilon": 0.5,
-                     "targeted": True,
-                     "k": 0,
-                     "noise": 2}
+                     "learning_rate": learning_rate, # learning_rate already passed in, this is only for printing
+                     "attack_iterations": 100,
+                     "epsilon": 0.2,
+                     "targeted": True}
 
     # use test data to generate adversarial examples
     total_count = 0

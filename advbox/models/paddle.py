@@ -44,10 +44,8 @@ class PaddleModel(Model):
 
     def __init__(self,
                  program,
-                 place,
-                 exe,
-                 input_name,
-                 logits_name,
+                 input_name, # input name
+                 logits_name, # output name
                  
                  softmax_name,
                  predict_name,
@@ -64,15 +62,13 @@ class PaddleModel(Model):
 
         #用于计算梯度
         self._program = program
-        self.place = place
-        self.exe = exe
         #仅用于预测
         self._predict_program = program.clone(for_test=True)
         self._place = fluid.CUDAPlace(0) if with_gpu else fluid.CPUPlace()
         self._exe = fluid.Executor(self._place)
 
-        self._input_name = input_name
-        self._logits_name = logits_name # wrong name man!
+        self._input_name = input_name # input name
+        self._logits_name = logits_name # output name
         
         self._softmax_name = softmax_name # this is actually output after softmax
         self._predict_name = predict_name # this is actually logit
@@ -130,7 +126,7 @@ class PaddleModel(Model):
         assert len(predict_var.shape) == 2
         return predict_var.shape[1]
 
-    # add a new function in model to get logits
+    # add a new function in model to get logits (un-used)
     def get_logits(self, data):
         """
         Calculate the logits of the data.
