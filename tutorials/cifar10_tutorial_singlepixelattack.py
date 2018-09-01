@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-SinglePixelAttack tutorial on mnist using advbox tool.
+SinglePixelAttack tutorial on cifar10 using advbox tool.
 """
 import sys
 import os
@@ -25,8 +25,8 @@ import paddle.v2 as paddle
 
 from advbox.adversary import Adversary
 from advbox.attacks.localsearch import SinglePixelAttack
-from advbox.models.paddleBlackBox import PaddleBlackBoxModel
-from tutorials.mnist_model import mnist_cnn_model
+from advbox.models.paddle import PaddleModel
+from image_classification.resnet import resnet_cifar10
 
 #通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
 #比如在mac上不设置该环境变量，在GPU服务器上设置 export WITH_GPU=1
@@ -41,11 +41,11 @@ def main(use_cuda):
     IMG_NAME = 'img'
     LABEL_NAME = 'label'
 
-    img = fluid.layers.data(name=IMG_NAME, shape=[1,28, 28], dtype='float32')
+    img = fluid.layers.data(name=IMG_NAME, shape=[3,32, 32], dtype='float32')
     # gradient should flow
     img.stop_gradient = False
     label = fluid.layers.data(name=LABEL_NAME, shape=[1], dtype='int64')
-    softmax, logits = mnist_cnn_model(img)
+    logits = resnet_cifar10(img, 32)
     cost = fluid.layers.cross_entropy(input=logits, label=label)
     avg_cost = fluid.layers.mean(x=cost)
 
@@ -58,28 +58,25 @@ def main(use_cuda):
 
     test_reader = paddle.batch(
         paddle.reader.shuffle(
-            paddle.dataset.mnist.test(), buf_size=128 * 10),
+            paddle.dataset.cifar.test10(), buf_size=128 * 10),
         batch_size=BATCH_SIZE)
 
     fluid.io.load_params(
-        exe, "./mnist/", main_program=fluid.default_main_program()
-      
-    # advbox demo 黑盒攻击 直接传入测试版本的program
-    m = PaddleBlackBoxModel(
-        fluid.default_main_program().clone(for_test=True),
+        exe, "cifar10/resnet/", main_program=fluid.default_main_program())
+
+    # advbox demo
+    m = PaddleModel(
+        fluid.default_main_program(),
         IMG_NAME,
         LABEL_NAME,
-      
-        softmax.name,
-        logits.name, 
-        
+        logits.name,
         avg_cost.name, (0, 255),
         channel_axis=0)
-    #形状为[1,28,28] channel_axis=0  形状为[28,28,1] channel_axis=2
 
+    #形状为[1,28,28] channel_axis=0  形状为[28,28,1] channel_axis=2
     attack = SinglePixelAttack(m)
 
-    attack_config = {"max_pixels": 28*28}
+    attack_config = {"max_pixels": 32*32}
 
     # use test data to generate adversarial examples
     total_count = 0
@@ -87,7 +84,7 @@ def main(use_cuda):
     for data in test_reader():
         total_count += 1
         img=data[0][0]
-        img=np.reshape(img,[1,28,28])
+        img=np.reshape(img,[3,32,32])
 
         adversary = Adversary(img, data[0][1])
         #adversary = Adversary(data[0][0], data[0][1])
