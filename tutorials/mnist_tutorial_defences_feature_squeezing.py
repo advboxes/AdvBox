@@ -20,7 +20,10 @@ import sys
 import os
 sys.path.append("..")
 
-import matplotlib.pyplot as plt
+import logging
+logging.basicConfig(level=logging.INFO,format="%(filename)s[line:%(lineno)d] %(levelname)s %(message)s")
+logger=logging.getLogger(__name__)
+
 import numpy as np
 import paddle.fluid as fluid
 import paddle.v2 as paddle
@@ -75,7 +78,7 @@ def main(use_cuda):
         avg_cost.name, (-1, 1),
         channel_axis=1)
     attack = FGSM(m)
-    attack_config = {"epsilons": 0.3}
+    attack_config = {"epsilons": 0.1}
 
     # use test data to generate adversarial examples
     total_count = 0
@@ -89,9 +92,9 @@ def main(use_cuda):
 
         if adversary.is_successful():
             fooling_count += 1
-            print(
-                'attack success, original_label=%d, adversarial_label=%d, count=%d'
-                % (data[0][1], adversary.adversarial_label, total_count))
+            #print(
+            #    'attack success, original_label=%d, adversarial_label=%d, count=%d'
+            #    % (data[0][1], adversary.adversarial_label, total_count))
         else:
             print('attack failed, original_label=%d, count=%d' %
                   (data[0][1], total_count))
@@ -112,21 +115,24 @@ def main(use_cuda):
         total_count += 1
         x=data[0][0]
         y=data[0][1]
-        bit_depth=8
+        #最关键的一个参数 mnist默认是8 防护阶段强烈建议小于8
+        bit_depth=2
         clip_values = (-1, 1)
-        print(x)
         #x的范围为[-1,1]，原始的mnist是[1,28,28]，每个像素取值范围为[0,255]
         x=FeatureFqueezingDefence(x, y, bit_depth, clip_values)
-        adversary = Adversary(x, y)
+        #print(x)
+        #不设置y 会自动获取
+        adversary = Adversary(x, None)
 
         # FGSM non-targeted attack
         adversary = attack(adversary, **attack_config)
 
         if adversary.is_successful():
             fooling_count += 1
-            print(
+            logger.info(
                 'attack success, original_label=%d, adversarial_label=%d, count=%d'
-                % (data[0][1], adversary.adversarial_label, total_count))
+                    % (data[0][1], adversary.adversarial_label, total_count)
+            )
         else:
             print('attack failed, original_label=%d, count=%d' %
                   (data[0][1], total_count))

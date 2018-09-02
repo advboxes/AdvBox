@@ -1,3 +1,5 @@
+#coding=utf-8
+
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,13 +33,14 @@ def FeatureFqueezingDefence(x, y=None, bit_depth=None, clip_values=(0, 1)):
     assert (type(bit_depth) is int ) and  ( bit_depth >= 1 ) and  ( bit_depth <= 64)
 
     x_ = x - clip_values[0]
-    if clip_values[1] != 0:
-        x_ = x_ / clip_values[1]
+
+    x_ = x_ / (clip_values[1]-clip_values[0])
 
     max_value = np.rint(2 ** bit_depth - 1)
     res = (np.rint(x_ * max_value) / max_value) * (clip_values[1] - clip_values[0]) + clip_values[0]
-    print(res)
-    assert (res < clip_values[1]).all() and (res > clip_values[0]).all()
+
+    #确保万无一失 clip生效
+    assert (res <= clip_values[1]).all() and (res >= clip_values[0]).all()
 
     return res
 
