@@ -30,7 +30,7 @@ import paddle.v2 as paddle
 
 from advbox.adversary import Adversary
 from advbox.attacks.gradient_method import FGSM
-from advbox.defences.feature_squeezing import FeatureFqueezingDefence
+from advbox.models.paddleFeatureFqueezingDefence import PaddleFeatureFqueezingDefenceModel
 from advbox.models.paddle import PaddleModel
 from tutorials.mnist_model import mnist_cnn_model
 
@@ -109,23 +109,31 @@ def main(use_cuda):
 
     #使用FeatureFqueezingDefence
 
+    # advbox FeatureFqueezingDefence demo
+
+    n = PaddleFeatureFqueezingDefenceModel(
+        fluid.default_main_program(),
+        IMG_NAME,
+        LABEL_NAME,
+        logits.name,
+        avg_cost.name, (-1, 1),
+        channel_axis=1,preprocess=None,
+        bit_depth=2,
+        clip_values=(-1, 1)
+            )
+    attack_new = FGSM(n)
+    attack_config = {"epsilons": 0.1}
+
     total_count = 0
     fooling_count = 0
     for data in test_reader():
         total_count += 1
-        x=data[0][0]
-        y=data[0][1]
-        #最关键的一个参数 mnist默认是8 防护阶段强烈建议小于8
-        bit_depth=2
-        clip_values = (-1, 1)
-        #x的范围为[-1,1]，原始的mnist是[1,28,28]，每个像素取值范围为[0,255]
-        x=FeatureFqueezingDefence(x, y, bit_depth, clip_values)
-        #print(x)
+
         #不设置y 会自动获取
-        adversary = Adversary(x, None)
+        adversary = Adversary(data[0][0], None)
 
         # FGSM non-targeted attack
-        adversary = attack(adversary, **attack_config)
+        adversary = attack_new(adversary, **attack_config)
 
         if adversary.is_successful():
             fooling_count += 1
