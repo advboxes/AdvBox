@@ -113,10 +113,10 @@ class CW_L2_Attack(Attack):
     def _apply(self,
                adversary,
                nb_classes=10,
-               learning_rate=0.01,
-               c_search_step=20,
+               learning_rate=1.0,
+               c_search_step=10,
                c_range=(0.01,100),
-               attack_iterations=10000,
+               attack_iterations=1000,
                multi_startpoints=10,
                targeted=True):
 
@@ -124,13 +124,13 @@ class CW_L2_Attack(Attack):
         self._adversary = adversary
         if not self._adversary.is_targeted_attack:
             raise ValueError("This attack method only support targeted attack!")
-        
+        '''
         print("Number of classes:",nb_classes,
               "Learning_rate:",learning_rate,
               "Attack_iterations:",attack_iterations,
               "c_range:",c_range,
               "Targeted:",targeted)
-        
+        '''
         img = self._adversary.original  # original image to be attacked
         # binary search for smallest c that makes f6<=0
         print('searching for the smallest c that makes attack possible within ({},{})'.format(c_range[0],c_range[1]))
@@ -170,7 +170,7 @@ class CW_L2_Attack(Attack):
 
         # inital data
         # print("Initial parameter!")
-        self.ret.set((1/255) * np.random.random_sample((1, 28, 28)).astype('float32'), self._place)
+        self.ret.set((10/255) * np.random.random_sample((1, 28, 28)).astype('float32'), self._place)
         screen_nontarget_logit = np.zeros(shape=[nb_classes], dtype="float32")
         screen_nontarget_logit[self._adversary.target_label] = 1
 
@@ -208,6 +208,7 @@ class CW_L2_Attack(Attack):
                   "logits_i_not_t:",result[3],\
                   "softmax:",result[5])
             '''
+            # print("loss:",result[2])
             f6 = result[0] - result[1]
             if i == 0:
                 smallest_f6 = f6
