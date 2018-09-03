@@ -30,7 +30,7 @@ __all__ = [
     'FastGradientSignMethodTargetedAttack', 'FGSMT',
     'BasicIterativeMethodAttack', 'BIM',
     'IterativeLeastLikelyClassMethodAttack', 'ILCM', 'MomentumIteratorAttack',
-    'MIFGSM'
+    'MIFGSM','FGSM_static'
 ]
 
 
@@ -153,6 +153,7 @@ class FastGradientSignMethodTargetedAttack(GradientMethodAttack):
             norm_ord=np.inf,
             epsilons=epsilons,
             steps=10)
+
 
 
 class FastGradientSignMethodAttack(FastGradientSignMethodTargetedAttack):
@@ -294,8 +295,103 @@ class MomentumIteratorAttack(GradientMethodAttack):
         return adversary
 
 
+
+
+class FGSMSAttack(Attack):
+    """
+    静态FGSM epsilon静态
+    """
+
+    def __init__(self, model, support_targeted=True):
+        """
+        :param model(model): The model to be attacked.
+        :param support_targeted(bool): Does this attack method support targeted.
+        """
+        super(FGSMSAttack, self).__init__(model)
+        self.support_targeted = support_targeted
+
+    def _apply(self,
+               adversary,
+               norm_ord=np.inf,
+               epsilon=0.01,
+               steps=10):
+        """
+        Apply the gradient attack method.
+        :param adversary(Adversary):
+            The Adversary object.
+        :param norm_ord(int):
+            Order of the norm, such as np.inf, 1, 2, etc. It can't be 0.
+        :param epsilons(list|tuple|int):
+            Attack step size (input variation).
+            Largest step size if epsilons is not iterable.
+        :param steps:
+            The number of attack iteration.
+        :param epsilon_steps:
+            The number of Epsilons' iteration for each attack iteration.
+        :return:
+            adversary(Adversary): The Adversary object.
+        """
+        if norm_ord == 0:
+            raise ValueError("L0 norm is not supported!")
+
+        if not self.support_targeted:
+            if adversary.is_targeted_attack:
+                raise ValueError(
+                    "This attack method doesn't support targeted attack!")
+
+        pre_label = adversary.original_label
+        min_, max_ = self.model.bounds()
+
+        assert self.model.channel_axis() == adversary.original.ndim
+        assert (self.model.channel_axis() == 1 or
+                self.model.channel_axis() == adversary.original.shape[0] or
+                self.model.channel_axis() == adversary.original.shape[-1])
+
+        step = 1
+        #强制拷贝 避免针对adv_img的修改也影响adversary.original
+        adv_img = np.copy(adversary.original)
+        for i in range(steps):
+            if adversary.is_targeted_attack:
+                gradient = -self.model.gradient(adv_img,
+                                                adversary.target_label)
+            else:
+                gradient = self.model.gradient(adv_img,
+                                               adversary.original_label)
+            if norm_ord == np.inf:
+                gradient_norm = np.sign(gradient)
+            else:
+                gradient_norm = gradient / self._norm(
+                    gradient, ord=norm_ord)
+
+            adv_img = adv_img + epsilon * gradient_norm * (max_ - min_)
+            adv_img = np.clip(adv_img, min_, max_)
+            adv_label = np.argmax(self.model.predict(adv_img))
+            logging.info('step={}, epsilon = {:.5f}, pre_label = {}, '
+                         'adv_label={}'.format(step, epsilon, pre_label,
+                                               adv_label))
+            if adversary.try_accept_the_example(adv_img, adv_label):
+                return adversary
+            step += 1
+
+
+        return adversary
+
+    @staticmethod
+    def _norm(a, ord):
+        if a.ndim == 1:
+            return np.linalg.norm(a, ord=ord)
+        if a.ndim == a.shape[0]:
+            norm_shape = (a.ndim, reduce(np.dot, a.shape[1:]))
+            norm_axis = 1
+        else:
+            norm_shape = (reduce(np.dot, a.shape[:-1]), a.ndim)
+            norm_axis = 0
+        return np.linalg.norm(a.reshape(norm_shape), ord=ord, axis=norm_axis)
+
+
 FGSM = FastGradientSignMethodAttack
 FGSMT = FastGradientSignMethodTargetedAttack
 BIM = BasicIterativeMethodAttack
 ILCM = IterativeLeastLikelyClassMethodAttack
 MIFGSM = MomentumIteratorAttack
+FGSM_static = FGSMSAttack

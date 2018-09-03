@@ -21,7 +21,7 @@ import os
 sys.path.append("..")
 
 import logging
-logging.basicConfig(level=logging.INFO,format="%(filename)s[line:%(lineno)d] %(levelname)s %(message)s")
+#logging.basicConfig(level=logging.INFO,format="%(filename)s[line:%(lineno)d] %(levelname)s %(message)s")
 logger=logging.getLogger(__name__)
 
 import numpy as np
@@ -30,6 +30,7 @@ import paddle.v2 as paddle
 
 from advbox.adversary import Adversary
 from advbox.attacks.gradient_method import FGSM
+from advbox.attacks.gradient_method import FGSM_static
 from advbox.models.paddleFeatureFqueezingDefence import PaddleFeatureFqueezingDefenceModel
 from advbox.models.paddle import PaddleModel
 from tutorials.mnist_model import mnist_cnn_model
@@ -77,8 +78,9 @@ def main(use_cuda):
         logits.name,
         avg_cost.name, (-1, 1),
         channel_axis=1)
-    attack = FGSM(m)
-    attack_config = {"epsilons": 0.1}
+    #使用静态FGSM epsilon不可变
+    attack = FGSM_static(m)
+    attack_config = {"epsilon": 0.01}
 
     # use test data to generate adversarial examples
     total_count = 0
@@ -96,7 +98,7 @@ def main(use_cuda):
             #    'attack success, original_label=%d, adversarial_label=%d, count=%d'
             #    % (data[0][1], adversary.adversarial_label, total_count))
         else:
-            print('attack failed, original_label=%d, count=%d' %
+            logger.info('attack failed, original_label=%d, count=%d' %
                   (data[0][1], total_count))
 
         if total_count >= TOTAL_NUM:
@@ -118,11 +120,11 @@ def main(use_cuda):
         logits.name,
         avg_cost.name, (-1, 1),
         channel_axis=1,preprocess=None,
-        bit_depth=2,
+        bit_depth=1,
         clip_values=(-1, 1)
             )
-    attack_new = FGSM(n)
-    attack_config = {"epsilons": 0.1}
+    attack_new = FGSM_static(n)
+    attack_config = {"epsilon": 0.01}
 
     total_count = 0
     fooling_count = 0
@@ -142,7 +144,7 @@ def main(use_cuda):
                     % (data[0][1], adversary.adversarial_label, total_count)
             )
         else:
-            print('attack failed, original_label=%d, count=%d' %
+            logger.info('attack failed, original_label=%d, count=%d' %
                   (data[0][1], total_count))
 
         if total_count >= TOTAL_NUM:

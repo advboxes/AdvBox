@@ -95,3 +95,23 @@ caffe的模型文件通常有两个组成，假设保存到models.caffe/lenet/�
 
 	[TEST_DATASET]: fooling_count=10, total_count=10, fooling_rate=1.000000
 	SinglePixelAttack attack done
+	
+	
+## 示例5：使用FeatureFqueezing加固基于MNIST数据集的CNN模型
+首先需要生成攻击用的模型，advbox的测试模型是一个识别MNIST的cnn模型。
+
+	python mnist_model.py
+	
+然后运行攻击代码，攻击FeatureFqueezing加固后的CNN模型。
+
+	python mnist_tutorial_defences_feature_squeezing.py
+	
+运行结果如下，首先攻击的没有加固的CNN模型，攻击成功率为54.6%
+
+	[TEST_DATASET]: fooling_count=273, total_count=500, fooling_rate=0.546000
+	fgsm attack done without any defence
+	
+攻击eatureFqueezing加固后的CNN模型，攻击成功率下降为10.6%。
+
+	[TEST_DATASET]: fooling_count=53, total_count=500, fooling_rate=0.106000
+	fgsm attack done with FeatureFqueezingDefence
