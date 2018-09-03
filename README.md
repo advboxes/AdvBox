@@ -35,15 +35,16 @@ AdvBox是一款支持PaddlePaddle、Caffe2以及TensorFlow平台，同时支持�
 
 ### 黑盒攻击算法
 
-- SinglePixelAttack
-- LocalSearchAttack
+- Single Pixel Attack
+- Local Search Attack
 
 
 ### 防护算法
 
-- FeatureFqueezing
-- SpatialSmoothing
-- 对抗训练
+- Feature Fqueezing
+- Spatial Smoothing
+- Label Smoothing
+- Adversarial Training
 
 ## AdvBox特点
 ### 多平台支持
