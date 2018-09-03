@@ -16,6 +16,7 @@
 
 """
 This module provide the attack method of "CW".
+
 L2 distance metrics especially
 """
 from __future__ import division
@@ -46,16 +47,14 @@ class CW_L2_Attack(Attack):
     """
 
     def __init__(self, model, learning_rate):
+
         super(CW_L2_Attack, self).__init__(model)
         self._predicts_normalized = None
         self._adversary = None  # type: Adversary
         #########################################
         # build cw attack computation graph
-        # use CPU
-        self.place = fluid.CPUPlace()
-        # use GPU
-        # place = fluid.CUDAPlace(0)
-        self.exe = fluid.Executor(self.place)
+        self._place = self.model._place
+        self._exe = self.model._exe
 
         # clone the prebuilt program that has cnn to attack
         self.attack_main_program = fluid.Program()  # prebuilt_program.clone(for_test=False)
@@ -75,24 +74,25 @@ class CW_L2_Attack(Attack):
             # softmax_from_prebuilt_program = attack_main_program.block(0).var(self.model._softmax_name)
             # logits_from_prebuilt_program = attack_main_program.block(0).var(self.model._predict_name)
 
-            t0, t1, t2, t3, t4 = self._loss_cw(img_0_1_placehold,
-                                               target_placehold,
-                                               shape_placehold,
-                                               c_placehold)  # ,
+            self.t0, self.t1, self.t2, self.t3, self.t4 = self._loss_cw(img_0_1_placehold,
+                                                                        target_placehold,
+                                                                        shape_placehold,
+                                                                        c_placehold)  # ,
             # img_placehold_from_prebuilt_program,
             # softmax_from_prebuilt_program,
             # logits_from_prebuilt_program)
-
-            # Adam optimizer as suggested in paper
+            
+            # Init Adam optimizer as suggested in paper
             optimizer = fluid.optimizer.Adam(learning_rate=learning_rate)
-            optimizer.minimize(t2, parameter_list=['parameter'])
+            optimizer.minimize(self.t2, parameter_list=['parameter'])
 
+            
         # initial variables and parameters every time before attack
-        self.exe.run(self.attack_startup_program)
-        # init ad perturbation
-        ret = fluid.global_scope().find_var("parameter").get_tensor()
+        # print("Initial param!")
+        self._exe.run(self.attack_startup_program)
+        self.ret = fluid.global_scope().find_var("parameter").get_tensor()
         # print(np.array(ret))
-        ret.set(0.001 * np.random.random_sample((1, 28, 28)).astype('float32'), self.place)
+        # self.ret.set((1/255) * np.random.random_sample((1, 28, 28)).astype('float32'), self._place)
         # print(np.array(ret))
         # print(attack_main_program.current_block()["parameter"])
         # pdb.set_trace()
@@ -106,67 +106,51 @@ class CW_L2_Attack(Attack):
         f4 = self.attack_main_program.block(0).var("fc_3.w_0")
         var_list = [c1, c2, c3, c4, f1, f2, f3, f4]
 
-        fluid.io.load_vars(executor=self.exe, dirname="../advbox/attacks/mnist/", vars=var_list,
+        fluid.io.load_vars(executor=self._exe, dirname="../advbox/attacks/mnist/", vars=var_list,
                            main_program=self.attack_main_program)  # ../advbox/attacks/mnist/
         #########################################
 
     def _apply(self,
                adversary,
                nb_classes=10,
-               learning_rate=0.01,
-               attack_iterations=100,
-               epsilon=1,
-               targeted=True,
-               k=0,
-               noise=2):
+               learning_rate=1.0,
+               c_search_step=10,
+               c_range=(0.01,100),
+               attack_iterations=1000,
+               multi_startpoints=10,
+               targeted=True):
 
         # put adversary instance inside of the attack instance so all other function within can access
         self._adversary = adversary
-
-        if not adversary.is_targeted_attack:
+        if not self._adversary.is_targeted_attack:
             raise ValueError("This attack method only support targeted attack!")
-
-        # locate the range of c which makes the attack successful
-        c = epsilon
+        '''
+        print("Number of classes:",nb_classes,
+              "Learning_rate:",learning_rate,
+              "Attack_iterations:",attack_iterations,
+              "c_range:",c_range,
+              "Targeted:",targeted)
+        '''
         img = self._adversary.original  # original image to be attacked
-        '''
-        guess = self.model.predict(img)
-        print('guess img before preprocess:',guess)
-        '''
-        for i in range(10):
-            c = 2 * c
-            print('Checking if the range {0:f} include a successful c.'.format(c))
-            is_adversary, f6 = self._cwb(img,
-                                         c,
-                                         attack_steps=attack_iterations,
-                                         k=k,
-                                         learning_rate=learning_rate,
-                                         noise=noise,
-                                         nb_classes=nb_classes)
-            if is_adversary:
-                break
-        if not is_adversary:
-            logging.info('This CW attack failed!')
-            return adversary
-
-        # binary search for smaller c that makes fx<=0
-        print('searching for the smallest c that makes attack possible.')
-        c_low = 0
-        c_high = c
-        while c_high - c_low >= epsilon:
-            logging.info('c_high={}, c_low={}, diff={}, epsilon={}'.format(c_high, c_low, c_high - c_low, epsilon))
-
+        # binary search for smallest c that makes f6<=0
+        print('searching for the smallest c that makes attack possible within ({},{})'.format(c_range[0],c_range[1]))
+        c_low = c_range[0]
+        c_high = c_range[1]
+        for i in range(c_search_step):
+            logging.info('c_high={}, c_low={}, diff={}'.format(c_high, c_low, c_high - c_low))
             c_half = (c_low + c_high) / 2
-
-            is_adversary, f6 = self._cwb(img,
-                                         c,
-                                         attack_steps=attack_iterations,
-                                         k=k,
-                                         learning_rate=learning_rate,
-                                         noise=noise,
-                                         nb_classes=nb_classes)
+            print('Checking if {0:f} is a successful c.'.format(c_half))
+            # multi-point gradient descent
+            for j in range(multi_startpoints):
+                is_adversary, f6 = self._cwb(img,
+                                             c_half,
+                                             attack_steps=attack_iterations,
+                                             learning_rate=learning_rate,
+                                             nb_classes=nb_classes)
+                if is_adversary: break
             # pdb.set_trace()
             is_f6_smaller_than_0 = f6 <= 0
+
             if is_adversary and is_f6_smaller_than_0:
                 c_high = c_half
             else:
@@ -174,17 +158,19 @@ class CW_L2_Attack(Attack):
 
         return adversary
 
-    def _cwb(self, img, c, attack_steps, k, learning_rate, noise, nb_classes):
+    def _cwb(self, img, c, attack_steps, learning_rate, nb_classes):
         '''
         use CW attack on an original image for a
         limited number of iterations
         :return bool
         '''
-
+        
         smallest_f6 = None
         corresponding_constrained = None
 
         # inital data
+        # print("Initial parameter!")
+        self.ret.set((10/255) * np.random.random_sample((1, 28, 28)).astype('float32'), self._place)
         screen_nontarget_logit = np.zeros(shape=[nb_classes], dtype="float32")
         screen_nontarget_logit[self._adversary.target_label] = 1
 
@@ -193,8 +179,7 @@ class CW_L2_Attack(Attack):
                        "target",
                        "shape",
                        "c"],  # self.model._input_name,self.model._logits_name,
-
-            place=self.place,
+            place=self._place,
             program=self.attack_main_program)
 
         sub = -1
@@ -202,15 +187,14 @@ class CW_L2_Attack(Attack):
 
         img_0_1 = self._process_input(img, sub, div)
         # pdb.set_trace()
-
+            
         for i in range(attack_steps):
             # print("steps:",i)
-            result = self.exe.run(self.attack_main_program,
+            result = self._exe.run(self.attack_main_program,
                                   feed=feeder.feed([(img_0_1,
                                                      screen_nontarget_logit,
                                                      np.zeros(shape=[1], dtype='float32'),
                                                      c)]),  # img_0_1,0,
-
                                   fetch_list=[self.maxlogit_i_not_t,
                                               self.maxlogit_target,
                                               self.loss,
@@ -224,6 +208,7 @@ class CW_L2_Attack(Attack):
                   "logits_i_not_t:",result[3],\
                   "softmax:",result[5])
             '''
+            # print("loss:",result[2])
             f6 = result[0] - result[1]
             if i == 0:
                 smallest_f6 = f6
@@ -231,7 +216,6 @@ class CW_L2_Attack(Attack):
             if f6 < smallest_f6:
                 smallest_f6 = f6
                 corresponding_constrained = result[4]
-
                 ######
         # pdb.set_trace()
         # print(corresponding_constrained)
@@ -254,6 +238,7 @@ class CW_L2_Attack(Attack):
 
     # this build up the CW attack computation graph in Paddle
     def _loss_cw(self, img_0_1, target, shape, c):  # ,img_input_entrance,softmax_entrance,logits_entrance
+
         ####
         # use layerhelper to init w
         self.helper = LayerHelper("Jay")
@@ -307,7 +292,7 @@ class CW_L2_Attack(Attack):
         :return: numpy.ndarray
         """
         return corresponding_constrained * 2 - 1  # mnist is belong to (-1,1)
-
+    # unused
     def _f6(self, w):
         '''
         _f6 is the special f function CW chose as part of the
@@ -320,7 +305,7 @@ class CW_L2_Attack(Attack):
         f6 = max(max([Z for i, Z in enumerate(Z_output) if i != target]) - Z_output[target], 0)
 
         return f6
-
+    # unused
     def _Z(self, img):
         """
         Get the Zx logits as a numpy array.
@@ -351,6 +336,7 @@ CW_L2 = CW_L2_Attack
 
 
 class NumpyInitializer(fluid.initializer.Initializer):
+
     def __init__(self, ndarray):
         super(NumpyInitializer, self).__init__()
         self._ndarray = ndarray.astype('float32')

@@ -42,7 +42,7 @@ def main():
     # gradient should flow
     img.stop_gradient = False
     label = fluid.layers.data(name=LABEL_NAME, shape=[1], dtype='int64')
-    logits = mnist_cnn_model(img)
+    softmax, logits = mnist_cnn_model(img)
     cost = fluid.layers.cross_entropy(input=logits, label=label)
     avg_cost = fluid.layers.mean(x=cost)
 
@@ -69,9 +69,14 @@ def main():
     # advbox demo
     m = PaddleModel(
         fluid.default_main_program(),
+        place,
+        exe,
         IMG_NAME,
         LABEL_NAME,
+        
+        softmax.name,
         logits.name,
+        
         avg_cost.name, (-1, 1),
         channel_axis=1)
     attack = FGSM(m)

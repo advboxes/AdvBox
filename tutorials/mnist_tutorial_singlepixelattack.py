@@ -45,7 +45,7 @@ def main(use_cuda):
     # gradient should flow
     img.stop_gradient = False
     label = fluid.layers.data(name=LABEL_NAME, shape=[1], dtype='int64')
-    logits = mnist_cnn_model(img)
+    softmax, logits = mnist_cnn_model(img)
     cost = fluid.layers.cross_entropy(input=logits, label=label)
     avg_cost = fluid.layers.mean(x=cost)
 
@@ -62,18 +62,21 @@ def main(use_cuda):
         batch_size=BATCH_SIZE)
 
     fluid.io.load_params(
-        exe, "./mnist/", main_program=fluid.default_main_program())
-
-    # advbox demo
+        exe, "./mnist/", main_program=fluid.default_main_program()
+      
     # advbox demo 黑盒攻击 直接传入测试版本的program
     m = PaddleBlackBoxModel(
         fluid.default_main_program().clone(for_test=True),
         IMG_NAME,
         LABEL_NAME,
-        logits.name, (0, 255),
+      
+        softmax.name,
+        logits.name, 
+        
+        avg_cost.name, (0, 255),
         channel_axis=0)
-
     #形状为[1,28,28] channel_axis=0  形状为[28,28,1] channel_axis=2
+
     attack = SinglePixelAttack(m)
 
     attack_config = {"max_pixels": 28*28}

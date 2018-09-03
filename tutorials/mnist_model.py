@@ -17,8 +17,6 @@
 """
 CNN on mnist data using fluid api of paddlepaddle
 """
-from __future__ import print_function
-
 import paddle.v2 as paddle
 import paddle.fluid as fluid
 import os
@@ -43,7 +41,7 @@ def mnist_cnn_model(img):
         filter_size=5,
         pool_size=2,
         pool_stride=2,
-        act='relu')
+        act='relu')#,param_attr=param_attr_1
 
     conv_pool_2 = fluid.nets.simple_img_conv_pool(
         input=conv_pool_1,
@@ -51,12 +49,32 @@ def mnist_cnn_model(img):
         filter_size=5,
         pool_size=2,
         pool_stride=2,
-        act='relu')
-    fc = fluid.layers.fc(input=conv_pool_2, size=50, act='relu')
+        act='relu')#,param_attr=param_attr_2
+    fc = fluid.layers.fc(input=conv_pool_2, size=50, act='relu')#,param_attr=param_attr_3
 
-    logits = fluid.layers.fc(input=fc, size=10, act='softmax')
-    return logits
+    logits = fluid.layers.fc(input=fc, size=10, act=None)
+    softmax = fluid.layers.softmax(input=logits)
+    
+    return softmax, logits
 
+# transfer image to (0,1) pixel value
+def _process_input(input_img, sub, div):
+    res = None
+    #sub, div = self._preprocess
+    if np.any(sub != 0):
+        res = input_img - sub
+    if not np.all(sub == 1):
+        if res is None:  # "res = input_ - sub" is not executed!
+            res = input_img / (div) 
+        else:
+            res /= div
+    if res is None:  # "res = (input_ - sub)/ div" is not executed!
+        return input_img
+
+    res = np.where(res==0,0.00001,res)
+    res = np.where(res==1,0.99999,res) # no 0 or 1
+
+    return res
 
 def main(use_cuda):
     """
@@ -64,15 +82,15 @@ def main(use_cuda):
     """
     img = fluid.layers.data(name='img', shape=[1, 28, 28], dtype='float32')
     label = fluid.layers.data(name='label', shape=[1], dtype='int64')
-    logits = mnist_cnn_model(img)
-    cost = fluid.layers.cross_entropy(input=logits, label=label)
+    softmax, logits = mnist_cnn_model(img) # I changed the returns
+    cost = fluid.layers.cross_entropy(input=softmax, label=label)
     avg_cost = fluid.layers.mean(x=cost)
     optimizer = fluid.optimizer.Adam(learning_rate=0.01)
     optimizer.minimize(avg_cost)
 
     batch_size = fluid.layers.create_tensor(dtype='int64')
     batch_acc = fluid.layers.accuracy(
-        input=logits, label=label, total=batch_size)
+        input=softmax, label=label, total=batch_size)
 
     BATCH_SIZE = 50
     PASS_NUM = 3
@@ -95,9 +113,19 @@ def main(use_cuda):
     for pass_id in range(PASS_NUM):
         pass_acc.reset()
         for data in train_reader():
+            #print(data)
+            #cw requires the image pixel between 0 and 1
+            data_scaled = []
+            
+            for i in range(BATCH_SIZE):
+                img_0_1 = _process_input(data[i][0],-1,2)
+                data_scaled.append((img_0_1,data[i][1]))
+                
+            #print(data_scaled)
+           
             loss, acc, b_size = exe.run(
                 fluid.default_main_program(),
-                feed=feeder.feed(data),
+                feed=feeder.feed(data_scaled),#[(img_0_1,data[0][1])]
                 fetch_list=[avg_cost, batch_acc, batch_size])
             pass_acc.add(value=acc, weight=b_size)
             pass_acc_val = pass_acc.eval()[0]
@@ -105,8 +133,9 @@ def main(use_cuda):
                   " pass_acc=" + str(pass_acc_val))
             if loss < LOSS_THRESHOLD and pass_acc_val > ACC_THRESHOLD:
                 # early stop
+                print('early stop')
                 break
-
+        
         print("pass_id=" + str(pass_id) + " pass_acc=" + str(pass_acc.eval()[
             0]))
     fluid.io.save_params(
