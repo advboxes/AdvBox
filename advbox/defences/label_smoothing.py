@@ -41,6 +41,9 @@ def LabelSmoothingDefence(y, max_value=0.9):
     res[res == 1.] = max_value
     res[res == 0.] = min_value
 
+    #res[res > max_value] = max_value
+    #res[res < min_value] = min_value
+
     return res
 
 

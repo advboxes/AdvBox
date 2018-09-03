@@ -120,7 +120,7 @@ def main(use_cuda):
         logits.name,
         avg_cost.name, (-1, 1),
         channel_axis=1,preprocess=None,
-        max_value=0.9
+        max_value=0.8
             )
     attack_new = FGSM_static(n)
     attack_config = {"epsilon": 0.01}
