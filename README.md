@@ -127,38 +127,9 @@ mac下安装paddlepaddle包方式比较特殊，相当于在docker镜像直接�
 	export NCCL_IB_DISABLE=1
 
 ## 部署AdvBox代码
-直接同步advbox的代码。
+直接同步advbox的代码，其中示例代码在tutorials目录下。
 
 	git clone https://github.com/baidu/AdvBox.git        
-
-advbox的目录结果如下所示，其中示例代码在tutorials目录下。
-
-	.
-	├── advbox
-	|   ├── __init__.py
-	|   ├── attack
-	|        ├── __init__.py
-	|        ├── base.py
-	|        ├── deepfool.py
-	|        ├── gradient_method.py
-	|        ├── lbfgs.py
-	|        └── saliency.py
-	|   ├── models
-	|        ├── __init__.py
-	|        ├── base.py
-	|        └── paddle.py
-	|   └── adversary.py
-	├── tutorials
-	|   ├── __init__.py
-	|   ├── mnist_model.py
-	|   ├── mnist_tutorial_lbfgs.py
-	|   ├── mnist_tutorial_fgsm.py
-	|   ├── mnist_tutorial_bim.py
-	|   ├── mnist_tutorial_ilcm.py
-	|   ├── mnist_tutorial_mifgsm.py
-	|   ├── mnist_tutorial_jsma.py
-	|   └── mnist_tutorial_deepfool.py
-	└── README.md
 
 ## 对Caffe以及TensorFlow平台的支持
 ### 如何将Caffe平台的模型转换成PaddlePaddle格式
