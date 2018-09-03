@@ -87,7 +87,7 @@ class GradientMethodAttack(Attack):
         pre_label = adversary.original_label
         min_, max_ = self.model.bounds()
 
-        assert self.model.channel_axis() == adversary.original.ndim
+        #assert self.model.channel_axis() == adversary.original.ndim
         assert (self.model.channel_axis() == 1 or
                 self.model.channel_axis() == adversary.original.shape[0] or
                 self.model.channel_axis() == adversary.original.shape[-1])
@@ -342,7 +342,7 @@ class FGSMSAttack(Attack):
         pre_label = adversary.original_label
         min_, max_ = self.model.bounds()
 
-        assert self.model.channel_axis() == adversary.original.ndim
+        #assert self.model.channel_axis() == adversary.original.ndim
         assert (self.model.channel_axis() == 1 or
                 self.model.channel_axis() == adversary.original.shape[0] or
                 self.model.channel_axis() == adversary.original.shape[-1])
