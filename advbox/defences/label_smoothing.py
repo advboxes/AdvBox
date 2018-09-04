@@ -32,18 +32,12 @@ __all__ = [
 
 
 #Perturbation, Optimization and Statistics
-def LabelSmoothingDefence(y, max_value=0.9):
+def LabelSmoothingDefence(y, smoothing=0.9):
 
-    min_value = (1 - max_value) / (y.shape[0] - 1)
-    assert max_value >= min_value
+    assert ( smoothing > 0 ) and ( smoothing < 1)
 
-    res = y.copy()
-    res[res == 1.] = max_value
-    res[res == 0.] = min_value
+    y -= smoothing * (y - 1. / y.shape[0])
 
-    #res[res > max_value] = max_value
-    #res[res < min_value] = min_value
-
-    return res
+    return y
 
 

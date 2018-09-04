@@ -43,7 +43,7 @@ class PaddleLabelSmoothingDefenceModel(PaddleModel):
                  bounds,
                  channel_axis=3,
                  preprocess=None,
-                 max_value=0.9):
+                 smoothing=0.9):
         if preprocess is None:
             preprocess = (0, 1)
 
@@ -53,14 +53,14 @@ class PaddleLabelSmoothingDefenceModel(PaddleModel):
             bounds=bounds, channel_axis=channel_axis, preprocess=preprocess)
 
 
-        self.__max_value=max_value
+        self.__smoothing=smoothing
 
 
 
     def predict(self, data):
 
         y = super(PaddleLabelSmoothingDefenceModel, self).predict(data)
-        res=LabelSmoothingDefence(y,max_value=self.__max_value)
+        res=LabelSmoothingDefence(y,smoothing=self.__smoothing)
 
         return res
 
