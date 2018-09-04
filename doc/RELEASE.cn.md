@@ -1,5 +1,22 @@
+# V0.3版本
+- 支持黑盒攻击算法：
+	- Single Pixel Attack
+	- Local Search Attack
+
+- 支持防护算法：
+	- Feature Fqueezing
+	- Spatial Smoothing
+	- Label Smoothing
+	- Gaussian Augmentation
+	- Adversarial Training
+- 新增了使用案例：
+	- 白盒攻击caffe下基于MNIST数据集的LeNet模型
+	- 黑盒攻击基于MNIST数据集的CNN模型
+	- 使用FeatureFqueezing加固基于MNIST数据集的CNN模型
+	- 使用GaussianAugmentation加固基于MNIST数据集的CNN模型
+
 # V0.2版本
-- 新增对Caffe以及TensorFlow平台的支持
+- 新增对Caffe平台的支持
 - 多GPU支持，目前基于nccl2框架，nccl2支持的NVIDIA GPU均可以使用
 - 新增了针对cifar10数据集的ResNet和Vgg16模型的攻击案例
 
