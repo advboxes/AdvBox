@@ -19,6 +19,7 @@ AdvBox是一款支持PaddlePaddle、Caffe2以及TensorFlow平台，同时支持�
  - [示例3：白盒攻击caffe下基于MNIST数据集的LeNet模型](tutorials/README.md#示例3：白盒攻击caffe下基于MNIST数据集的LeNet模型)
  - [示例4：黑盒攻击基于MNIST数据集的CNN模型](tutorials/README.md#示例4：黑盒攻击基于MNIST数据集的CNN模型)
  - [示例5：使用FeatureFqueezing加固基于MNIST数据集的CNN模型](tutorials/README.md#示例5：使用FeatureFqueezing加固基于MNIST数据集的CNN模型)
+ - [示例6：使用GaussianAugmentation加固基于MNIST数据集的CNN模型](tutorials/README.md#示例6：使用GaussianAugmentation加固基于MNIST数据集的CNN模型)
 
 ## 支持的攻击和防护算法
 
@@ -44,6 +45,7 @@ AdvBox是一款支持PaddlePaddle、Caffe2以及TensorFlow平台，同时支持�
 - Feature Fqueezing
 - Spatial Smoothing
 - Label Smoothing
+- Gaussian Augmentation
 - Adversarial Training
 
 ## AdvBox特点

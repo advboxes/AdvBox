@@ -11,6 +11,7 @@
  - [示例3：白盒攻击caffe下基于MNIST数据集的LeNet模型](tutorials/README.md#示例3：白盒攻击caffe下基于MNIST数据集的LeNet模型)
  - [示例4：黑盒攻击基于MNIST数据集的CNN模型](tutorials/README.md#示例4：黑盒攻击基于MNIST数据集的CNN模型)
  - [示例5：使用FeatureFqueezing加固基于MNIST数据集的CNN模型](tutorials/README.md#示例5：使用FeatureFqueezing加固基于MNIST数据集的CNN模型)
+ - [示例6：使用GaussianAugmentation加固基于MNIST数据集的CNN模型](tutorials/README.md#示例6：使用GaussianAugmentation加固基于MNIST数据集的CNN模型)
 
 ## 示例1：白盒攻击基于MNIST数据集的CNN模型
 首先需要生成攻击用的模型，advbox的测试模型是一个识别MNIST的cnn模型。
@@ -123,3 +124,25 @@ caffe的模型文件通常有两个组成，假设保存到models.caffe/lenet/�
 
 	[TEST_DATASET]: fooling_count=53, total_count=500, fooling_rate=0.106000
 	fgsm attack done with FeatureFqueezingDefence
+	
+## 示例6：使用GaussianAugmentation加固基于MNIST数据集的CNN模型
+首先需要生成攻击用的模型，advbox的测试模型是一个识别MNIST的cnn模型，模型保存在mnist目录下。
+
+	python mnist_model.py
+	
+接着运行GaussianAugmentation加固的模型，模型保存在mnist-gad目录下。
+
+	python mnist_model_gaussian_augmentation_defence.py
+
+
+最后运行攻击代码，攻击GaussianAugmentation加固后的CNN模型。
+
+	python mnist_tutorial_defences_gaussian_augmentation.py
+	
+运行结果如下，首先攻击的没有加固的CNN模型，攻击成功率为54.6%
+
+	[TEST_DATASET]: fooling_count=282, total_count=500, fooling_rate=0.564000 fgsm attack done without any defence
+	
+攻击加固后的CNN模型，攻击成功率下降为36.2%。
+
+	[TEST_DATASET]: fooling_count=181, total_count=500, fooling_rate=0.362000 fgsm attack done with  GaussianAugmentationDefence
