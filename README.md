@@ -136,14 +136,10 @@ mac下安装paddlepaddle包方式比较特殊，相当于在docker镜像直接�
 
 ## 对Caffe以及TensorFlow平台的支持
 ### 如何将Caffe平台的模型转换成PaddlePaddle格式
-提供了转换工具[caffe2paddle](https://github.com/PaddlePaddle/models/tree/develop/image_classification/caffe2paddle)，使用方法如下：
-
-	https://github.com/PaddlePaddle/models/tree/develop/image_classification/caffe2paddle
+提供了转换工具[caffe2fluid](https://github.com/PaddlePaddle/models/tree/e7684f07505c172beb4c4d9febb4a48f9fa83b68/fluid/image_classification/caffe2fluid)
 
 ### 如何将TensorFlow平台的模型转换成PaddlePaddle格式
-提供了转换工具[tf2paddle](https://github.com/PaddlePaddle/models/tree/develop/image_classification/tf2paddle)，使用方法如下：
-
-	https://github.com/PaddlePaddle/models/tree/develop/image_classification/tf2paddle
+提供了转换工具[tf2paddle](https://github.com/PaddlePaddle/models/tree/develop/v2/image_classification/tf2paddle)
 
 ## hello world
 安装完advbox后，可以运行自带的hello world示例代码。
