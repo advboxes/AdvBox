@@ -46,7 +46,7 @@ def bias_variable(shape):
   initial = tf.constant(0.1, shape=shape)
   return tf.Variable(initial)
 
-def mnist_cnn_model(x):
+def mnist_cnn_model(x,keep_prob):
 
     with tf.name_scope('reshape'):
         x_image = tf.reshape(x, [-1, 28, 28, 1])
@@ -77,7 +77,7 @@ def mnist_cnn_model(x):
 
 
     with tf.name_scope('dropout'):
-        keep_prob = tf.placeholder(tf.float32)
+
         h_fc1_drop = tf.nn.dropout(h_fc1, keep_prob)
 
     with tf.name_scope('fc2'):
@@ -86,7 +86,7 @@ def mnist_cnn_model(x):
 
         y_conv = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
 
-    return y_conv, keep_prob
+    return y_conv
 
 
 def main(dirname):
@@ -96,10 +96,10 @@ def main(dirname):
     mnist = input_data.read_data_sets("MNIST_data/", one_hot=False)
 
     x = tf.placeholder(tf.float32, [None, 784])
-
+    keep_prob = tf.placeholder(tf.float32)
     y_ = tf.placeholder(tf.int64, [None])
 
-    y_conv, keep_prob = mnist_cnn_model(x)
+    y_conv= mnist_cnn_model(x,keep_prob)
 
     with tf.name_scope('loss'):
         cross_entropy = tf.losses.sparse_softmax_cross_entropy(

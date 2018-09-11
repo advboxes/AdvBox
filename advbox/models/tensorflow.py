@@ -41,7 +41,7 @@ class TensorflowModel(Model):
     """
 
     def __init__(self,
-                 session,
+                 dirname,
                  input,
                  loss,
                  logits,
@@ -60,12 +60,24 @@ class TensorflowModel(Model):
 
 
 
-        self._session = session
+        self._session = tf.Session()
         self._loss=loss
         self._logits=logits
         self._input=input
         self._input_shape = tuple(input.get_shape()[1:])
         self._nb_classes=int(logits.get_shape()[-1])
+
+        def create_graph(dirname):
+            with tf.gfile.FastGFile(dirname, 'rb') as f:
+                # graph_def = tf.GraphDef()
+                graph_def = self._session.graph_def
+                graph_def.ParseFromString(f.read())
+                _ = tf.import_graph_def(graph_def, name='')
+
+        create_graph(dirname)
+
+        #初始化参数  非常重要
+        self._session.run(tf.global_variables_initializer())
 
         logger.info('self._input_shape:'+str(self._input_shape))
 
@@ -133,12 +145,9 @@ class TensorflowModel(Model):
 
         grads = grads[None, ...]
         grads = np.swapaxes(np.array(grads), 0, 1)
-        assert grads.shape == (data.shape[0], 1) + self.input_shape
+        assert grads.shape == (data.shape[0], 1) + self._input_shape
 
         #grad = self._apply_processing_gradient(grad)
-
-        assert grads.shape == data.shape
-
 
         return grads.reshape(data.shape)
 

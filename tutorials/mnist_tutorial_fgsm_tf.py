@@ -1,3 +1,5 @@
+#coding=utf-8
+
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +46,10 @@ def main(dirname):
 
     y_ = tf.placeholder(tf.int64, [None])
 
-    logits, keep_prob = mnist_cnn_model(x)
+    #keep_prob = tf.placeholder(tf.float32)
+    keep_prob=1.0
+
+    logits= mnist_cnn_model(x,keep_prob)
 
     cross_entropy = tf.losses.sparse_softmax_cross_entropy( labels=y_, logits=logits)
     cross_entropy = tf.reduce_mean(cross_entropy)
@@ -52,66 +57,56 @@ def main(dirname):
 
     BATCH_SIZE = 1
 
-    def create_graph(dirname):
-        with tf.gfile.FastGFile(dirname, 'rb') as f:
-            #graph_def = tf.GraphDef()
-            graph_def=sess.graph_def
-            graph_def.ParseFromString(f.read())
-            _ = tf.import_graph_def(graph_def, name='')
+    # advbox demo
+    m = TensorflowModel(
+        dirname,
+        x,
+        cross_entropy,
+        logits, (-1, 1),
+        channel_axis=1)
+    attack = FGSM(m)
+    attack_config = {"epsilons": 0.3}
+
+    # use test data to generate adversarial examples
+    total_count = 0
+    fooling_count = 0
+
+    for _ in range(10000):
+        data = mnist.test.next_batch(BATCH_SIZE, shuffle=False)
+
+        total_count += 1
+        (x,y)=data
+
+        y=y[0]
+
+        #print(x.shape)
+        #print(y.shape)
+
+        adversary = Adversary(x,y)
+
+        # FGSM non-targeted attack
+        adversary = attack(adversary, **attack_config)
 
 
-    with tf.Session() as sess:
-        # 加载pb文件
-        create_graph(dirname)
+        if adversary.is_successful():
+            fooling_count += 1
+            print(
+                'attack success, original_label=%d, adversarial_label=%d, count=%d'
+                % (y, adversary.adversarial_label, total_count))
 
-        # advbox demo
-        m = TensorflowModel(
-            sess,
-            x,
-            cross_entropy,
-            logits, (-1, 1),
-            channel_axis=1)
-        attack = FGSM(m)
-        attack_config = {"epsilons": 0.3}
+        else:
+            print('attack failed, original_label=%d, count=%d' %
+                  (y, total_count))
 
-        # use test data to generate adversarial examples
-        total_count = 0
-        fooling_count = 0
-
-        for _ in range(10000):
-            data = mnist.test.next_batch(BATCH_SIZE, shuffle=False)
-
-            total_count += 1
-            (x,y)=data
-
-            y=y[0]
-
-            #print(x.shape)
-            #print(y.shape)
-
-            adversary = Adversary(x,y)
-
-            # FGSM non-targeted attack
-            adversary = attack(adversary, **attack_config)
+        if total_count >= TOTAL_NUM:
+            print(
+                "[TEST_DATASET]: fooling_count=%d, total_count=%d, fooling_rate=%f"
+                % (fooling_count, total_count,
+                   float(fooling_count) / total_count))
+            break
 
 
-            if adversary.is_successful():
-                fooling_count += 1
-                print(
-                    'attack success, original_label=%d, adversarial_label=%d, count=%d'
-                    % (y, adversary.adversarial_label, total_count))
-
-            else:
-                print('attack failed, original_label=%d, count=%d' %
-                      (y, total_count))
-
-            if total_count >= TOTAL_NUM:
-                print(
-                    "[TEST_DATASET]: fooling_count=%d, total_count=%d, fooling_rate=%f"
-                    % (fooling_count, total_count,
-                       float(fooling_count) / total_count))
-                break
-        print("fgsm attack done")
+    print("fgsm attack done")
 
 
 if __name__ == '__main__':
