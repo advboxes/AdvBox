@@ -54,6 +54,8 @@ def main(dirname,imagename):
     create_graph(dirname)
 
     # 初始化参数  非常重要
+
+
     session.run(tf.global_variables_initializer())
 
     #tensorlist=[n.name for n in session.graph_def.node]
@@ -86,16 +88,32 @@ def main(dirname,imagename):
     #print(g)
     #print(logits)
     #print(softmax)
-    #logits = session.run(logits, feed_dict={x: image_data})
-    #print(logits)
+    g = session.run(logits, feed_dict={x: image_data})
+    print(g)
+
+    g = session.run(softmax, feed_dict={x: image_data})
+    print(g)
     #tf.gradients(tf.nn.softmax(self._logits)[:, label], self._input_ph)[0]
-    g = tf.gradients(logits[:, 1], x)[0]
+    #print(logits[:, 1])
+    g = tf.gradients(logits, x)
+    print(g)
+
+    g = tf.gradients(softmax, x)
+    print(g)
+
+    z=tf.placeholder(tf.int64, None)
+    z=2*y
+
+    g = tf.gradients(z, y)
     print(g)
 
 
-    grads = session.run(g, feed_dict={x: image_data})
 
-    print(grads)
+
+
+    #grads = session.run(g, feed_dict={x: image_data})
+
+    #print(grads)
 
 
 
