@@ -54,8 +54,6 @@ def main(dirname,imagename):
     create_graph(dirname)
 
     # 初始化参数  非常重要
-
-
     session.run(tf.global_variables_initializer())
 
     #tensorlist=[n.name for n in session.graph_def.node]
@@ -81,13 +79,7 @@ def main(dirname,imagename):
 
 
     print('!!!!!!!')
-    #print(logits[:, 0])
-    #print(tf.nn.softmax(logits[:, 0]) )
-    #print(x)
-    #print(cross_entropy)
-    #print(g)
-    #print(logits)
-    #print(softmax)
+
     g = session.run(logits, feed_dict={x: image_data})
     print(g)
 
@@ -117,6 +109,7 @@ def main(dirname,imagename):
 
 
 
+'''
 
     # advbox demo
     m = TensorflowPBModel(
@@ -148,7 +141,7 @@ def main(dirname,imagename):
 
 
     print("fgsm attack done")
-
+'''
 
 if __name__ == '__main__':
     #从'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'下载并解压到当前路径
