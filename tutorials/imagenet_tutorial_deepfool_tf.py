@@ -29,8 +29,9 @@ from PIL import Image
 #pip install Pillow
 
 from advbox.adversary import Adversary
-from advbox.attacks.gradient_method import FGSM
-from advbox.attacks.gradient_method import FGSMT
+#from advbox.attacks.gradient_method import FGSM
+#from advbox.attacks.gradient_method import FGSMT
+from advbox.attacks.deepfool import DeepFoolAttack
 from advbox.models.tensorflowPB import TensorflowPBModel
 from tutorials.mnist_model_tf import mnist_cnn_model
 import tensorflow as tf
@@ -86,8 +87,8 @@ def main(dirname,imagename):
         channel_axis=3,
         preprocess=None)
 
-    attack = FGSM(m)
-    attack_config = {"epsilons": 0.1}
+    attack = DeepFoolAttack(m)
+    attack_config = {"iterations": 100, "overshoot": 9}
 
     #y设置为空 会自动计算
     adversary = Adversary(image,None)
@@ -103,38 +104,13 @@ def main(dirname,imagename):
         #对抗样本保存在adversary.adversarial_example
         adversary_image=np.copy(adversary.adversarial_example)
         #强制类型转换 之前是float 现在要转换成int8
-        #print(adversary_image)
         adversary_image = np.array(adversary_image).astype("uint8").reshape([100,100,3])
         im = Image.fromarray(adversary_image)
         im.save("adversary_image_nontarget.jpg")
 
-    print("fgsm non-target attack done")
+    print("DeepFool non-target attack done")
 
-    attack = FGSMT(m)
-    attack_config = {"epsilons": 0.1,"epsilons_max":1}
 
-    adversary = Adversary(image,None)
-    #麦克风
-    tlabel = 651
-    adversary.set_target(is_targeted_attack=True, target_label=tlabel)
-
-    # FGSM targeted attack
-    adversary = attack(adversary, **attack_config)
-
-    if adversary.is_successful():
-        print(
-            'attack success, adversarial_label=%d'
-            % (adversary.adversarial_label) )
-
-        #对抗样本保存在adversary.adversarial_example
-        adversary_image=np.copy(adversary.adversarial_example)
-        #强制类型转换 之前是float 现在要转换成int8
-
-        adversary_image = np.array(adversary_image).astype("uint8").reshape([100,100,3])
-        im = Image.fromarray(adversary_image)
-        im.save("adversary_image_target.jpg")
-
-    print("fgsm target attack done")
 
 if __name__ == '__main__':
     #从'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'下载并解压到当前路径

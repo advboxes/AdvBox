@@ -54,8 +54,10 @@ class GradientMethodAttack(Attack):
                adversary,
                norm_ord=np.inf,
                epsilons=0.01,
+               epsilons_max=0.5,
                steps=10,
                epsilon_steps=100):
+        #epsilons_max 为动态调整epsilon时的上限 静态epsilon算法时epsilon_steps=1  epsilons_max=epsilons即可
         """
         Apply the gradient attack method.
         :param adversary(Adversary):
@@ -82,7 +84,7 @@ class GradientMethodAttack(Attack):
 
         if not isinstance(epsilons, Iterable):
             #从epsilons到0.5逐步增大
-            epsilons = np.linspace(epsilons, 0.5, num=epsilon_steps)
+            epsilons = np.linspace(epsilons, epsilons_max, num=epsilon_steps)
 
         pre_label = adversary.original_label
         min_, max_ = self.model.bounds()
@@ -144,12 +146,13 @@ class FastGradientSignMethodTargetedAttack(GradientMethodAttack):
     """
 
     #硬编码了epsilons=0.01
-    def _apply(self, adversary, epsilons=0.01):
+    def _apply(self, adversary, epsilons=0.01,epsilons_max=0.5):
         return GradientMethodAttack._apply(
             self,
             adversary=adversary,
             norm_ord=np.inf,
             epsilons=epsilons,
+            epsilons_max=epsilons_max,
             steps=10)
 
 
@@ -176,12 +179,13 @@ class IterativeLeastLikelyClassMethodAttack(GradientMethodAttack):
     Paper link: https://arxiv.org/abs/1607.02533
     """
 
-    def _apply(self, adversary, epsilons=0.01, steps=1000):
+    def _apply(self, adversary, epsilons=0.01, epsilons_max=0.5,steps=1000):
         return GradientMethodAttack._apply(
             self,
             adversary=adversary,
             norm_ord=np.inf,
             epsilons=epsilons,
+            epsilons_max=epsilons_max,
             steps=steps)
 
 
@@ -217,6 +221,7 @@ class MomentumIteratorAttack(GradientMethodAttack):
                adversary,
                norm_ord=np.inf,
                epsilons=0.1,
+               epsilons_max=0.5,
                steps=100,
                epsilon_steps=100,
                decay_factor=1):
@@ -253,8 +258,8 @@ class MomentumIteratorAttack(GradientMethodAttack):
 
         if not isinstance(epsilons, Iterable):
             #epsilons = np.linspace(0, epsilons, num=epsilon_steps)
-            #从epsilons到0.5逐步增大
-            epsilons = np.linspace(epsilons, 0.5, num=epsilon_steps)
+            #从epsilons到epsilons_max逐步增大
+            epsilons = np.linspace(epsilons, epsilons_max, num=epsilon_steps)
 
         min_, max_ = self.model.bounds()
         pre_label = adversary.original_label

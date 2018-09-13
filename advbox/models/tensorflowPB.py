@@ -84,6 +84,8 @@ class TensorflowPBModel(Model):
 
         import tensorflow as tf
 
+        #scaled_data = self._process_input(data)
+
         fd = {self._input: data}
 
         # Run prediction
@@ -111,9 +113,11 @@ class TensorflowPBModel(Model):
             numpy.ndarray: gradient of the cross-entropy loss w.r.t the image
                 with the shape (height, width, channel).
         """
-        #scaled_data = self._process_input(data)
+
 
         import tensorflow as tf
+
+        #scaled_data = self._process_input(data)
 
         self._grads=tf.gradients(self._logits[:,label], self._input)[0]
 
