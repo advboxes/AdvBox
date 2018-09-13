@@ -116,9 +116,9 @@ def main(dirname,imagename):
 
     print("fgsm non-target attack done")
 
-'''
+
     attack = FGSMT(m)
-    attack_config = {"epsilons": 0.1,"epsilons_max":1}
+    attack_config = {"epsilons": 0.3, "epsilons_max": 0.5, "epsilon_steps": 10}
 
     adversary = Adversary(image,None)
     #麦克风
@@ -142,7 +142,7 @@ def main(dirname,imagename):
         im.save("adversary_image_target.jpg")
 
     print("fgsm target attack done")
-'''
+
 if __name__ == '__main__':
     #从'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'下载并解压到当前路径
     #classify_image_graph_def.pb cropped_panda.jpg
