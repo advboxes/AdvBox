@@ -101,10 +101,12 @@ class DeepFoolAttack(Attack):
             #论文中为+  advbox老版本实现成了-
             r_i = w * pert / w_norm  # The gradient is -gradient in the paper.
 
-            logging.info('select min l={0} '.format(pert))
+            logging.info('select min r={0} '.format(r_i*(max_-min_)))
 
-            #放大系数 在原论文上的创新 提高攻击速度 论文中相当于overshoot=0
-            x = x + (1 + overshoot) * r_i
+            # 放大系数 在原论文上的创新 提高攻击速度 论文中相当于overshoot=0
+            #x = x + (1 + overshoot) * r_i
+            #与FGSM实现类似 不用考虑特征取值范围
+            x = x + (1 + overshoot) *r_i*(max_-min_)
 
             x = np.clip(x, min_, max_)
 

@@ -88,7 +88,7 @@ def main(dirname,imagename):
         preprocess=None)
 
     attack = DeepFoolAttack(m)
-    attack_config = {"iterations": 100, "overshoot": 0.2}
+    attack_config = {"iterations": 100, "overshoot": 0.02}
 
     #y设置为空 会自动计算
     adversary = Adversary(image,None)
@@ -104,22 +104,23 @@ def main(dirname,imagename):
         #对抗样本保存在adversary.adversarial_example
         adversary_image=np.copy(adversary.adversarial_example)
 
-        print(adversary_image - image)
+        #print(adversary_image - image)
 
         #强制类型转换 之前是float 现在要转换成int8
         adversary_image = np.array(adversary_image).astype("uint8").reshape([100,100,3])
 
-        print(adversary_image - image)
+        logging.info(adversary_image - image)
+        #print(adversary_image - image)
 
         im = Image.fromarray(adversary_image)
         im.save("adversary_image_nontarget.jpg")
 
     print("DeepFool non-target attack done")
 
-'''
+
 
     attack = DeepFoolAttack(m)
-    attack_config = {"iterations": 100, "overshoot": 0.1}
+    attack_config = {"iterations": 100, "overshoot": 0.05}
 
     adversary = Adversary(image,None)
     #麦克风
@@ -138,7 +139,7 @@ def main(dirname,imagename):
         adversary_image=np.copy(adversary.adversarial_example)
         #强制类型转换 之前是float 现在要转换成int8
 
-        print(adversary_image-image)
+        logging.info(adversary_image-image)
 
         adversary_image = np.array(adversary_image).astype("uint8").reshape([100,100,3])
         im = Image.fromarray(adversary_image)
@@ -147,7 +148,7 @@ def main(dirname,imagename):
 
 
     print("DeepFool target attack done")
-'''
+
 
 
 if __name__ == '__main__':
