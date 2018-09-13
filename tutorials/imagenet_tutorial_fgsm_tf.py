@@ -25,9 +25,12 @@ logger=logging.getLogger(__name__)
 
 #import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image
+#pip install Pillow
 
 from advbox.adversary import Adversary
 from advbox.attacks.gradient_method import FGSM
+from advbox.attacks.gradient_method import FGSMT
 from advbox.models.tensorflowPB import TensorflowPBModel
 from tutorials.mnist_model_tf import mnist_cnn_model
 import tensorflow as tf
@@ -35,11 +38,15 @@ from tensorflow.examples.tutorials.mnist import input_data
 
 
 def main(dirname,imagename):
-    """
-    Advbox demo which demonstrate how to use advbox.
-    """
 
-    image_data = tf.gfile.FastGFile(imagename, 'rb').read()
+    #加载解码的图像 这里是个大坑 tf提供的imagenet预训练好的模型pb文件中 包含针对图像的预处理环节 即解码jpg文件 这部分没有梯度
+    #需要直接处理解码后的数据
+    image=None
+    with tf.gfile.Open(imagename, 'rb') as f:
+        image = np.array(
+            Image.open(f).convert('RGB')).astype(np.float)
+
+    image=[image]
 
 
     session=tf.Session()
@@ -56,94 +63,77 @@ def main(dirname,imagename):
     # 初始化参数  非常重要
     session.run(tf.global_variables_initializer())
 
-    #tensorlist=[n.name for n in session.graph_def.node]
+    tensorlist=[n.name for n in session.graph_def.node]
 
-    #logger.info(tensorlist)
-    #获取softmax层而非logit层
-    softmax = session.graph.get_tensor_by_name('softmax:0')
+    logger.info(tensorlist)
 
-    #获取softmax/logits
+    #获取logits
     logits=session.graph.get_tensor_by_name('softmax/logits:0')
 
-    x = session.graph.get_tensor_by_name('DecodeJpeg/contents:0')
+    x = session.graph.get_tensor_by_name('ExpandDims:0')
 
-    y = tf.placeholder(tf.int64, None, name='label')
-
-    cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(
-            labels=y, logits=logits)
-
-    #tf.gradients(tf.nn.softmax(self._logits)[:, label], self._input)[0]
-
-
-
-
-
-    print('!!!!!!!')
-
-    g = session.run(logits, feed_dict={x: image_data})
-    print(g)
-
-    g = session.run(softmax, feed_dict={x: image_data})
-    print(g)
-    #tf.gradients(tf.nn.softmax(self._logits)[:, label], self._input_ph)[0]
-    #print(logits[:, 1])
-    g = tf.gradients(logits, x)
-    print(g)
-
-    g = tf.gradients(softmax, x)
-    print(g)
-
-    z=tf.placeholder(tf.int64, None)
-    z=2*y
-
-    g = tf.gradients(z, y)
-    print(g)
-
-
-
-
-
-    #grads = session.run(g, feed_dict={x: image_data})
-
-    #print(grads)
-
-
-
-'''
+    #y = tf.placeholder(tf.int64, None, name='label')
 
     # advbox demo
     m = TensorflowPBModel(
         session,
         x,
-        y,
-        softmax,
-        cross_entropy,
-        (0, 1),
-        channel_axis=1)
+        None,
+        logits,
+        None,
+        (0, 255),
+        channel_axis=3)
 
     attack = FGSM(m)
     attack_config = {"epsilons": 0.3}
 
-
-    #print(x.shape)
-    #print(y.shape)
-
-    adversary = Adversary(image_data,None)
+    #y设置为空 会自动计算
+    adversary = Adversary(image,None)
 
     # FGSM non-targeted attack
     adversary = attack(adversary, **attack_config)
-
 
     if adversary.is_successful():
         print(
             'attack success, adversarial_label=%d'
             % (adversary.adversarial_label) )
 
+        #对抗样本保存在adversary.adversarial_example
+        adversary_image=np.copy(adversary.adversarial_example)
+        #强制类型转换 之前是float 现在要转换成int8
+        adversary_image = np.array(adversary_image).astype("uint8").reshape([100,100,3])
+        im = Image.fromarray(adversary_image)
+        im.save("adversary_image_nontarget.jpg")
 
-    print("fgsm attack done")
-'''
+    print("fgsm non-target attack done")
+
+    attack = FGSMT(m)
+    attack_config = {"epsilons": 0.3}
+
+    adversary = Adversary(image,None)
+    #麦克风
+    tlabel = 651
+    adversary.set_target(is_targeted_attack=True, target_label=tlabel)
+
+    # FGSM targeted attack
+    adversary = attack(adversary, **attack_config)
+
+    if adversary.is_successful():
+        print(
+            'attack success, adversarial_label=%d'
+            % (adversary.adversarial_label) )
+
+        #对抗样本保存在adversary.adversarial_example
+        adversary_image=np.copy(adversary.adversarial_example)
+        #强制类型转换 之前是float 现在要转换成int8
+        adversary_image = np.array(adversary_image).astype("uint8").reshape([100,100,3])
+        im = Image.fromarray(adversary_image)
+        im.save("adversary_image_target.jpg")
+
+    print("fgsm target attack done")
 
 if __name__ == '__main__':
     #从'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'下载并解压到当前路径
     #classify_image_graph_def.pb cropped_panda.jpg
+    #imagenet2012 中文标签 https://blog.csdn.net/u010165147/article/details/72848497
     main(dirname="classify_image_graph_def.pb",imagename="cropped_panda.jpg")

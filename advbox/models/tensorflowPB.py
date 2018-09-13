@@ -64,13 +64,9 @@ class TensorflowPBModel(Model):
 
         logger.info("init grads[{0}]...".format(self._nb_classes))
 
-        self._grads= tf.gradients(self._loss, self._input)[0]
+        #self._grads= tf.gradients(self._loss, self._input)[0]
+        #self._grads= tf.gradients(self._logits, self._input)[0]
 
-        print(self._grads)
-
-        self._grads= tf.gradients(self._logits, self._input)[0]
-
-        print(self._grads)
 
         logger.info("Finish TensorflowPBModel init")
 
@@ -119,7 +115,9 @@ class TensorflowPBModel(Model):
 
         import tensorflow as tf
 
-        grads = self._session.run(self._grads, feed_dict={self._input: data,self._label:label})
+        self._grads=tf.gradients(self._logits[:,label], self._input)[0]
+
+        grads = self._session.run(self._grads, feed_dict={self._input: data})
 
         grads = grads[None, ...]
         grads = np.swapaxes(np.array(grads), 0, 1)

@@ -115,7 +115,7 @@ class GradientMethodAttack(Attack):
                 adv_img = adv_img + epsilon * gradient_norm * (max_ - min_)
                 adv_img = np.clip(adv_img, min_, max_)
                 adv_label = np.argmax(self.model.predict(adv_img))
-                #logging.info('step={}, epsilon = {:.5f}, pre_label = {}, adv_label={}'.format(step, epsilon, pre_label,adv_label))
+                logging.info('step={}, epsilon = {:.5f}, pre_label = {}, adv_label={}'.format(step, epsilon, pre_label,adv_label))
                 if adversary.try_accept_the_example(adv_img, adv_label):
                     return adversary
                 step += 1
