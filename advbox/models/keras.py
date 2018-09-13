@@ -1,0 +1,141 @@
+#coding=utf-8
+# Copyright 2017 - 2018 Baidu Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""
+keras model
+"""
+from __future__ import absolute_import
+
+import numpy as np
+import os
+
+from .base import Model
+
+import logging
+logger=logging.getLogger(__name__)
+
+class KerasModel(Model):
+
+
+    def __init__(self,
+                 module,
+                 input,
+                 label,
+                 logits,
+                 loss,
+                 bounds,
+                 channel_axis=3,
+                 preprocess=None):
+
+        import keras.backend as k
+
+        if preprocess is None:
+            preprocess = (0, 1)
+
+        super(KerasModel, self).__init__(
+            bounds=bounds, channel_axis=channel_axis, preprocess=preprocess)
+
+
+        self._module = module
+
+        self._loss=loss
+
+
+        self._label=label
+        self._logits=logits
+        self._input = input
+
+        _, self._nb_classes = k.int_shape(self._output)
+        self._input_shape = k.int_shape(self._input)[1:]
+
+        logger.info('self._input_shape:'+str(self._input_shape))
+
+        logger.info("init grads[{0}]...".format(self._nb_classes))
+
+        #定义预测函数
+        preds, = self._output
+        self._preds = k.function([self._input], [preds])
+
+
+        logger.info("Finish KerasModel init")
+
+
+    def predict(self, data):
+        """
+        Calculate the prediction of the data.
+        Args:
+            data(numpy.ndarray): input data with shape (size,
+            height, width, channels).
+        Return:
+            numpy.ndarray: predictions of the data with shape (batch_size,
+                num_of_classes).
+        """
+
+        import keras.backend as k
+        k.set_learning_phase(0)
+
+        scaled_data = self._process_input(data)
+
+        # Run prediction
+        predict = self._preds(scaled_data)
+        predict = np.squeeze(predict, axis=0)
+
+        return predict
+
+    def num_classes(self):
+        """
+            Calculate the number of classes of the output label.
+        Return:
+            int: the number of classes
+        """
+
+        return int(self._logits.get_shape()[-1])
+
+    def gradient(self, data, label):
+        """
+        Calculate the gradient of the cross-entropy loss w.r.t the image.
+        Args:
+            data(numpy.ndarray): input data with shape (size, height, width,
+            channels).
+            label(int): Label used to calculate the gradient.
+        Return:
+            numpy.ndarray: gradient of the cross-entropy loss w.r.t the image
+                with the shape (height, width, channel).
+        """
+
+
+        import keras.backend as k
+        k.set_learning_phase(0)
+
+        scaled_data = self._process_input(data)
+
+        # class_grads_logits = [k.gradients(self._preds_op[:, label], self._input)[0]]
+        # self._class_grads_logits_idx[label] = k.function([self._input], class_grads_logits)
+
+        grads=[k.gradients(self._preds[:, label], self._input)[0]]
+        self._grads = k.function([self._input], self._grads)
+
+        grads = self._grads[label]([scaled_data])
+
+        grads = grads[None, ...]
+        grads = np.swapaxes(np.array(grads), 0, 1)
+
+        return grads.reshape(data.shape)
+
+    def predict_name(self):
+        """
+        Get the predict name, such as "softmax",etc.
+        :return: string
+        """
+        return self._predict_program.block(0).var(self._predict_name).op.type
