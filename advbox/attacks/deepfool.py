@@ -61,7 +61,10 @@ class DeepFoolAttack(Attack):
             max_class_count = 10
             class_count = self.model.num_classes()
             if class_count > max_class_count:
-                labels = np.argsort(f)[-(max_class_count + 1):-1]
+                #labels = np.argsort(f)[-(max_class_count + 1):-1]
+                logging.info('selec top-{0} class'.format(max_class_count))
+                labels= np.argsort(f)[::-1]
+                labels = labels[:max_class_count]
             else:
                 labels = np.arange(class_count)
 
