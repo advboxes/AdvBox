@@ -56,7 +56,7 @@ class KerasModel(Model):
         self._logits=logits
         self._input = input
 
-        _, self._nb_classes = k.int_shape(self._output)
+        _, self._nb_classes = k.int_shape(self._logits)
         self._input_shape = k.int_shape(self._input)[1:]
 
         logger.info('self._input_shape:'+str(self._input_shape))
@@ -64,7 +64,7 @@ class KerasModel(Model):
         logger.info("init grads[{0}]...".format(self._nb_classes))
 
         #定义预测函数
-        preds, = self._output
+        preds= self._logits
         self._preds = k.function([self._input], [preds])
 
 
@@ -83,12 +83,11 @@ class KerasModel(Model):
         """
 
         import keras.backend as k
-        k.set_learning_phase(0)
 
         scaled_data = self._process_input(data)
 
         # Run prediction
-        predict = self._preds(scaled_data)
+        predict = self._preds(inputs=[scaled_data])
         predict = np.squeeze(predict, axis=0)
 
         return predict
@@ -116,7 +115,7 @@ class KerasModel(Model):
 
 
         import keras.backend as k
-        k.set_learning_phase(0)
+
 
         scaled_data = self._process_input(data)
 
@@ -124,7 +123,7 @@ class KerasModel(Model):
         # self._class_grads_logits_idx[label] = k.function([self._input], class_grads_logits)
 
         grads=[k.gradients(self._preds[:, label], self._input)[0]]
-        self._grads = k.function([self._input], self._grads)
+        self._grads = k.function([self._input], [self._grads])
 
         grads = self._grads[label]([scaled_data])
 

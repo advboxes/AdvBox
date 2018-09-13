@@ -36,22 +36,26 @@ from advbox.models.keras import KerasModel
 from keras.applications.resnet50 import ResNet50
 from keras.preprocessing import image
 from keras.applications.resnet50 import preprocess_input, decode_predictions
+import keras
 
 #pip install keras==2.1
 
 def main(modulename,imagename):
-'''
-Kera的应用模块Application提供了带有预训练权重的Keras模型，这些模型可以用来进行预测、特征提取和finetune
-模型的预训练权重将下载到~/.keras/models/并在载入模型时自动载入
-'''
+    '''
+    Kera的应用模块Application提供了带有预训练权重的Keras模型，这些模型可以用来进行预测、特征提取和finetune
+    模型的预训练权重将下载到~/.keras/models/并在载入模型时自动载入
+    '''
+
+    # 设置为测试模式
+    keras.backend.set_learning_phase(0)
+
     model = ResNet50(weights=modulename)
 
     img = image.load_img(imagename, target_size=(224, 224))
     imagedata = image.img_to_array(img)
     imagedata = np.expand_dims(imagedata, axis=0)
+    #keras数据预处理后范围为(-128,128)
     imagedata = preprocess_input(imagedata)
-
-    print(image)
 
     preds = model.predict(imagedata)
 
@@ -68,7 +72,7 @@ Kera的应用模块Application提供了带有预训练权重的Keras模型，这
         None,
         model.output,
         None,
-        bounds=(0, 255),
+        bounds=(-128, 128),
         channel_axis=3,
         preprocess=None)
 
@@ -79,7 +83,7 @@ Kera的应用模块Application提供了带有预训练权重的Keras模型，这
     attack_config = {"epsilons": 0.3,"epsilons_max":0.5,"epsilon_steps":100}
 
     #y设置为空 会自动计算
-    adversary = Adversary(image,None)
+    adversary = Adversary(imagedata,None)
 
     # FGSM non-targeted attack
     adversary = attack(adversary, **attack_config)
