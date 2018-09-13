@@ -82,6 +82,9 @@ class GradientMethodAttack(Attack):
                 raise ValueError(
                     "This attack method doesn't support targeted attack!")
 
+        logging.info('epsilons={0},epsilons_max={1},steps={2},epsilon_steps={3}'.
+                     format(epsilons,epsilons_max,steps,epsilon_steps))
+
         if not isinstance(epsilons, Iterable):
             #从epsilons到0.5逐步增大
             epsilons = np.linspace(epsilons, epsilons_max, num=epsilon_steps)
@@ -93,6 +96,8 @@ class GradientMethodAttack(Attack):
         assert (self.model.channel_axis() == 1 or
                 self.model.channel_axis() == adversary.original.shape[0] or
                 self.model.channel_axis() == adversary.original.shape[-1])
+
+
 
         #从[epsilon,0.5]动态调整epsilon 直到攻击成功
         for epsilon in epsilons[:]:
@@ -114,7 +119,13 @@ class GradientMethodAttack(Attack):
                     gradient_norm = gradient / self._norm(
                         gradient, ord=norm_ord)
 
+                #logging.info('epsilon * gradient_norm={0}'.format(gradient_norm * epsilon))
+
+                #改进的实现 不用考虑特征取值范围
                 adv_img = adv_img + epsilon * gradient_norm * (max_ - min_)
+                #按照论文实现
+                #adv_img = adv_img + epsilon * gradient_norm
+
                 adv_img = np.clip(adv_img, min_, max_)
                 adv_label = np.argmax(self.model.predict(adv_img))
                 logging.info('step={}, epsilon = {:.5f}, pre_label = {}, adv_label={}'.format(step, epsilon, pre_label,adv_label))
@@ -146,14 +157,15 @@ class FastGradientSignMethodTargetedAttack(GradientMethodAttack):
     """
 
     #硬编码了epsilons=0.01
-    def _apply(self, adversary, epsilons=0.01,epsilons_max=0.5):
+    def _apply(self, adversary, epsilons=0.01,epsilons_max=0.5,epsilon_steps=100):
         return GradientMethodAttack._apply(
             self,
             adversary=adversary,
             norm_ord=np.inf,
             epsilons=epsilons,
             epsilons_max=epsilons_max,
-            steps=10)
+            steps=10,
+            epsilon_steps=epsilon_steps)
 
 
 
@@ -179,14 +191,15 @@ class IterativeLeastLikelyClassMethodAttack(GradientMethodAttack):
     Paper link: https://arxiv.org/abs/1607.02533
     """
 
-    def _apply(self, adversary, epsilons=0.01, epsilons_max=0.5,steps=1000):
+    def _apply(self, adversary, epsilons=0.01, epsilons_max=0.5,steps=1000,epsilon_steps=1000):
         return GradientMethodAttack._apply(
             self,
             adversary=adversary,
             norm_ord=np.inf,
             epsilons=epsilons,
             epsilons_max=epsilons_max,
-            steps=steps)
+            steps=steps,
+            epsilon_steps=epsilon_steps)
 
 
 class BasicIterativeMethodAttack(IterativeLeastLikelyClassMethodAttack):

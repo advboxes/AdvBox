@@ -87,7 +87,10 @@ def main(dirname,imagename):
         preprocess=None)
 
     attack = FGSM(m)
-    attack_config = {"epsilons": 0.1}
+    #设置epsilons时不用考虑特征范围 算法实现时已经考虑了取值范围的问题 epsilons取值范围为（0，1）
+    #epsilon支持动态调整 epsilon_steps为epsilon变化的个数
+    #epsilons为下限 epsilons_max为上限
+    attack_config = {"epsilons": 0.3,"epsilons_max":0.5,"epsilon_steps":100}
 
     #y设置为空 会自动计算
     adversary = Adversary(image,None)
@@ -105,11 +108,15 @@ def main(dirname,imagename):
         #强制类型转换 之前是float 现在要转换成int8
         #print(adversary_image)
         adversary_image = np.array(adversary_image).astype("uint8").reshape([100,100,3])
+
+        logging.info(adversary_image-image)
+
         im = Image.fromarray(adversary_image)
         im.save("adversary_image_nontarget.jpg")
 
     print("fgsm non-target attack done")
 
+'''
     attack = FGSMT(m)
     attack_config = {"epsilons": 0.1,"epsilons_max":1}
 
@@ -135,7 +142,7 @@ def main(dirname,imagename):
         im.save("adversary_image_target.jpg")
 
     print("fgsm target attack done")
-
+'''
 if __name__ == '__main__':
     #从'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'下载并解压到当前路径
     #classify_image_graph_def.pb cropped_panda.jpg

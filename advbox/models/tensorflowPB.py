@@ -84,10 +84,11 @@ class TensorflowPBModel(Model):
 
         import tensorflow as tf
 
-        #scaled_data = self._process_input(data)
-        #print(data)
+        scaled_data = self._process_input(data)
 
-        fd = {self._input: data}
+        #print(scaled_data)
+
+        fd = {self._input: scaled_data}
 
         # Run prediction
         predict = self._session.run(self._logits, feed_dict=fd)
@@ -119,11 +120,11 @@ class TensorflowPBModel(Model):
 
         import tensorflow as tf
 
-        #scaled_data = self._process_input(data)
+        scaled_data = self._process_input(data)
 
         self._grads=tf.gradients(self._logits[:,label], self._input)[0]
 
-        grads = self._session.run(self._grads, feed_dict={self._input: data})
+        grads = self._session.run(self._grads, feed_dict={self._input: scaled_data})
 
         grads = grads[None, ...]
         grads = np.swapaxes(np.array(grads), 0, 1)
