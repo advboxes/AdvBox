@@ -85,11 +85,13 @@ class TensorflowPBModel(Model):
         import tensorflow as tf
 
         #scaled_data = self._process_input(data)
+        #print(data)
 
         fd = {self._input: data}
 
         # Run prediction
         predict = self._session.run(self._logits, feed_dict=fd)
+        predict = np.squeeze(predict, axis=0)
 
         return predict
 

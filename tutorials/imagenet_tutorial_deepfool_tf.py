@@ -111,6 +111,33 @@ def main(dirname,imagename):
     print("DeepFool non-target attack done")
 
 
+    attack = DeepFoolAttack(m)
+    attack_config = {"iterations": 100, "overshoot": 9}
+
+    adversary = Adversary(image,None)
+    #麦克风
+    tlabel = 651
+    adversary.set_target(is_targeted_attack=True, target_label=tlabel)
+
+    # FGSM targeted attack
+    adversary = attack(adversary, **attack_config)
+
+    if adversary.is_successful():
+        print(
+            'attack success, adversarial_label=%d'
+            % (adversary.adversarial_label) )
+
+        #对抗样本保存在adversary.adversarial_example
+        adversary_image=np.copy(adversary.adversarial_example)
+        #强制类型转换 之前是float 现在要转换成int8
+
+        adversary_image = np.array(adversary_image).astype("uint8").reshape([100,100,3])
+        im = Image.fromarray(adversary_image)
+        im.save("adversary_image_target.jpg")
+
+    print("DeepFool target attack done")
+
+
 
 if __name__ == '__main__':
     #从'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'下载并解压到当前路径
