@@ -102,7 +102,8 @@ class DeepFoolAttack(Attack):
 
 
             #论文中为+  advbox老版本实现成了-
-            r_i = w * pert / w_norm*(max_-min_)  # The gradient is -gradient in the paper.
+            #r_i = w * pert / w_norm*(max_-min_)
+            r_i = w * pert / w_norm  # The gradient is -gradient in the paper.
 
             #logging.info('select min r={0} '.format(r_i*(max_-min_)))
             #logging.info('select min r={0} '.format(r_i ))

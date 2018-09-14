@@ -20,7 +20,11 @@ from __future__ import absolute_import
 import numpy as np
 import os
 
+import sys
+sys.path.append("..")
+
 from .base import Model
+from advbox.defences.feature_squeezing import FeatureFqueezingDefence
 
 import logging
 logger=logging.getLogger(__name__)
@@ -36,7 +40,8 @@ class KerasModel(Model):
                  loss,
                  bounds,
                  channel_axis=3,
-                 preprocess=None):
+                 preprocess=None,
+                 featurefqueezing_bit_depth=None):
 
         import keras.backend as k
 
@@ -67,6 +72,12 @@ class KerasModel(Model):
         preds= self._logits
         self._preds = k.function([self._input], [preds])
 
+        self._featurefqueezing_bit_depth=featurefqueezing_bit_depth
+
+        if self._featurefqueezing_bit_depth is not None:
+            logging.info('use featurefqueezing_bit_depth={}'.format(self._featurefqueezing_bit_depth))
+
+
         logger.info("Finish KerasModel init")
 
 
@@ -84,7 +95,10 @@ class KerasModel(Model):
         import keras.backend as k
         k.set_learning_phase(0)
 
-        scaled_data = self._process_input(data.copy())
+        if self._featurefqueezing_bit_depth is not None:
+            scaled_data=FeatureFqueezingDefence(data.copy(),None,self._featurefqueezing_bit_depth,self._bounds)
+
+        scaled_data = self._process_input(scaled_data)
 
         #print(scaled_data)
 

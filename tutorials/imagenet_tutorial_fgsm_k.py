@@ -68,6 +68,7 @@ def main(modulename,imagename):
     # advbox demo
     # 因为原始数据没有归一化  所以bounds=(0, 255)  KerasMode内部在进行预测和计算梯度时会进行预处理
     # imagenet数据集归一化时 标准差为1  mean为[104, 116, 123]
+    # featurefqueezing_bit_depth featurefqueezing防御算法 提高生成攻击样本的质量 为特征数据的bit位 一般8就ok了
     m = KerasModel(
         model,
         model.input,
@@ -76,7 +77,8 @@ def main(modulename,imagename):
         None,
         bounds=(0, 255),
         channel_axis=3,
-        preprocess=([104, 116, 123],1))
+        preprocess=([104, 116, 123],1),
+        featurefqueezing_bit_depth=8)
 
     attack = FGSM(m)
     #设置epsilons时不用考虑特征范围 算法实现时已经考虑了取值范围的问题 epsilons取值范围为（0，1）
@@ -118,7 +120,7 @@ def main(modulename,imagename):
 
     attack = FGSMT(m)
     #静态epsilons
-    attack_config = {"epsilons": 40, "epsilons_max": 10, "epsilon_steps": 1,"steps":100}
+    attack_config = {"epsilons": 10, "epsilons_max": 10, "epsilon_steps": 1,"steps":100}
 
     adversary = Adversary(imagedata,None)
 

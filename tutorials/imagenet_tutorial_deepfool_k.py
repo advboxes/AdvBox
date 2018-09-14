@@ -78,7 +78,7 @@ def main(modulename,imagename):
         preprocess=([104, 116, 123],1))
 
     attack = DeepFoolAttack(m)
-    attack_config = {"iterations": 100, "overshoot": 0.02}
+    attack_config = {"iterations": 100, "overshoot": 10}
 
     #y设置为空 会自动计算
     adversary = Adversary(imagedata,None)
@@ -97,6 +97,7 @@ def main(modulename,imagename):
 
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
 
+        logging.info(adversary_image - imagedata)
         img=array_to_img(adversary_image)
         img.save('adversary_image_nontarget.jpg')
 
@@ -104,7 +105,7 @@ def main(modulename,imagename):
 
 
     attack = DeepFoolAttack(m)
-    attack_config = {"iterations": 100, "overshoot": 0.02}
+    attack_config = {"iterations": 100, "overshoot": 200}
 
     adversary = Adversary(imagedata,None)
 
@@ -125,6 +126,7 @@ def main(modulename,imagename):
 
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
 
+        logging.info(adversary_image - imagedata)
         img=array_to_img(adversary_image)
         img.save('adversary_image_target.jpg')
 
