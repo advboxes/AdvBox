@@ -84,7 +84,7 @@ def main(modulename,imagename):
     #epsilons为下限 epsilons_max为上限
     #attack_config = {"epsilons": 0.3, "epsilons_max": 0.5, "epsilon_steps": 100}
     #静态epsilons
-    attack_config = {"epsilons": 0.2, "epsilons_max": 0.3, "epsilon_steps": 1,"steps":100}
+    attack_config = {"epsilons": 30, "epsilons_max": 10, "epsilon_steps": 1,"steps":100}
 
     #y设置为空 会自动计算
     adversary = Adversary(imagedata.copy(),None)
@@ -99,9 +99,14 @@ def main(modulename,imagename):
 
         #对抗样本保存在adversary.adversarial_example
         adversary_image=np.copy(adversary.adversarial_example)
-        #强制类型转换 之前是float 现在要转换成iunt8
 
+        logging.info("adversary_image label={0} ".format(np.argmax(m.predict(adversary_image)))  )
+        #logging.info(adversary_image)
+
+        #强制类型转换 之前是float 现在要转换成iunt8
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
+
+        #logging.info(adversary_image)
 
         logging.info(adversary_image-imagedata)
 
@@ -110,9 +115,10 @@ def main(modulename,imagename):
 
     print("fgsm non-target attack done")
 
-    '''
+
     attack = FGSMT(m)
-    attack_config = {"epsilons": 0.3, "epsilons_max": 0.5, "epsilon_steps": 10}
+    #静态epsilons
+    attack_config = {"epsilons": 40, "epsilons_max": 10, "epsilon_steps": 1,"steps":100}
 
     adversary = Adversary(imagedata,None)
 
@@ -133,11 +139,13 @@ def main(modulename,imagename):
 
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
 
+        logging.info(adversary_image - imagedata)
+
         img=array_to_img(adversary_image)
         img.save('adversary_image_target.jpg')
 
     print("fgsm target attack done")
-'''
+
 
 
 if __name__ == '__main__':

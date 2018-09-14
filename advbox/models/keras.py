@@ -81,9 +81,10 @@ class KerasModel(Model):
                 num_of_classes).
         """
 
-        #import keras.backend as k
+        import keras.backend as k
+        k.set_learning_phase(0)
 
-        scaled_data = self._process_input(data)
+        scaled_data = self._process_input(data.copy())
 
         #print(scaled_data)
 
@@ -119,9 +120,10 @@ class KerasModel(Model):
 
 
         import keras.backend as k
+        k.set_learning_phase(0)
 
 
-        scaled_data = self._process_input(data)
+        scaled_data = self._process_input(data.copy())
 
         grads_logits=k.gradients(self._logits[:, label], self._input)[0]
         self._grads = k.function([self._input], [grads_logits])

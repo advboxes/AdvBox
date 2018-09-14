@@ -109,10 +109,10 @@ class GradientMethodAttack(Attack):
                 continue
             for i in range(steps):
                 if adversary.is_targeted_attack:
-                    gradient = -self.model.gradient(adv_img,
+                    gradient = +self.model.gradient(adv_img,
                                                     adversary.target_label)
                 else:
-                    gradient = self.model.gradient(adv_img,
+                    gradient = -self.model.gradient(adv_img,
                                                    adversary.original_label)
                 if norm_ord == np.inf:
                     gradient_norm = np.sign(gradient)
@@ -123,13 +123,14 @@ class GradientMethodAttack(Attack):
                 #logging.info('epsilon * gradient_norm={0}'.format(gradient_norm * epsilon))
                 #logging.info('epsilon * gradient_norm* (max_ - min_)={0}'.format(gradient_norm * epsilon* (max_ - min_)))
                 #改进的实现 不用考虑特征取值范围
-                adv_img = adv_img + epsilon * gradient_norm * (max_ - min_)
+                #adv_img = adv_img + epsilon * gradient_norm * (max_ - min_)
                 #按照论文实现
-                #adv_img = adv_img + epsilon * gradient_norm
+                adv_img = adv_img + epsilon * gradient_norm
 
                 adv_img = np.clip(adv_img, min_, max_)
                 adv_label = np.argmax(self.model.predict(adv_img))
-                logging.info('step={}, epsilon = {:.5f}, pre_label = {}, adv_label={}'.format(step, epsilon, pre_label,adv_label))
+                logging.info('step={}, epsilon = {:.5f}, pre_label = {}, adv_label={} logits={}'.
+                             format(step, epsilon, pre_label,adv_label,self.model.predict(adv_img)[adv_label]))
                 if adversary.try_accept_the_example(adv_img, adv_label):
                     return adversary
                 step += 1
