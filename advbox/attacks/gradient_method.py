@@ -158,14 +158,14 @@ class FastGradientSignMethodTargetedAttack(GradientMethodAttack):
     """
 
     #硬编码了epsilons=0.01
-    def _apply(self, adversary, epsilons=0.01,epsilons_max=0.5,epsilon_steps=100):
+    def _apply(self, adversary, epsilons=0.01,epsilons_max=0.5,epsilon_steps=100,steps=10):
         return GradientMethodAttack._apply(
             self,
             adversary=adversary,
             norm_ord=np.inf,
             epsilons=epsilons,
             epsilons_max=epsilons_max,
-            steps=10,
+            steps=steps,
             epsilon_steps=epsilon_steps)
 
 

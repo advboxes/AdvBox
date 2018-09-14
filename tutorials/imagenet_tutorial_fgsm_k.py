@@ -82,10 +82,12 @@ def main(modulename,imagename):
     #设置epsilons时不用考虑特征范围 算法实现时已经考虑了取值范围的问题 epsilons取值范围为（0，1）
     #epsilon支持动态调整 epsilon_steps为epsilon变化的个数
     #epsilons为下限 epsilons_max为上限
-    attack_config = {"epsilons": 0.2, "epsilons_max": 0.5, "epsilon_steps": 100}
+    #attack_config = {"epsilons": 0.3, "epsilons_max": 0.5, "epsilon_steps": 100}
+    #静态epsilons
+    attack_config = {"epsilons": 0.2, "epsilons_max": 0.3, "epsilon_steps": 1,"steps":100}
 
     #y设置为空 会自动计算
-    adversary = Adversary(imagedata,None)
+    adversary = Adversary(imagedata.copy(),None)
 
     # FGSM non-targeted attack
     adversary = attack(adversary, **attack_config)
@@ -101,12 +103,14 @@ def main(modulename,imagename):
 
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
 
+        logging.info(adversary_image-imagedata)
+
         img=array_to_img(adversary_image)
         img.save('adversary_image_nontarget.jpg')
 
     print("fgsm non-target attack done")
 
-
+    '''
     attack = FGSMT(m)
     attack_config = {"epsilons": 0.3, "epsilons_max": 0.5, "epsilon_steps": 10}
 
@@ -133,7 +137,7 @@ def main(modulename,imagename):
         img.save('adversary_image_target.jpg')
 
     print("fgsm target attack done")
-
+'''
 
 
 if __name__ == '__main__':
