@@ -67,7 +67,6 @@ class KerasModel(Model):
         preds= self._logits
         self._preds = k.function([self._input], [preds])
 
-
         logger.info("Finish KerasModel init")
 
 
@@ -82,13 +81,18 @@ class KerasModel(Model):
                 num_of_classes).
         """
 
-        import keras.backend as k
+        #import keras.backend as k
 
         scaled_data = self._process_input(data)
+
+        #print(scaled_data)
 
         # Run prediction
         predict = self._preds(inputs=[scaled_data])
         predict = np.squeeze(predict, axis=0)
+
+        #print(predict)
+        #print(np.argmax(predict))
 
         return predict
 
@@ -119,15 +123,12 @@ class KerasModel(Model):
 
         scaled_data = self._process_input(data)
 
-        # class_grads_logits = [k.gradients(self._preds_op[:, label], self._input)[0]]
-        # self._class_grads_logits_idx[label] = k.function([self._input], class_grads_logits)
+        grads_logits=k.gradients(self._logits[:, label], self._input)[0]
+        self._grads = k.function([self._input], [grads_logits])
 
-        grads=[k.gradients(self._preds[:, label], self._input)[0]]
-        self._grads = k.function([self._input], [self._grads])
+        grads = self._grads([scaled_data])
 
-        grads = self._grads[label]([scaled_data])
-
-        grads = grads[None, ...]
+        #grads = grads[None, ...]
         grads = np.swapaxes(np.array(grads), 0, 1)
 
         return grads.reshape(data.shape)

@@ -51,6 +51,8 @@ def main(modulename,imagename):
 
     model = ResNet50(weights=modulename)
 
+    logging.info(model.summary())
+
     img = image.load_img(imagename, target_size=(224, 224))
     imagedata = image.img_to_array(img)
     imagedata = np.expand_dims(imagedata, axis=0)
@@ -58,6 +60,9 @@ def main(modulename,imagename):
     imagedata = preprocess_input(imagedata)
 
     preds = model.predict(imagedata)
+
+    #logit fc1000
+    logits=model.get_layer('fc1000').output
 
     print('Predicted:', decode_predictions(preds, top=3)[0])
 
@@ -70,7 +75,7 @@ def main(modulename,imagename):
         model,
         model.input,
         None,
-        model.output,
+        logits,
         None,
         bounds=(-128, 128),
         channel_axis=3,
@@ -80,7 +85,7 @@ def main(modulename,imagename):
     #设置epsilons时不用考虑特征范围 算法实现时已经考虑了取值范围的问题 epsilons取值范围为（0，1）
     #epsilon支持动态调整 epsilon_steps为epsilon变化的个数
     #epsilons为下限 epsilons_max为上限
-    attack_config = {"epsilons": 0.3,"epsilons_max":0.5,"epsilon_steps":100}
+    attack_config = {"epsilons": 0.1,"epsilons_max":0.5,"epsilon_steps":100}
 
     #y设置为空 会自动计算
     adversary = Adversary(imagedata,None)
@@ -97,20 +102,21 @@ def main(modulename,imagename):
         adversary_image=np.copy(adversary.adversarial_example)
         #强制类型转换 之前是float 现在要转换成int8
         #print(adversary_image)
-        adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
+        adversary_image = np.array(adversary_image).astype("int8").reshape([224,224,3])
 
-        logging.info(adversary_image-image)
+        #logging.info(adversary_image-imagedata)
+        #logging.info(adversary_image)
 
         im = Image.fromarray(adversary_image)
         im.save("adversary_image_nontarget.jpg")
 
     print("fgsm non-target attack done")
 
-
+'''
     attack = FGSMT(m)
     attack_config = {"epsilons": 0.3, "epsilons_max": 0.5, "epsilon_steps": 10}
 
-    adversary = Adversary(image,None)
+    adversary = Adversary(imagedata,None)
     #麦克风
     tlabel = 651
     adversary.set_target(is_targeted_attack=True, target_label=tlabel)
@@ -132,6 +138,8 @@ def main(modulename,imagename):
         im.save("adversary_image_target.jpg")
 
     print("fgsm target attack done")
+
+'''
 
 if __name__ == '__main__':
     #从'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'下载并解压到当前路径
