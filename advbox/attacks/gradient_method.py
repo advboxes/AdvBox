@@ -92,6 +92,7 @@ class GradientMethodAttack(Attack):
         pre_label = adversary.original_label
         min_, max_ = self.model.bounds()
 
+
         #assert self.model.channel_axis() == adversary.original.ndim
         assert (self.model.channel_axis() == 1 or
                 self.model.channel_axis() == adversary.original.shape[0] or
@@ -120,7 +121,7 @@ class GradientMethodAttack(Attack):
                         gradient, ord=norm_ord)
 
                 #logging.info('epsilon * gradient_norm={0}'.format(gradient_norm * epsilon))
-
+                #logging.info('epsilon * gradient_norm* (max_ - min_)={0}'.format(gradient_norm * epsilon* (max_ - min_)))
                 #改进的实现 不用考虑特征取值范围
                 adv_img = adv_img + epsilon * gradient_norm * (max_ - min_)
                 #按照论文实现

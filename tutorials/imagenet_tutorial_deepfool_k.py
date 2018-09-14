@@ -29,8 +29,7 @@ from PIL import Image
 #pip install Pillow
 
 from advbox.adversary import Adversary
-from advbox.attacks.gradient_method import FGSM
-from advbox.attacks.gradient_method import FGSMT
+from advbox.attacks.deepfool import DeepFoolAttack
 from advbox.models.keras import KerasModel
 
 from keras.applications.resnet50 import ResNet50
@@ -78,16 +77,13 @@ def main(modulename,imagename):
         channel_axis=3,
         preprocess=([104, 116, 123],1))
 
-    attack = FGSM(m)
-    #设置epsilons时不用考虑特征范围 算法实现时已经考虑了取值范围的问题 epsilons取值范围为（0，1）
-    #epsilon支持动态调整 epsilon_steps为epsilon变化的个数
-    #epsilons为下限 epsilons_max为上限
-    attack_config = {"epsilons": 0.2, "epsilons_max": 0.5, "epsilon_steps": 100}
+    attack = DeepFoolAttack(m)
+    attack_config = {"iterations": 100, "overshoot": 0.02}
 
     #y设置为空 会自动计算
     adversary = Adversary(imagedata,None)
 
-    # FGSM non-targeted attack
+    # deepfool non-targeted attack
     adversary = attack(adversary, **attack_config)
 
     if adversary.is_successful():
@@ -104,18 +100,18 @@ def main(modulename,imagename):
         img=array_to_img(adversary_image)
         img.save('adversary_image_nontarget.jpg')
 
-    print("fgsm non-target attack done")
+    print("deepfool non-target attack done")
 
 
-    attack = FGSMT(m)
-    attack_config = {"epsilons": 0.3, "epsilons_max": 0.5, "epsilon_steps": 10}
+    attack = DeepFoolAttack(m)
+    attack_config = {"iterations": 100, "overshoot": 0.02}
 
     adversary = Adversary(imagedata,None)
 
     tlabel = 489
     adversary.set_target(is_targeted_attack=True, target_label=tlabel)
 
-    # FGSM targeted attack
+    # deepfool targeted attack
     adversary = attack(adversary, **attack_config)
 
     if adversary.is_successful():
@@ -132,7 +128,7 @@ def main(modulename,imagename):
         img=array_to_img(adversary_image)
         img.save('adversary_image_target.jpg')
 
-    print("fgsm target attack done")
+    print("deepfool target attack done")
 
 
 

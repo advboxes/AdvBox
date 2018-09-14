@@ -128,8 +128,9 @@ class KerasModel(Model):
 
         grads = self._grads([scaled_data])
 
-        #grads = grads[None, ...]
         grads = np.swapaxes(np.array(grads), 0, 1)
+
+        #print(grads)
 
         return grads.reshape(data.shape)
 

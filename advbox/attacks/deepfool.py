@@ -98,18 +98,19 @@ class DeepFoolAttack(Attack):
                     pert = pert_k
                     w = w_k
                     w_norm = w_k_norm
-                    logging.info("k={0} pert={1} w_norm={2}".format(k,pert, w_norm))
+                    #logging.info("k={0} pert={1} w_norm={2}".format(k,pert, w_norm))
 
 
             #论文中为+  advbox老版本实现成了-
-            r_i = w * pert / w_norm  # The gradient is -gradient in the paper.
+            r_i = w * pert / w_norm*(max_-min_)  # The gradient is -gradient in the paper.
 
-            logging.info('select min r={0} '.format(r_i*(max_-min_)))
+            #logging.info('select min r={0} '.format(r_i*(max_-min_)))
+            #logging.info('select min r={0} '.format(r_i ))
 
             # 放大系数 在原论文上的创新 提高攻击速度 论文中相当于overshoot=0
             #x = x + (1 + overshoot) * r_i
             #与FGSM实现类似 不用考虑特征取值范围
-            x = x + (1 + overshoot) *r_i*(max_-min_)
+            x = x + (1 + overshoot) *r_i
 
             x = np.clip(x, min_, max_)
 
