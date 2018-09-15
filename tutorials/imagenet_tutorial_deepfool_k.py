@@ -83,7 +83,7 @@ def main(modulename,imagename):
     attack_config = {"iterations": 100, "overshoot": 10}
 
     #y设置为空 会自动计算
-    adversary = Adversary(imagedata,None)
+    adversary = Adversary(imagedata[:, :, ::-1],None)
 
     # deepfool non-targeted attack
     adversary = attack(adversary, **attack_config)
@@ -98,7 +98,7 @@ def main(modulename,imagename):
         #强制类型转换 之前是float 现在要转换成iunt8
 
         #::-1 reverses the color channels, because Keras ResNet50 expects BGR instead of RGB
-        #adversary_image=adversary_image[:,:,::-1]
+        adversary_image=adversary_image[:,:,::-1]
 
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
 
@@ -110,9 +110,9 @@ def main(modulename,imagename):
 
 
     attack = DeepFoolAttack(m)
-    attack_config = {"iterations": 100, "overshoot": 30}
+    attack_config = {"iterations": 100, "overshoot": 0}
 
-    adversary = Adversary(imagedata,None)
+    adversary = Adversary(imagedata[:, :, ::-1],None)
 
     tlabel = 489
     adversary.set_target(is_targeted_attack=True, target_label=tlabel)
@@ -130,7 +130,7 @@ def main(modulename,imagename):
         #强制类型转换 之前是float 现在要转换成int8
 
         #::-1 reverses the color channels, because Keras ResNet50 expects BGR instead of RGB
-        #adversary_image=adversary_image[:,:,::-1]
+        adversary_image=adversary_image[:,:,::-1]
 
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
 
