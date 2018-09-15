@@ -34,9 +34,10 @@ from advbox.attacks.gradient_method import FGSMT
 from advbox.models.keras import KerasModel
 
 from keras.applications.resnet50 import ResNet50
+#from keras.applications.inception_v3 import InceptionV3
 from keras.preprocessing import image
 from keras.preprocessing.image import img_to_array,array_to_img
-from keras.applications.resnet50 import decode_predictions
+#from keras.applications.resnet50 import decode_predictions
 
 
 import keras
@@ -53,12 +54,19 @@ def main(modulename,imagename):
     keras.backend.set_learning_phase(0)
 
     model = ResNet50(weights=modulename)
+    #model = InceptionV3(weights=modulename)
 
     logging.info(model.summary())
 
     img = image.load_img(imagename, target_size=(224, 224))
-    imagedata = image.img_to_array(img)
-    imagedata = np.expand_dims(imagedata, axis=0)
+    raw_imagedata = image.img_to_array(img)
+    raw_imagedata = np.expand_dims(raw_imagedata, axis=0)
+
+    # 'RGB'->'BGR'
+    imagedata = raw_imagedata[:, :, :, ::-1]
+
+    #logging.info(raw_imagedata)
+    #logging.info(imagedata)
 
     #logit fc1000
     logits=model.get_layer('fc1000').output
@@ -75,7 +83,7 @@ def main(modulename,imagename):
         None,
         logits,
         None,
-        bounds=(0, 255),
+        bounds=(0, 255.0),
         channel_axis=3,
         preprocess=([104, 116, 123],1),
         featurefqueezing_bit_depth=8)
@@ -86,7 +94,7 @@ def main(modulename,imagename):
     #epsilons为下限 epsilons_max为上限
     #attack_config = {"epsilons": 0.3, "epsilons_max": 0.5, "epsilon_steps": 100}
     #静态epsilons
-    attack_config = {"epsilons": 30, "epsilons_max": 10, "epsilon_steps": 1,"steps":100}
+    attack_config = {"epsilons": 1, "epsilons_max": 10, "epsilon_steps": 1,"steps":100}
 
     #y设置为空 会自动计算
     adversary = Adversary(imagedata.copy(),None)
@@ -105,12 +113,12 @@ def main(modulename,imagename):
         logging.info("adversary_image label={0} ".format(np.argmax(m.predict(adversary_image)))  )
         #logging.info(adversary_image)
 
-        #强制类型转换 之前是float 现在要转换成iunt8
+        #强制类型转换 之前是float 现在要转换成uint8
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
 
         #logging.info(adversary_image)
-
-        logging.info(adversary_image-imagedata)
+        adversary_image=adversary_image[:, :, ::-1]
+        logging.info(adversary_image-raw_imagedata)
 
         img=array_to_img(adversary_image)
         img.save('adversary_image_nontarget.jpg')
@@ -141,7 +149,8 @@ def main(modulename,imagename):
 
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
 
-        logging.info(adversary_image - imagedata)
+        adversary_image=adversary_image[:, :, ::-1]
+        logging.info(adversary_image - raw_imagedata)
 
         img=array_to_img(adversary_image)
         img.save('adversary_image_target.jpg')

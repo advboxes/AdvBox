@@ -57,6 +57,7 @@ def main(modulename,imagename):
 
     img = image.load_img(imagename, target_size=(224, 224))
     imagedata = image.img_to_array(img)
+    #imagedata=imagedata[:, :, ::-1]
     imagedata = np.expand_dims(imagedata, axis=0)
 
     #logit fc1000
@@ -75,7 +76,8 @@ def main(modulename,imagename):
         None,
         bounds=(0, 255),
         channel_axis=3,
-        preprocess=([104, 116, 123],1))
+        preprocess=([104, 116, 123],1),
+        featurefqueezing_bit_depth=8)
 
     attack = DeepFoolAttack(m)
     attack_config = {"iterations": 100, "overshoot": 10}
@@ -95,6 +97,9 @@ def main(modulename,imagename):
         adversary_image=np.copy(adversary.adversarial_example)
         #强制类型转换 之前是float 现在要转换成iunt8
 
+        #::-1 reverses the color channels, because Keras ResNet50 expects BGR instead of RGB
+        #adversary_image=adversary_image[:,:,::-1]
+
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
 
         logging.info(adversary_image - imagedata)
@@ -105,7 +110,7 @@ def main(modulename,imagename):
 
 
     attack = DeepFoolAttack(m)
-    attack_config = {"iterations": 100, "overshoot": 200}
+    attack_config = {"iterations": 100, "overshoot": 30}
 
     adversary = Adversary(imagedata,None)
 
@@ -123,6 +128,9 @@ def main(modulename,imagename):
         #对抗样本保存在adversary.adversarial_example
         adversary_image=np.copy(adversary.adversarial_example)
         #强制类型转换 之前是float 现在要转换成int8
+
+        #::-1 reverses the color channels, because Keras ResNet50 expects BGR instead of RGB
+        #adversary_image=adversary_image[:,:,::-1]
 
         adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
 

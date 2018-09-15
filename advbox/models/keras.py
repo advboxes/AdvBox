@@ -96,11 +96,14 @@ class KerasModel(Model):
         k.set_learning_phase(0)
 
         if self._featurefqueezing_bit_depth is not None:
+            #logging.info(data)
             scaled_data=FeatureFqueezingDefence(data.copy(),None,self._featurefqueezing_bit_depth,self._bounds)
+            #logging.info(scaled_data)
+
 
         scaled_data = self._process_input(scaled_data)
 
-        #print(scaled_data)
+        #logging.info(scaled_data)
 
         # Run prediction
         predict = self._preds(inputs=[scaled_data])
@@ -145,8 +148,6 @@ class KerasModel(Model):
         grads = self._grads([scaled_data])
 
         grads = np.swapaxes(np.array(grads), 0, 1)
-
-        #print(grads)
 
         return grads.reshape(data.shape)
 
