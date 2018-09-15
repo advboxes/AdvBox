@@ -53,7 +53,7 @@ AdvBox是一款支持PaddlePaddle、Caffe2、Keras以及TensorFlow平台的AI模
 
 # 文档
 
-## 例子
+## Keras示例
 
 以Keras环境为例，代码路径为[tutorials/keras_demo.py](tutorials/keras_demo.py)
 
