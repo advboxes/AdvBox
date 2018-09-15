@@ -100,9 +100,8 @@ class DeepFoolAttack(Attack):
                     w_norm = w_k_norm
                     #logging.info("k={0} pert={1} w_norm={2}".format(k,pert, w_norm))
 
-
-            #论文中为+  advbox老版本实现成了-
-            r_i = w * pert / w_norm
+            #论文中为+  advbox老版本实现成了- l2实现
+            r_i = -w * pert / w_norm
 
             logging.info(r_i)
 

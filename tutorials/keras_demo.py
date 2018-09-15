@@ -20,8 +20,8 @@ FGSM method is non-targeted attack while FGSMT is targeted attack.
 import sys
 sys.path.append("..")
 import logging
-logging.basicConfig(level=logging.INFO,format="%(filename)s[line:%(lineno)d] %(levelname)s %(message)s")
-logger=logging.getLogger(__name__)
+#logging.basicConfig(level=logging.INFO,format="%(filename)s[line:%(lineno)d] %(levelname)s %(message)s")
+#logger=logging.getLogger(__name__)
 
 #import matplotlib.pyplot as plt
 import numpy as np
@@ -29,13 +29,15 @@ from PIL import Image
 #pip install Pillow
 
 from advbox.adversary import Adversary
-from advbox.attacks.deepfool import DeepFoolAttack
+from advbox.attacks.gradient_method import FGSM
 from advbox.models.keras import KerasModel
 
 from keras.applications.resnet50 import ResNet50
 from keras.preprocessing import image
 from keras.preprocessing.image import img_to_array,array_to_img
 from keras.applications.resnet50 import decode_predictions
+
+from utils import show_images_diff
 
 
 import keras
@@ -53,20 +55,16 @@ def main(modulename,imagename):
 
     model = ResNet50(weights=modulename)
 
-    logging.info(model.summary())
-
     img = image.load_img(imagename, target_size=(224, 224))
-    imagedata = image.img_to_array(img)
-    #imagedata=imagedata[:, :, ::-1]
-    imagedata = np.expand_dims(imagedata, axis=0)
+    original_image = image.img_to_array(img)
+    imagedata = np.expand_dims(original_image, axis=0)
 
-    #logit fc1000
+
+
+    #获取logit层
     logits=model.get_layer('fc1000').output
 
-    #keras中获取指定层的方法为：
-    #base_model.get_layer('block4_pool').output)
-    # advbox demo
-    # 因为原始数据没有归一化  所以bounds=(0, 255)  KerasMode内部在进行预测和计算梯度时会进行预处理
+    # 创建keras对象
     # imagenet数据集归一化时 标准差为1  mean为[104, 116, 123]
     m = KerasModel(
         model,
@@ -79,13 +77,14 @@ def main(modulename,imagename):
         preprocess=([104, 116, 123],1),
         featurefqueezing_bit_depth=8)
 
-    attack = DeepFoolAttack(m)
-    attack_config = {"iterations": 100, "overshoot": 10}
+    attack = FGSM(m)
+    #静态epsilon
+    attack_config = {"epsilons": 1, "epsilons_max": 10, "epsilon_steps": 1, "steps": 100}
 
     #y设置为空 会自动计算
     adversary = Adversary(imagedata[:, :, ::-1],None)
 
-    # deepfool non-targeted attack
+    # fgsm non-targeted attack
     adversary = attack(adversary, **attack_config)
 
     if adversary.is_successful():
@@ -93,52 +92,25 @@ def main(modulename,imagename):
             'attack success, adversarial_label=%d'
             % (adversary.adversarial_label) )
 
-        #对抗样本保存在adversary.adversarial_example
         adversary_image=np.copy(adversary.adversarial_example)
-        #强制类型转换 之前是float 现在要转换成iunt8
+        #强制类型转换 之前是float 现在要转换成uint8
 
-        #::-1 reverses the color channels, because Keras ResNet50 expects BGR instead of RGB
+        #BGR -> RGB
         adversary_image=adversary_image[:,:,::-1]
 
-        adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
+        #adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
+        #original_image=np.array(original_image).astype("uint8").reshape([224, 224, 3])
 
-        logging.info(adversary_image - imagedata)
-        img=array_to_img(adversary_image)
-        img.save('adversary_image_nontarget.jpg')
+        adversary_image = np.array(adversary_image).reshape([224,224,3])
+        original_image=np.array(original_image).reshape([224, 224, 3])
+
+
+        show_images_diff(original_image,adversary_image)
 
     print("deepfool non-target attack done")
 
 
-    attack = DeepFoolAttack(m)
-    attack_config = {"iterations": 100, "overshoot": 10}
 
-    adversary = Adversary(imagedata[:, :, ::-1],None)
-
-    tlabel = 489
-    adversary.set_target(is_targeted_attack=True, target_label=tlabel)
-
-    # deepfool targeted attack
-    adversary = attack(adversary, **attack_config)
-
-    if adversary.is_successful():
-        print(
-            'attack success, adversarial_label=%d'
-            % (adversary.adversarial_label) )
-
-        #对抗样本保存在adversary.adversarial_example
-        adversary_image=np.copy(adversary.adversarial_example)
-        #强制类型转换 之前是float 现在要转换成int8
-
-        #::-1 reverses the color channels, because Keras ResNet50 expects BGR instead of RGB
-        adversary_image=adversary_image[:,:,::-1]
-
-        adversary_image = np.array(adversary_image).astype("uint8").reshape([224,224,3])
-
-        logging.info(adversary_image - imagedata)
-        img=array_to_img(adversary_image)
-        img.save('adversary_image_target.jpg')
-
-    print("deepfool target attack done")
 
 
 
