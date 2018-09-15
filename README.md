@@ -1,6 +1,4 @@
-=======
-AdvBox
-=======
+# AdvBox
 
 ![logo](pic/logo.png)
 
