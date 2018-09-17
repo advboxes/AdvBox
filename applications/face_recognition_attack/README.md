@@ -7,7 +7,7 @@ We chose a pre-trained FaceNet model that is a state-of-the-art and widely used 
 
 FaceNet and its pre-trained model can be downloaded from `https://github.com/davidsandberg/facenet`.
 
-	cd applications/
+	cd thirdparty
 
 ### Clone facenet
 
