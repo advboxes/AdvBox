@@ -84,13 +84,13 @@ def main(dirname,imagename):
         None,
         bounds=(0, 255),
         channel_axis=3,
-        preprocess=None)
+        preprocess=([104, 116, 123],1))
 
     attack = FGSM(m)
     #设置epsilons时不用考虑特征范围 算法实现时已经考虑了取值范围的问题 epsilons取值范围为（0，1）
     #epsilon支持动态调整 epsilon_steps为epsilon变化的个数
     #epsilons为下限 epsilons_max为上限
-    attack_config = {"epsilons": 0.3,"epsilons_max":0.5,"epsilon_steps":100}
+    attack_config = {"epsilons": 1, "epsilons_max": 10, "epsilon_steps": 1, "steps": 100}
 
     #y设置为空 会自动计算
     adversary = Adversary(image,None)
@@ -118,7 +118,7 @@ def main(dirname,imagename):
 
 
     attack = FGSMT(m)
-    attack_config = {"epsilons": 0.3, "epsilons_max": 0.5, "epsilon_steps": 10}
+    attack_config = {"epsilons": 10, "epsilons_max": 10, "epsilon_steps": 1, "steps": 100}
 
     adversary = Adversary(image,None)
     #麦克风
@@ -138,6 +138,10 @@ def main(dirname,imagename):
         #强制类型转换 之前是float 现在要转换成int8
 
         adversary_image = np.array(adversary_image).astype("uint8").reshape([100,100,3])
+
+        logging.info(adversary_image - image)
+
+
         im = Image.fromarray(adversary_image)
         im.save("adversary_image_target.jpg")
 
