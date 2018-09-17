@@ -105,9 +105,9 @@ AdvBox是一款支持PaddlePaddle、Caffe2、Keras以及TensorFlow平台的AI模
 
    ![keras-demo.png](pic/keras-demo.png)
 
-##  使用案例
+##  学习教程
 
-为了进一步降低学习成本，AdvBox提供大量的[使用案例](tutorials/README.md)。
+为了进一步降低学习成本，AdvBox提供大量的[学习教程](tutorials/README.md)。
 
  - [示例1：白盒攻击基于MNIST数据集的CNN模型](tutorials/README.md#示例1：白盒攻击基于MNIST数据集的CNN模型)
  - [示例2：白盒攻击基于CIFAR10数据集的ResNet模型](tutorials/README.md#示例2：白盒攻击基于CIFAR10数据集的ResNet模型)
@@ -115,6 +115,13 @@ AdvBox是一款支持PaddlePaddle、Caffe2、Keras以及TensorFlow平台的AI模
  - [示例4：黑盒攻击基于MNIST数据集的CNN模型](tutorials/README.md#示例4：黑盒攻击基于MNIST数据集的CNN模型)
  - [示例5：使用FeatureFqueezing加固基于MNIST数据集的CNN模型](tutorials/README.md#示例5：使用FeatureFqueezing加固基于MNIST数据集的CNN模型)
  - [示例6：使用GaussianAugmentation加固基于MNIST数据集的CNN模型](tutorials/README.md#示例6：使用GaussianAugmentation加固基于MNIST数据集的CNN模型)
+
+## 典型应用
+
+基于AdvBox可以针对大量实际使用的AI模型生成对抗样本并给出通用加固方案。
+
+ - [应用1：白盒攻击人脸识别系统](applications/face_recognition_attack/README.md)
+
 
 # 问题反馈
 	
