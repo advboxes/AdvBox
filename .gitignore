@@ -3,7 +3,9 @@
 *.so
 *.egg
 *.egg-info
+*.pb
 dist
 build
 
 .idea/
+thirdparty/

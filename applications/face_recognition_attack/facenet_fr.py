@@ -22,10 +22,10 @@ from scipy import misc
 import os
 import time
 
-sys.path.append("../../../facenet/src")
+sys.path.append("../thirdparty/facenet/src")
 import facenet
 
-FACENET_MODEL_CHECKPOINT = "/mnt/model/facenet/20180402-114759/20180402-114759.pb"
+FACENET_MODEL_CHECKPOINT = "20180402-114759.pb"
 
 
 def get_pic_from_png(pic_path):
