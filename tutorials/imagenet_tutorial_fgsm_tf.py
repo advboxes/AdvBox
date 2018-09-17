@@ -31,7 +31,7 @@ from PIL import Image
 from advbox.adversary import Adversary
 from advbox.attacks.gradient_method import FGSM
 from advbox.attacks.gradient_method import FGSMT
-from advbox.models.tensorflowPB import TensorflowPBModel
+from advbox.models.tensorflow import TensorflowModel
 from tutorials.mnist_model_tf import mnist_cnn_model
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
@@ -47,7 +47,6 @@ def main(dirname,imagename):
             Image.open(f).convert('RGB')).astype(np.float)
 
     image=[image]
-
 
     session=tf.Session()
 
@@ -67,6 +66,7 @@ def main(dirname,imagename):
 
     logger.info(tensorlist)
 
+
     #获取logits
     logits=session.graph.get_tensor_by_name('softmax/logits:0')
 
@@ -76,7 +76,7 @@ def main(dirname,imagename):
 
     # advbox demo
     # 因为原始数据没有归一化  所以bounds=(0, 255)
-    m = TensorflowPBModel(
+    m = TensorflowModel(
         session,
         x,
         None,
@@ -84,13 +84,13 @@ def main(dirname,imagename):
         None,
         bounds=(0, 255),
         channel_axis=3,
-        preprocess=([104, 116, 123],1))
+        preprocess=None)
 
     attack = FGSM(m)
     #设置epsilons时不用考虑特征范围 算法实现时已经考虑了取值范围的问题 epsilons取值范围为（0，1）
     #epsilon支持动态调整 epsilon_steps为epsilon变化的个数
     #epsilons为下限 epsilons_max为上限
-    attack_config = {"epsilons": 1, "epsilons_max": 10, "epsilon_steps": 1, "steps": 100}
+    attack_config = {"epsilons": 20, "epsilons_max": 10, "epsilon_steps": 1, "steps": 100}
 
     #y设置为空 会自动计算
     adversary = Adversary(image,None)
@@ -118,7 +118,7 @@ def main(dirname,imagename):
 
 
     attack = FGSMT(m)
-    attack_config = {"epsilons": 10, "epsilons_max": 10, "epsilon_steps": 1, "steps": 100}
+    attack_config = {"epsilons": 30, "epsilons_max": 10, "epsilon_steps": 1, "steps": 100}
 
     adversary = Adversary(image,None)
     #麦克风

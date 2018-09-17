@@ -126,9 +126,10 @@ def main(modulename,imagename):
     print("fgsm non-target attack done")
 
 
+
     attack = FGSMT(m)
     #静态epsilons
-    attack_config = {"epsilons": 10, "epsilons_max": 10, "epsilon_steps": 1,"steps":100}
+    attack_config = {"epsilons": 20, "epsilons_max": 20, "epsilon_steps": 1,"steps":100}
 
     adversary = Adversary(imagedata,None)
 

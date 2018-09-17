@@ -25,26 +25,16 @@ from .base import Model
 import logging
 logger=logging.getLogger(__name__)
 
-
+#直接加载pb文件
 class TensorflowModel(Model):
-    """
-    Create a TensorflowModel instance.
-    When you need to generate a adversarial sample, you should construct an
-    instance of PaddleModel.
-    Args:
-        program(paddle.fluid.framework.Program): The program of the model
-            which generate the adversarial sample.
-        input_name(string): The name of the input.
-        logits_name(string): The name of the logits.
-        predict_name(string): The name of the predict.
-        cost_name(string): The name of the loss in the program.
-    """
+
 
     def __init__(self,
-                 dirname,
+                 session,
                  input,
-                 loss,
+                 label,
                  logits,
+                 loss,
                  bounds,
                  channel_axis=3,
                  preprocess=None):
@@ -59,36 +49,30 @@ class TensorflowModel(Model):
             bounds=bounds, channel_axis=channel_axis, preprocess=preprocess)
 
 
+        self._session = session
 
-        self._session = tf.Session()
         self._loss=loss
+
+
+        self._label=label
         self._logits=logits
-        self._input=input
-        self._input_shape = tuple(input.get_shape()[1:])
-        self._nb_classes=int(logits.get_shape()[-1])
-
-        def create_graph(dirname):
-            with tf.gfile.FastGFile(dirname, 'rb') as f:
-                # graph_def = tf.GraphDef()
-                graph_def = self._session.graph_def
-                graph_def.ParseFromString(f.read())
-                _ = tf.import_graph_def(graph_def, name='')
-
-        create_graph(dirname)
-
-        #初始化参数  非常重要
-        self._session.run(tf.global_variables_initializer())
+        self._input = input
+        self._input_shape = tuple(self._input.get_shape()[1:])
+        self._nb_classes=int(self._logits.get_shape()[-1])
 
         logger.info('self._input_shape:'+str(self._input_shape))
 
-        self._probs = tf.nn.softmax(logits)
+        logger.info("init grads[{0}]...".format(self._nb_classes))
 
-        self._loss_grads = tf.gradients(self._loss, self._input)[0]
+        #self._grads= tf.gradients(self._loss, self._input)[0]
+        #self._grads= tf.gradients(self._logits, self._input)[0]
+        self._grads = [ None for _ in range(self._nb_classes) ]
 
-        self._class_grads = [ tf.gradients(tf.nn.softmax(self._logits)[:, label], self._input)[0] for label in range(self._nb_classes)]
+
+        logger.info("Finish TensorflowPBModel init")
 
 
-    def predict(self, data, logits=False):
+    def predict(self, data):
         """
         Calculate the prediction of the data.
         Args:
@@ -101,16 +85,15 @@ class TensorflowModel(Model):
 
         import tensorflow as tf
 
-        #scaled_data = self._process_input(data)
+        scaled_data = self._process_input(data)
 
-        #fd = {self._input: scaled_data}
-        fd = {self._input: data}
+        #print(scaled_data)
+
+        fd = {self._input: scaled_data}
 
         # Run prediction
-        if logits:
-            predict = self._session.run(self._logits, feed_dict=fd)
-        else:
-            predict = self._session.run(self._probs, feed_dict=fd)
+        predict = self._session.run(self._logits, feed_dict=fd)
+        predict = np.squeeze(predict, axis=0)
 
         return predict
 
@@ -123,7 +106,7 @@ class TensorflowModel(Model):
 
         return int(self._logits.get_shape()[-1])
 
-    def gradient(self, data, label, logits=False):
+    def gradient(self, data, label):
         """
         Calculate the gradient of the cross-entropy loss w.r.t the image.
         Args:
@@ -134,20 +117,21 @@ class TensorflowModel(Model):
             numpy.ndarray: gradient of the cross-entropy loss w.r.t the image
                 with the shape (height, width, channel).
         """
-        #scaled_data = self._process_input(data)
+
 
         import tensorflow as tf
 
-        if logits:
-            grads = self._session.run(self._logit_class_grads[label], feed_dict={self._input: data})
-        else:
-            grads = self._session.run(self._class_grads[label], feed_dict={self._input: data})
+        scaled_data = self._process_input(data)
+
+        if self._grads[label] is None:
+            logging.info('Start to get _grads[{}]'.format(label))
+            self._grads[label]=tf.gradients(self._logits[:,label], self._input)[0]
+            logging.info('Finish to get _grads[{}]'.format(label))
+
+        grads = self._session.run(self._grads[label], feed_dict={self._input: scaled_data})
 
         grads = grads[None, ...]
         grads = np.swapaxes(np.array(grads), 0, 1)
-        assert grads.shape == (data.shape[0], 1) + self._input_shape
-
-        #grad = self._apply_processing_gradient(grad)
 
         return grads.reshape(data.shape)
 

@@ -32,7 +32,7 @@ from advbox.adversary import Adversary
 #from advbox.attacks.gradient_method import FGSM
 #from advbox.attacks.gradient_method import FGSMT
 from advbox.attacks.deepfool import DeepFoolAttack
-from advbox.models.tensorflowPB import TensorflowPBModel
+from advbox.models.tensorflow import TensorflowModel
 from tutorials.mnist_model_tf import mnist_cnn_model
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
@@ -77,7 +77,7 @@ def main(dirname,imagename):
 
     # advbox demo
     # 因为原始数据没有归一化  所以bounds=(0, 255)
-    m = TensorflowPBModel(
+    m = TensorflowModel(
         session,
         x,
         None,
