@@ -1,4 +1,6 @@
 # V0.3版本
+- 新增支持平台：
+	- Keras
 - 支持黑盒攻击算法：
 	- Single Pixel Attack
 	- Local Search Attack
