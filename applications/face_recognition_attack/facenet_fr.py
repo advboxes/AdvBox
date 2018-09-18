@@ -120,6 +120,7 @@ class FacenetFR():
         adv = tf.clip_by_value(adv, -1.0, 1.0)
 
         epsilon = 0.003
+
         loss_limit = 0.0002
         loss_cnt_threshold = 10
         num_iter = 10000
