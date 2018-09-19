@@ -69,4 +69,22 @@ def fgsm(x,
 
     return adv_x
 
+#DeepFool 仅实现了目标攻击
+def deepfool(x,
+        loss=None,
+        bounds=(0,1)):
 
+    (clip_min, clip_max)=bounds
+
+    grad, = tf.gradients(loss, x)
+
+    r=grad*loss/tf.reduce_sum(tf.square(grad))
+
+    #目标是让loss下降
+    adv_x = x - r
+
+
+    if (clip_min is not None) and (clip_max is not None):
+        adv_x = tf.clip_by_value(adv_x, clip_min, clip_max)
+
+    return adv_x

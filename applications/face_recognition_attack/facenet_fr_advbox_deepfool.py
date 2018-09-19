@@ -22,8 +22,15 @@ from scipy import misc
 import os
 import time
 
+
+sys.path.append("../../")
+
+from  advbox.attacks.tf.tools import  deepfool
+
+
 sys.path.append("../thirdparty/facenet/src")
 import facenet
+
 
 FACENET_MODEL_CHECKPOINT = "20180402-114759.pb"
 
@@ -112,32 +119,40 @@ class FacenetFR():
 
         target_emb = self.generate_embedding(target_pic)
 
-        eta = 0.0001
-        adv = tf.identity(images_placeholder)
+        #攻击步长
+        eta = 0.01
+        #loss函数目的是将起下降
         loss = tf.sqrt(tf.reduce_sum(tf.square(embeddings - target_emb)))
-        gradient, = tf.gradients(loss, images_placeholder)
-        adv -= eta * tf.sign(gradient)
-        adv = tf.clip_by_value(adv, -1.0, 1.0)
 
-        #控制相似程度
-        epsilon = 0.003
+        #定义deepfool迭代器
+        adv_x=deepfool(images_placeholder,
+                   loss=loss,
+                    bounds=(-1.0,1.0))
 
+        input_image = get_pic_from_png(input_pic)
+        adv_image = np.reshape(
+            input_image, (-1, input_image.shape[0], input_image.shape[1], input_image.shape[2]))
+
+
+        #损失函数小于adv_loss_stop 认为满足需要了 退出
+        adv_loss_stop=0.01
+        #loss阈值 衡量前后两次loss差别过小 认为已经稳定了 收敛了 连续loss_cnt_threshold次小于loss_limit退出
         loss_limit = 0.0008
         loss_cnt_threshold = 10
-        num_iter = 10000
+        #最大迭代次数
+        num_iter = 2000
 
         last_adv_loss = 0
         cnt = 0
         flag = False
-        input_image = get_pic_from_png(input_pic)
-        adv_image = np.reshape(
-            input_image, (-1, input_image.shape[0], input_image.shape[1], input_image.shape[2]))
+
         for i in range(num_iter):
             feed_dict = {
                 images_placeholder: adv_image,
                 phase_train_placeholder: False
             }
-            adv_image, adv_loss = self.sess.run([adv, loss], feed_dict=feed_dict)
+            #调用迭代器
+            adv_image, adv_loss = self.sess.run([adv_x, loss], feed_dict=feed_dict)
 
             print('[%d] Bias from original image: %2.6f Loss: %2.6f' % (i, np.sqrt(
                 np.sum(np.square(adv_image[0, ...] - input_image))), adv_loss))
@@ -155,15 +170,18 @@ class FacenetFR():
                 print('always get too tiny loss...')
                 break
 
-            if adv_loss < epsilon:
+            if adv_loss < adv_loss_stop:
                 print('get final result...')
                 break
 
             last_adv_loss = adv_loss
 
+
         if i == num_iter - 1:
             print('Out of maximum iterative number...')
-        filename = generate_inp2adv_name(input_pic, target_pic) + str(i)
+        #filename = generate_inp2adv_name(input_pic, target_pic) + str(i)
+        #调试阶段 文件名不随机
+        filename = generate_inp2adv_name(input_pic, target_pic)
         save_img2png(adv_image[0, ...], filename)
 
         feed_dict = {
