@@ -120,7 +120,7 @@ class FacenetFR():
         target_emb = self.generate_embedding(target_pic)
 
         #攻击步长
-        eta = 0.0001
+        eta = 0.01
         #loss函数目的是将起下降
         loss = tf.sqrt(tf.reduce_sum(tf.square(embeddings - target_emb)))
 
@@ -177,6 +177,20 @@ class FacenetFR():
                 break
 
             last_adv_loss = adv_loss
+
+
+        if i == num_iter - 1:
+            print('Out of maximum iterative number...')
+        filename = generate_inp2adv_name(input_pic, target_pic) + str(i)
+        save_img2png(adv_image[0, ...], filename)
+
+        feed_dict = {
+            images_placeholder: adv_image,
+            phase_train_placeholder: False
+        }
+        adv_embedding = self.sess.run(embeddings, feed_dict=feed_dict)[0]
+        print('The distance between input embedding and target is %2.6f' %
+              Euclidian_distance(adv_embedding, target_emb))
 
 
 if __name__ == '__main__':
