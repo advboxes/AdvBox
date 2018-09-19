@@ -138,11 +138,11 @@ class FacenetFR():
 
         #损失函数小于adv_loss_stop 认为满足需要了 退出
         adv_loss_stop=0.01
-        #loss阈值 衡量前后两次loss差别过小 认为已经稳定了 收敛了
+        #loss阈值 衡量前后两次loss差别过小 认为已经稳定了 收敛了 连续loss_cnt_threshold次小于loss_limit退出
         loss_limit = 0.0008
         loss_cnt_threshold = 10
         #最大迭代次数
-        num_iter = 10000
+        num_iter = 2000
 
         last_adv_loss = 0
         cnt = 0
@@ -181,7 +181,9 @@ class FacenetFR():
 
         if i == num_iter - 1:
             print('Out of maximum iterative number...')
-        filename = generate_inp2adv_name(input_pic, target_pic) + str(i)
+        #filename = generate_inp2adv_name(input_pic, target_pic) + str(i)
+        #调试阶段 文件名不随机
+        filename = generate_inp2adv_name(input_pic, target_pic)
         save_img2png(adv_image[0, ...], filename)
 
         feed_dict = {
