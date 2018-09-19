@@ -119,8 +119,6 @@ class FacenetFR():
 
         target_emb = self.generate_embedding(target_pic)
 
-        #攻击步长
-        eta = 0.01
         #loss函数目的是将起下降
         loss = tf.sqrt(tf.reduce_sum(tf.square(embeddings - target_emb)))
 
@@ -135,9 +133,9 @@ class FacenetFR():
 
 
         #损失函数小于adv_loss_stop 认为满足需要了 退出
-        adv_loss_stop=0.01
+        adv_loss_stop=0.001
         #loss阈值 衡量前后两次loss差别过小 认为已经稳定了 收敛了 连续loss_cnt_threshold次小于loss_limit退出
-        loss_limit = 0.0008
+        loss_limit = adv_loss_stop/10
         loss_cnt_threshold = 10
         #最大迭代次数
         num_iter = 2000
