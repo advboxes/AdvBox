@@ -47,7 +47,7 @@ AdvBox是一款支持PaddlePaddle、Caffe2、Keras以及TensorFlow平台的AI模
 
 ## 初始化软件环境
 
-强烈建议使用Conda管理python软件环境，对应的python安装包安装方式如下。
+为了兼容主流的深度学习平台，AdvBox基于python2.7开发，强烈建议使用Conda管理python软件环境，对应的python安装包安装方式如下。
 
 	pip install -r requirements.txt
 
@@ -104,6 +104,10 @@ AdvBox是一款支持PaddlePaddle、Caffe2、Keras以及TensorFlow平台的AI模
 实际运行代码，原始图像和对抗样本的差别如下图所示。
 
    ![keras-demo.png](pic/keras-demo.png)
+
+## PaddlePaddle示例
+请见[PaddlePaddle示例](paddle.md)
+
 
 ##  学习教程
 
