@@ -179,7 +179,7 @@ class FacenetFR():
             print('Out of maximum iterative number...')
         #filename = generate_inp2adv_name(input_pic, target_pic) + str(i)
         #调试阶段 文件名不随机
-        filename = generate_inp2adv_name(input_pic, target_pic)
+        filename = "output/"+generate_inp2adv_name(input_pic, target_pic)
         save_img2png(adv_image[0, ...], filename)
 
         feed_dict = {
@@ -191,11 +191,26 @@ class FacenetFR():
               Euclidian_distance(adv_embedding, target_emb))
 
 
-if __name__ == '__main__':
+def batch_generate_adv_whitebox():
+    import glob
+    Bill_Gates_list=glob.glob("Bill_Gates/*.png")
+    Michael_Jordan_list=glob.glob("Michael_Jordan/*.png")
+
     fr = FacenetFR()
 
-    input_pic = "Bill_Gates_0001.png"
-    target_pic = "Michael_Jordan_0002.png"
+    for a in Bill_Gates_list:
+        for b in Michael_Jordan_list:
+            fr.generate_adv_whitebox(a, b)
+
+
+if __name__ == '__main__':
+    #fr = FacenetFR()
+
+    #input_pic = "Bill_Gates_0001.png"
+    #target_pic = "Michael_Jordan_0002.png"
     # print fr.compare(input_pic,target_pic)
 
-    fr.generate_adv_whitebox(input_pic, target_pic)
+    #fr.generate_adv_whitebox(input_pic, target_pic)
+
+    #批量生成
+    batch_generate_adv_whitebox()

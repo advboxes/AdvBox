@@ -39,7 +39,22 @@ def test_t(a,b):
     print(client.face_compare(CIFile(a), CIFile(b)))
 
 
+def batch_test_t():
+    import glob
+    import time
+
+    Bill_Gates_list=glob.glob("Bill_Gates/*.png")
+    Michael_Jordan_list=glob.glob("Michael_Jordan/*.png")
+    adv_list=glob.glob("output/*.png")
+
+    for a in Michael_Jordan_list:
+        for b in adv_list:
+            time.sleep(1)  # 休眠1秒
+            test_t(a, b)
+
 
 if __name__ == '__main__':
-    test_t("Bill_Gates_0001_2_Michael_Jordan_0002.png","Bill_Gates_0001.png")
-    test_t("Bill_Gates_0001_2_Michael_Jordan_0002.png", "Michael_Jordan_0002.png")
+    #test_t("Bill_Gates_0001_2_Michael_Jordan_0002.png","Bill_Gates_0001.png")
+    #test_t("Bill_Gates_0001_2_Michael_Jordan_0002.png", "Michael_Jordan_0002.png")
+
+    batch_test_t()
