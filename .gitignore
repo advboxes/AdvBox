@@ -9,3 +9,5 @@ build
 
 .idea/
 thirdparty
+conf/*.conf
+conf/*.ini
