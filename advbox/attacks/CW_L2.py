@@ -65,28 +65,24 @@ class CW_L2_Attack(Attack):
         with fluid.program_guard(main_program=self.attack_main_program, startup_program=self.attack_startup_program):
             img_0_1_placehold = fluid.layers.data(name='img_data_scaled', shape=[1, 28, 28], dtype="float32")
             target_placehold = fluid.layers.data(name='target', shape=[10], dtype="float32")
-            shape_placehold = fluid.layers.data(name="shape", shape=[1], dtype="float32")
-            # k_placehold = fluid.layers.data(name='k',shape=[1],dtype="float32")
             c_placehold = fluid.layers.data(name='c', shape=[1], dtype="float32")
+            # k_placehold = fluid.layers.data(name='k',shape=[1],dtype="float32")
 
-            # get fluid.layer object from prebuilt program
-            # img_placehold_from_prebuilt_program = attack_main_program.block(0).var(self.model._input_name)
-            # softmax_from_prebuilt_program = attack_main_program.block(0).var(self.model._softmax_name)
-            # logits_from_prebuilt_program = attack_main_program.block(0).var(self.model._predict_name)
-
-            self.t0, self.t1, self.t2, self.t3, self.t4 = self._loss_cw(img_0_1_placehold,
-                                                                        target_placehold,
-                                                                        shape_placehold,
-                                                                        c_placehold)  # ,
-            # img_placehold_from_prebuilt_program,
-            # softmax_from_prebuilt_program,
-            # logits_from_prebuilt_program)
+            # add this perturbation
+            self.ad_perturbation = fluid.layers.create_parameter(name='parameter',
+                                                                shape=[1, 28, 28],
+                                                                dtype='float32',
+                                                                is_bias=False)
             
+            # construct graph with perturbation and cnn model
+            constrained = self._create_constrained(img_0_1_placehold)
+            t0, t1, _ = self._logits_distribute(target_placehold, constrained)
+            loss = self._loss_cw_new(t0, t1, c_placehold, img_0_1_placehold, constrained)
+
             # Init Adam optimizer as suggested in paper
             optimizer = fluid.optimizer.Adam(learning_rate=learning_rate)
-            optimizer.minimize(self.t2, parameter_list=['parameter'])
+            optimizer.minimize(loss, parameter_list=['parameter'])
 
-            
         # initial variables and parameters every time before attack
         # print("Initial param!")
         self._exe.run(self.attack_startup_program)
@@ -96,19 +92,18 @@ class CW_L2_Attack(Attack):
         # print(np.array(ret))
         # print(attack_main_program.current_block()["parameter"])
         # pdb.set_trace()
-        c1 = self.attack_main_program.block(0).var("conv2d_2.b_0")
-        c2 = self.attack_main_program.block(0).var("conv2d_2.w_0")
-        c3 = self.attack_main_program.block(0).var("conv2d_3.b_0")
-        c4 = self.attack_main_program.block(0).var("conv2d_3.w_0")
-        f1 = self.attack_main_program.block(0).var("fc_2.b_0")
-        f2 = self.attack_main_program.block(0).var("fc_2.w_0")
-        f3 = self.attack_main_program.block(0).var("fc_3.b_0")
-        f4 = self.attack_main_program.block(0).var("fc_3.w_0")
+        c1 = self.attack_main_program.block(0).var("conv2d_0.b_0")
+        c2 = self.attack_main_program.block(0).var("conv2d_0.w_0")
+        c3 = self.attack_main_program.block(0).var("conv2d_1.b_0")
+        c4 = self.attack_main_program.block(0).var("conv2d_1.w_0")
+        f1 = self.attack_main_program.block(0).var("fc_0.b_0")
+        f2 = self.attack_main_program.block(0).var("fc_0.w_0")
+        f3 = self.attack_main_program.block(0).var("fc_1.b_0")
+        f4 = self.attack_main_program.block(0).var("fc_1.w_0")
         var_list = [c1, c2, c3, c4, f1, f2, f3, f4]
 
-        fluid.io.load_vars(executor=self._exe, dirname="../advbox/attacks/mnist/", vars=var_list,
+        fluid.io.load_vars(executor=self._exe, dirname="../tutorials/mnist/", vars=var_list,
                            main_program=self.attack_main_program)  # ../advbox/attacks/mnist/
-        #########################################
 
     def _apply(self,
                adversary,
@@ -170,14 +165,13 @@ class CW_L2_Attack(Attack):
 
         # inital data
         # print("Initial parameter!")
-        self.ret.set((10/255) * np.random.random_sample((1, 28, 28)).astype('float32'), self._place)
+        self.ret.set((10/255) * (np.random.random_sample((1, 28, 28))-0.5).astype('float32'), self._place)
         screen_nontarget_logit = np.zeros(shape=[nb_classes], dtype="float32")
         screen_nontarget_logit[self._adversary.target_label] = 1
 
         feeder = fluid.DataFeeder(
             feed_list=["img_data_scaled",
                        "target",
-                       "shape",
                        "c"],  # self.model._input_name,self.model._logits_name,
             place=self._place,
             program=self.attack_main_program)
@@ -193,14 +187,12 @@ class CW_L2_Attack(Attack):
             result = self._exe.run(self.attack_main_program,
                                   feed=feeder.feed([(img_0_1,
                                                      screen_nontarget_logit,
-                                                     np.zeros(shape=[1], dtype='float32'),
                                                      c)]),  # img_0_1,0,
                                   fetch_list=[self.maxlogit_i_not_t,
                                               self.maxlogit_target,
                                               self.loss,
                                               self.logits_i_not_t,
-                                              self.constrained,
-                                              self.softmax])
+                                              self.constrained])
             '''
             print("maxlogit_i_not_t:",result[0],\
                   "maxlogit_target:",result[1],\
@@ -230,26 +222,16 @@ class CW_L2_Attack(Attack):
         print(self._adversary.original_label,self.model.predict(img))
         print(self._adversary.target_label,screen_nontarget_logit)
         print(adv_label,self.model.predict(img_ad))
-        #pdb.set_trace()
+        pdb.set_trace()
         '''
         # try to accept new result, success or fail
         return self._adversary.try_accept_the_example(
-            img_ad, adv_label), f6  # img,img_ad
-
-    # this build up the CW attack computation graph in Paddle
-    def _loss_cw(self, img_0_1, target, shape, c):  # ,img_input_entrance,softmax_entrance,logits_entrance
-
+            img_ad, adv_label), smallest_f6  # img,img_ad
+    
+    # box constraints
+    def _create_constrained(self, img_0_1):
         ####
         # use layerhelper to init w
-        self.helper = LayerHelper("Jay")
-        # name a name for later to take it out
-        self.param_attr = ParamAttr(name="parameter")
-
-        # add this perturbation on w space, then, reconstruct as an image within (0,1)
-        self.ad_perturbation = self.helper.create_parameter(attr=self.param_attr,
-                                                            shape=[1, 28, 28],
-                                                            dtype='float32',
-                                                            is_bias=False)
 
         self.y = 2 * img_0_1 - 1
         # compute arctan for y to get w
@@ -261,11 +243,12 @@ class CW_L2_Attack(Attack):
         self.tanh_w = fluid.layers.tanh(self.w_ad)
         self.constrained = 0.5 * (self.tanh_w + 1)
 
-        self.softmax, self.logits = mnist_cnn_model(self.constrained)
-
-        self.sub = fluid.layers.elementwise_sub(img_0_1, self.constrained)
-        self.squared = fluid.layers.elementwise_mul(self.sub, self.sub)
-        self.distance_L2 = fluid.layers.reduce_sum(self.squared)
+        return self.constrained
+    
+    # select logits to do something
+    def _logits_distribute(self, target, constrained):  # ,img_input_entrance,softmax_entrance,logits_entrance
+        ####
+        _, self.logits = mnist_cnn_model(constrained)
 
         self.negetive_screen_nontarget_logit = fluid.layers.scale(target, scale=-1.0)
         self.screen_target_logit = self.negetive_screen_nontarget_logit.__add__(
@@ -277,13 +260,22 @@ class CW_L2_Attack(Attack):
         self.maxlogit_i_not_t = fluid.layers.reduce_max(self.logits_i_not_t)
         self.maxlogit_target = fluid.layers.reduce_sum(self.logit_target)
 
-        self.difference_between_two_logits = self.maxlogit_i_not_t - self.maxlogit_target
+        return self.maxlogit_i_not_t, self.maxlogit_target, self.logits_i_not_t
+    
+    # this build up the CW attack computation graph in Paddle
+    def _loss_cw_new(self, maxlogit_i_not_t, maxlogit_target, c, img_0_1, constrained):
+
+        self.sub = fluid.layers.elementwise_sub(img_0_1, constrained)
+        self.squared = fluid.layers.elementwise_mul(self.sub, self.sub)
+        self.distance_L2 = fluid.layers.reduce_sum(self.squared)
+
+        self.difference_between_two_logits = maxlogit_i_not_t - maxlogit_target
 
         self.f6 = fluid.layers.relu(self.difference_between_two_logits)
 
         self.loss = c * self.f6 + self.distance_L2
 
-        return self.maxlogit_i_not_t, self.maxlogit_target, self.loss, self.logits_i_not_t, self.constrained  # distance_L2
+        return self.loss
 
     # reconstruct corresponding_constrained to an image in MNIST format
     def reconstruct(self, corresponding_constrained):
@@ -292,26 +284,6 @@ class CW_L2_Attack(Attack):
         :return: numpy.ndarray
         """
         return corresponding_constrained * 2 - 1  # mnist is belong to (-1,1)
-    # unused
-    def _f6(self, w):
-        '''
-        _f6 is the special f function CW chose as part of the
-        objective function, this returns the values directly
-        :return float32
-        '''
-        target = self._adversary.target_label
-        img = (np.tanh(w) + 1) / 2
-        Z_output = self._Z(img)
-        f6 = max(max([Z for i, Z in enumerate(Z_output) if i != target]) - Z_output[target], 0)
-
-        return f6
-    # unused
-    def _Z(self, img):
-        """
-        Get the Zx logits as a numpy array.
-        :return: numpy.ndarray
-        """
-        return self.model.get_logits(img)
 
     def _process_input(self, input_, sub, div):
         res = None
@@ -333,23 +305,3 @@ class CW_L2_Attack(Attack):
 
 
 CW_L2 = CW_L2_Attack
-
-
-class NumpyInitializer(fluid.initializer.Initializer):
-
-    def __init__(self, ndarray):
-        super(NumpyInitializer, self).__init__()
-        self._ndarray = ndarray.astype('float32')
-
-    def __call__(self, var, block):
-        values = [float(v) for v in self._ndarray.flat]
-        op = block.append_op(
-            type="assign_value",
-            outputs={"Out": [var]},
-            attrs={
-                "shape": var.shape,
-                "dtype": int(var.dtype),
-                "fp32_values": values,
-            })
-        var.op = op
-        return op

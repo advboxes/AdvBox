@@ -20,6 +20,7 @@ CNN on mnist data using fluid api of paddlepaddle
 import paddle.v2 as paddle
 import paddle.fluid as fluid
 import os
+import numpy as np
 
 #通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
 #比如在mac上不设置该环境变量，在GPU服务器上设置 export WITH_GPU=1
@@ -27,13 +28,13 @@ with_gpu = os.getenv('WITH_GPU', '0') != '0'
 
 def mnist_cnn_model(img):
     """
-    Mnist cnn model
+    Mnist cnn model without act of the last fc
 
     Args:
         img(Varaible): the input image to be recognized
 
     Returns:
-        Variable: the label prediction
+        Variable: without act of the label prediction
     """
     conv_pool_1 = fluid.nets.simple_img_conv_pool(
         input=img,
@@ -41,7 +42,9 @@ def mnist_cnn_model(img):
         filter_size=5,
         pool_size=2,
         pool_stride=2,
-        act='relu')#,param_attr=param_attr_1
+        param_attr=fluid.ParamAttr(name='conv2d' + '_0.w_0'),
+        bias_attr=fluid.ParamAttr(name='conv2d' + '_0.b_0'),
+        act='relu')
 
     conv_pool_2 = fluid.nets.simple_img_conv_pool(
         input=conv_pool_1,
@@ -49,13 +52,22 @@ def mnist_cnn_model(img):
         filter_size=5,
         pool_size=2,
         pool_stride=2,
-        act='relu')#,param_attr=param_attr_2
-    fc = fluid.layers.fc(input=conv_pool_2, size=50, act='relu')#,param_attr=param_attr_3
+        param_attr=fluid.ParamAttr(name='conv2d' + '_1.w_0'),
+        bias_attr=fluid.ParamAttr(name='conv2d' + '_1.b_0'),
+        act='relu')
+    fc = fluid.layers.fc(input=conv_pool_2, size=50,
+            param_attr=fluid.ParamAttr(name='fc' + '_0.w_0'),
+            bias_attr=fluid.ParamAttr(name='fc' + '_0.b_0'),
+            act='relu')
 
-    logits = fluid.layers.fc(input=fc, size=10, act=None)
-    softmax = fluid.layers.softmax(input=logits)
-    
-    return softmax, logits
+    conv_fc = fluid.layers.fc(input=fc, size=10,
+            param_attr=fluid.ParamAttr(name='fc' + '_1.w_0'),
+            bias_attr=fluid.ParamAttr(name='fc' + '_1.b_0'),
+            act=None)
+
+    logits = fluid.layers.softmax(input=conv_fc)
+
+    return logits, conv_fc
 
 # transfer image to (0,1) pixel value
 def _process_input(input_img, sub, div):

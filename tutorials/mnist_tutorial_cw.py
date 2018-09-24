@@ -96,7 +96,7 @@ def main(use_cuda):
     #######
     attack_config = {"nb_classes": 10,
                      "learning_rate": learning_rate, # learning_rate already passed in, this is only for printing
-                     "c_search_step":10,
+                     "c_search_step":1,
                      "c_range": (0.01,100),
                      "attack_iterations": 100,
                      "multi_startpoints":10,
@@ -121,15 +121,18 @@ def main(use_cuda):
                 ############################## This is for server sides' convenience
                 # save file on the server
                 path = "/book/Jay_workplace/AdvBox/pic/"
-                savedname = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())+".jpg"
+                savedname = time.strftime("_%Y-%m-%d-%H-%M-%S", time.localtime())+".jpg"
+                
                 original_to_be_saved = 255*((data[0][0]+1)/2).reshape([28,28]) 
                 adversary_to_be_saved = 255*((adversary.adversarial_example+1)/2).reshape([28,28])
-                original_is_saved = cv2.imwrite(path+"origin_"+savedname,original_to_be_saved)
+                
+                original_is_saved = cv2.imwrite(path+"origin_"+str(adversary.original_label)+savedname,original_to_be_saved)
                 if original_is_saved:
                     print("Saved under: ",path+savedname)
                 else:
                     print("Saving error!")
-                adversary_is_saved = cv2.imwrite(path+"ad_"+savedname,adversary_to_be_saved)
+                    
+                adversary_is_saved = cv2.imwrite(path+str(adversary.original_label)+"_ad_"+str(adversary.adversarial_label)+savedname,adversary_to_be_saved)
                 if adversary_is_saved:
                     print("Saved under: ",path+savedname)
                 else:
@@ -139,7 +142,7 @@ def main(use_cuda):
                 # hostname = "baidu@10.155.236.124"
                 # remote_path = "/book/Jay_workplace/AdvBox/pic"
                 # subprocess.call(['scp', filepath, ':'.join([hostname,remote_path])])
-                pdb.set_trace()
+                # pdb.set_trace()
                 ##############################
             else:
                 print('attack failed, original_label=%d, count=%d' %
