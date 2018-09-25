@@ -16,6 +16,12 @@
 
 import matplotlib.pyplot as plt
 
+
+#测试代码
+def show():
+    print("测试代码")
+
+#对比展现原始图片和对抗样本图片
 def show_images_diff(original_img,adversarial_img):
 
     plt.figure()
@@ -43,3 +49,39 @@ def show_images_diff(original_img,adversarial_img):
     plt.axis('off')
 
     plt.show()
+
+#自定义的视频图像处理函数
+def invert_green_blue(image):
+    return image[:,:,[0,2,1]]
+
+#处理视频文件
+def do_movie_content(infile,outfile):
+    # pip install moviepy
+    #pip install requests
+    #brew install imagemagick 如果更新慢
+    # cd "$(brew --repo)" && git remote set-url origin https://git.coding.net/homebrew/homebrew.git
+    # Import everything needed to edit video clips
+    from moviepy.editor import *
+
+    # Load myHolidays.mp4 and select the subclip 00:00:50 - 00:00:60
+    clip = VideoFileClip(infile).subclip(0, 10)
+
+    modifiedClip = clip.fl_image(invert_green_blue)
+
+
+    #添加字幕
+    # Generate a text clip. You can customize the font, color, etc.
+    txt_clip = TextClip("Dou Goodman", fontsize=70, color='white')
+
+    # Say that you want it to appear 10s at the center of the screen
+    txt_clip = txt_clip.set_pos('center').set_duration(10)
+
+    # Overlay the text clip on the first video clip
+    video = CompositeVideoClip([modifiedClip, txt_clip])
+
+    # Write the result to a file (many options available !)
+    video.write_videofile(outfile)
+
+
+if __name__ == '__main__':
+    do_movie_content('demo.mp4','demo-edited.mp4')
