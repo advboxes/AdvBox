@@ -84,4 +84,4 @@ def do_movie_content(infile,outfile):
 
 
 if __name__ == '__main__':
-    do_movie_content('demo.mp4','demo-edited.mp4')
+    do_movie_content('baidu.mp4','baidu-edited.mp4')
