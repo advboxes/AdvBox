@@ -61,6 +61,8 @@ def do_movie_content(infile,outfile):
     #brew install imagemagick 如果更新慢
     # cd "$(brew --repo)" && git remote set-url origin https://git.coding.net/homebrew/homebrew.git
     # Import everything needed to edit video clips
+    ## From tensorflow/models/research/
+    #export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
     from moviepy.editor import *
 
     # Load myHolidays.mp4 and select the subclip 00:00:50 - 00:00:60
