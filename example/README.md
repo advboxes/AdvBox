@@ -5,7 +5,7 @@
 提供如下攻击算法的实例：
 - FGSM (no target)
 - CW (target)
-##结构分布
+## 结构分布
 example
 ├── images
 │   ├── cat_example.png
@@ -31,20 +31,20 @@ imagenet_example_fgsm.py：用例应用主文件，使用FGSM攻击算法，当�
 reader.py：读取原始图片处理。
 utility.py：命令行参数及输出处理。
 
-##测试应用
-###下载模型和参数
+## 测试应用
+### 下载模型和参数
 本例中已提供[resnet](http://paddle-imagenet-models.bj.bcebos.com/alexnet_model.tar)、[alexnet](http://paddle-imagenet-models.bj.bcebos.com/resnet_50_model.tar)的模型及其预训练参数下载，也可以另行下载任意模型，但需要按要求进行修改调整（参见：特别提示）
 模型文件放入
 	example/models/
 训练参数文件放入
 	example/parameters/
-###下载攻击图片
+### 下载攻击图片
 图片放入
 	example/images/
 更新图片配置文件
 	example/images/mytest_list.txt
 	将所有需要攻击的图片名称加入其中
-###执行攻击
+### 执行攻击
 输入命令
 	python imagenet_example_cw.py  --log_debug=True --target=560
 	具体参数
@@ -95,7 +95,7 @@ utility.py：命令行参数及输出处理。
 	1_adversary-560-by-CW.png  1_diff-x-by-CW.png  1_original-282-by-CW.png
 adv字样的为攻击样本，diff为在原图中扰动的部分，orig为原图
 
-##样本效果
+## 样本效果
 
 验证样本的实际效果，可以先将输出的样本拷贝到images目录下,在mytest_list.txt中增加这个图片名称
 	cp .output/imagenet/1_adversary-560-by-CW.png ./images/
@@ -119,20 +119,20 @@ adv字样的为攻击样本，diff为在原图中扰动的部分，orig为原图
 	Test-0-score: 0.380188554525, class 282, name=./images/cat_example.png
 	Test-1-score: 0.903945684433, class 560, name=./images/1_adversary-560-by-CW.png
 
-###显示图片结果
+### 显示图片结果
 ![图片对比](pic/cw验证结果.png)
 
 ##特别提示
 
--关于CW算法的使用：
+- 关于CW算法的使用：
 1、因为该算法需要在IMG数据前进行一系列的计算，当前paddle又无法使用非Data的占位符，所以model要一起被带入CW中执行
 2、已经训练好的参数如果只想导入一次，需要在model内对每个conv2d、bn、fc等参数位置指定名称，这样在主进程导入时，可以只导一次，并提供给CW和主框架同时使用。
 3、应用主进程内，创建攻击类要提前，导入参数要放置在最后。
 
--原始图片相关
+- 原始图片相关
 本例中仅生成大小为224*224的攻击样本，会对原始图片进行缩放和裁剪，所以输出并不是原图比例
 
--使用GPU运行
+- 使用GPU运行
 如果需要使用GPU，命令行需要加--use_gpu=True ，另外还要提前设置环境变量
 	export WITH_GPU=1
 
