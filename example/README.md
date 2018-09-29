@@ -33,7 +33,7 @@ utility.py：命令行参数及输出处理
 
 ## 测试应用
 ### 下载模型和参数
-本例中已提供[resnet](http://paddle-imagenet-models.bj.bcebos.com/alexnet_model.tar)、[alexnet](http://paddle-imagenet-models.bj.bcebos.com/resnet_50_model.tar)的模型及其预训练参数下载，也可以另行下载任意模型，但需要按要求进行修改调整（参见：特别提示）
+本例中已提供[resnet](http://paddle-imagenet-models.bj.bcebos.com/alexnet_model.tar)、[alexnet](http://paddle-imagenet-models.bj.bcebos.com/resnet_50_model.tar)的模型及其预训练参数下载，也可以另行下载任意模型，但需要按要求进行修改调整（参见：特别提示）  
 模型文件放入
 
 	example/models/
