@@ -6,21 +6,21 @@
 - FGSM (no target)
 - CW (target)
 ## 结构分布
-example
-├── images
-│   ├── cat_example.png
-│   └── mytest_list.txt
-├── models
-│   ├── alexnet.py
-│   ├── __init__.py
-│   └── resnet.py
-├── parameters
-│   ├── alexnet
-│   └── resnet_50
-├── imagenet_example_cw.py
-├── imagenet_example_fgsm.py
-├── reader.py
-└── utility.py
+	example
+	├── images
+	│   ├── cat_example.png
+	│   └── mytest_list.txt
+	├── models
+	│   ├── alexnet.py
+	│   ├── __init__.py
+	│   └── resnet.py
+	├── parameters
+	│   ├── alexnet
+	│   └── resnet_50
+	├── imagenet_example_cw.py
+	├── imagenet_example_fgsm.py
+	├── reader.py
+	└── utility.py
 
 例子中包括几部分：
 images目录：放置被攻击的原始图片，可以是多张。mytest_list.txt中记录了需要进行样本生成的该图片名称。
@@ -35,17 +35,22 @@ utility.py：命令行参数及输出处理。
 ### 下载模型和参数
 本例中已提供[resnet](http://paddle-imagenet-models.bj.bcebos.com/alexnet_model.tar)、[alexnet](http://paddle-imagenet-models.bj.bcebos.com/resnet_50_model.tar)的模型及其预训练参数下载，也可以另行下载任意模型，但需要按要求进行修改调整（参见：特别提示）
 模型文件放入
+
 	example/models/
 训练参数文件放入
+
 	example/parameters/
 ### 下载攻击图片
 图片放入
+
 	example/images/
 更新图片配置文件
+
 	example/images/mytest_list.txt
 	将所有需要攻击的图片名称加入其中
 ### 执行攻击
 输入命令
+
 	python imagenet_example_cw.py  --log_debug=True --target=560
 	具体参数
 	--use_gpu:(BOOL) 是否使用GPU
@@ -59,6 +64,7 @@ utility.py：命令行参数及输出处理。
 	注：可信度没有提供成参数，需要在代码中指定，名称confidence_level，畎认设置为0.9，表示90%可信度
 
 执行输出
+
 	root:/AdvBox/example# python imagenet_example_cw.py --use_gpu=True --log_debug=True --target=560
 	-----------  Configuration Arguments -----------
 	batch_size: 256
@@ -92,16 +98,19 @@ utility.py：命令行参数及输出处理。
 	cw attack done
 
 对原图片cat_example.png生成的对抗样本保存在./output目录下
+
 	1_adversary-560-by-CW.png  1_diff-x-by-CW.png  1_original-282-by-CW.png
 adv字样的为攻击样本，diff为在原图中扰动的部分，orig为原图
 
 ## 样本效果
 
 验证样本的实际效果，可以先将输出的样本拷贝到images目录下,在mytest_list.txt中增加这个图片名称
+
 	cp .output/imagenet/1_adversary-560-by-CW.png ./images/
 	vi ./images/mytest_list.txt
 
 再次以inference方式运行example
+
 	root:/AdvBox/example# python imagenet_example_cw.py --use_gpu=True --inference=True
 	
 	-----------  Configuration Arguments -----------
@@ -120,9 +129,9 @@ adv字样的为攻击样本，diff为在原图中扰动的部分，orig为原图
 	Test-1-score: 0.903945684433, class 560, name=./images/1_adversary-560-by-CW.png
 
 ### 显示图片结果
-![图片对比](pic/cw验证结果.png)
+![图片对比](./../pic/cw验证结果.png)
 
-##特别提示
+## 特别提示
 
 - 关于CW算法的使用：
 1、因为该算法需要在IMG数据前进行一系列的计算，当前paddle又无法使用非Data的占位符，所以model要一起被带入CW中执行
