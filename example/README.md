@@ -1,7 +1,7 @@
 # Example
 ## AdvBox对抗样本生成简例
-可对任意图片基于白盒模型进行对抗样本生成
-该简例提供了resnet、alexnet的模型，以及其对imagenet的训练参数，可放置任意图片进行对抗样本生成。target方式还可指定生成样本的可信度。
+可对任意图片基于白盒模型进行对抗样本生成  
+该简例提供了resnet、alexnet的模型，以及其对imagenet的训练参数，可放置任意图片进行对抗样本生成。target方式还可指定生成样本的可信度。  
 提供如下攻击算法的实例：
 - FGSM (no target)
 - CW (target)
