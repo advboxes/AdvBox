@@ -22,14 +22,14 @@
 	├── reader.py
 	└── utility.py
 
-例子中包括几部分：
-images目录：放置被攻击的原始图片，可以是多张。mytest_list.txt中记录了需要进行样本生成的该图片名称。
-models目录：模型文件
-parameters目录：需要下载，用于models内模型的训练参数。
-imagenet_example_cw.py：用例应用主文件，使用CW攻击算法，当前仅支持target方式
-imagenet_example_fgsm.py：用例应用主文件，使用FGSM攻击算法，当前仅支持非target方式
-reader.py：读取原始图片处理。
-utility.py：命令行参数及输出处理。
+例子中包括几部分：  
+images目录：放置被攻击的原始图片，可以是多张。mytest_list.txt中记录了需要进行样本生成的该图片名称  
+models目录：模型文件  
+parameters目录：需要下载，用于models内模型的训练参数  
+imagenet_example_cw.py：用例应用主文件，使用CW攻击算法，当前仅支持target方式  
+imagenet_example_fgsm.py：用例应用主文件，使用FGSM攻击算法，当前仅支持非target方式  
+reader.py：读取原始图片处理  
+utility.py：命令行参数及输出处理  
 
 ## 测试应用
 ### 下载模型和参数
