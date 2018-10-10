@@ -130,6 +130,8 @@ AdvBox是一款支持PaddlePaddle、Caffe2、Keras以及TensorFlow平台的AI模
 # 问题反馈
 	
 目前支持通过Github提交[issues](https://github.com/baidu/AdvBox/issues)
+。国内用户（需要通过国内手机号登录）也可以加入我们的知识星球进行交流，扫描二维码即可。
+![知识星球](pic/issue.jpeg)
 
 # 许可
 
@@ -138,6 +140,7 @@ AdvBox循序[Apache License 2.0](https://github.com/baidu/AdvBox/blob/master/LIC
 # 作者
 
 - 百度安全实验室 xlab
+
 
 # 参考文献
 
