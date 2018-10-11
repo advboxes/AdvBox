@@ -12,6 +12,7 @@
  - [示例4:黑盒攻击基于MNIST数据集的CNN模型](#示例4:黑盒攻击基于MNIST数据集的CNN模型)
  - [示例5:使用FeatureFqueezing加固基于MNIST数据集的CNN模型](#示例5:使用FeatureFqueezing加固基于MNIST数据集的CNN模型)
  - [示例6:使用GaussianAugmentation加固基于MNIST数据集的CNN模型](#示例6:使用GaussianAugmentation加固基于MNIST数据集的CNN模型)
+ - [示例7:白盒攻击PyTorch下基于MNIST数据集的CNN模型](#示例7：白盒攻击PyTorch下基于MNIST数据集的CNN模型)
 
 ## 示例1:白盒攻击基于MNIST数据集的CNN模型
 首先需要生成攻击用的模型，advbox的测试模型是一个识别MNIST的cnn模型。
@@ -146,3 +147,12 @@ caffe的模型文件通常有两个组成，假设保存到models.caffe/lenet/�
 攻击加固后的CNN模型，攻击成功率下降为36.2%。
 
 	[TEST_DATASET]: fooling_count=181, total_count=500, fooling_rate=0.362000 fgsm attack done with  GaussianAugmentationDefence
+	
+## 示例7：白盒攻击PyTorch下基于MNIST数据集的CNN模型
+首先需要生成攻击用的模型，advbox的测试模型是一个识别MNIST的cnn模型，模型保存在mnist目录下。
+	
+	python mnist_model_pytorch.py
+
+运行攻击代码，以基于FGSM算法的演示代码为例。
+
+	python mnist_tutorial_fgsm_pytorch.py

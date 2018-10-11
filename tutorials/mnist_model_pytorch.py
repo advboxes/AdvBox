@@ -80,7 +80,7 @@ class Net(torch.nn.Module):
         conv3_out = self.conv3(conv2_out)
         res = conv3_out.view(conv3_out.size(0), -1)
         out = self.dense(res)
-        return out
+        return torch.nn.functional.log_softmax(out, dim=1)
 
 
 """
@@ -117,6 +117,7 @@ def main():
 
             # forward + backward
             outputs = model(inputs)
+
             loss = loss_func(outputs, labels)
             loss.backward()
             optimizer.step()
