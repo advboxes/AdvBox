@@ -153,6 +153,7 @@ class PytorchModel(Model):
 
 
         label = torch.from_numpy(label).to(self._device)
+        #label = torch.Tensor(label).to(self._device)
 
         output=self.predict_tensor(scaled_data).to(self._device)
 
