@@ -35,7 +35,8 @@ class SaliencyMapAttack(Attack):
                max_iter=2000,
                fast=True,
                theta=0.1,
-               max_perturbations_per_pixel=7):
+               max_perturbations_per_pixel=7,
+               two_pix=True):
         """
         Apply the JSMA attack.
         Args:
@@ -44,6 +45,8 @@ class SaliencyMapAttack(Attack):
             fast(bool): Whether evaluate the pixel influence on sum of residual classes.
             theta(float): Perturbation per pixel relative to [min, max] range.
             max_perturbations_per_pixel(int): The max count of perturbation per pixel.
+            two_pix(bool): Whether to select two pixels from salience map which 
+                is used in original paper.
         Return:
             adversary: The Adversary object.
         """
@@ -84,21 +87,39 @@ class SaliencyMapAttack(Attack):
 
                 # get pixel location with highest influence on class
                 idx, p_sign = self._saliency_map(
-                    adv_img, target, labels, mask, fast=fast)
-
-                # apply perturbation
-                adv_img[idx] += -p_sign * theta * (max_ - min_)
-
-                # tracks number of updates for each pixel
-                counts[idx] += 1
-
-                # remove pixel from search domain if it hits the bound
-                if adv_img[idx] <= min_ or adv_img[idx] >= max_:
-                    mask[idx] = 0
-
-                # remove pixel if it was changed too often
-                if counts[idx] >= max_perturbations_per_pixel:
-                    mask[idx] = 0
+                    adv_img, target, labels, mask, fast=fast, two_pix=two_pix)
+                if two_pix:
+                    input_dimension = adv_img.shape[0]
+                    idx = idx[0]
+                    idx1 = idx // input_dimension
+                    idx2 = idx % input_dimension
+                    # apply perturbation
+                    adv_img[idx1] += -p_sign * theta * (max_ - min_)
+                    adv_img[idx2] += -p_sign * theta * (max_ - min_)
+                    # tracks number of updates for each pixel
+                    counts[idx1] += 1
+                    counts[idx2] += 1
+                    # remove pixel from search domain if it hits the bound
+                    if adv_img[idx1] <= min_ or adv_img[idx1] >= max_:
+                        mask[idx1] = 0
+                    if adv_img[idx2] <= min_ or adv_img[idx2] >= max_:
+                        mask[idx2] = 0
+                    # remove pixel if it was changed too often
+                    if counts[idx1] >= max_perturbations_per_pixel:
+                        mask[idx1] = 0
+                    if counts[idx2] >= max_perturbations_per_pixel:
+                        mask[idx2] = 0
+                else:
+                    # apply perturbation
+                    adv_img[idx] += -p_sign * theta * (max_ - min_)
+                    # tracks number of updates for each pixel
+                    counts[idx] += 1
+                    # remove pixel from search domain if it hits the bound
+                    if adv_img[idx] <= min_ or adv_img[idx] >= max_:
+                        mask[idx] = 0
+                    # remove pixel if it was changed too often
+                    if counts[idx] >= max_perturbations_per_pixel:
+                        mask[idx] = 0
 
                 adv_img = np.clip(adv_img, min_, max_)
 
@@ -120,7 +141,7 @@ class SaliencyMapAttack(Attack):
 
         return target_labels
 
-    def _saliency_map(self, image, target, labels, mask, fast=False):
+    def _saliency_map(self, image, target, labels, mask, fast=False, two_pix=True):
         """
         Get pixel location with highest influence on class.
         Args:
@@ -129,8 +150,11 @@ class SaliencyMapAttack(Attack):
             labels(int): The number of classes of the output label.
             mask(list): Each modified pixel with border value is set to zero in mask.
             fast(bool): Whether evaluate the pixel influence on sum of residual classes.
+            two_pix(bool): Whether to select two pixels from salience map which 
+                is used in original paper.
         Return:
-            idx: The index of optimal pixel.
+            idx: The index of optimal pixel (idx = idx1 * input_dimension +
+                idx2 in two pix setting)
             pix_sign: The direction of perturbation
         """
         # pixel influence on target class
@@ -145,13 +169,34 @@ class SaliencyMapAttack(Attack):
                 for label in labels
             ], 0)
 
-        # compute saliency map (take into account both pos. & neg. perturbations)
-        sal_map = np.abs(alphas) * np.abs(betas) * np.sign(alphas * betas)
-
-        # find optimal pixel & direction of perturbation
-        idx = np.argmin(sal_map)
-        idx = np.unravel_index(idx, mask.shape)
-        pix_sign = np.sign(alphas)[idx]
+        if two_pix:
+            # construct two pix matrix to treat it as one pix
+            alphas_col = np.expand_dims(alphas, axis=0)
+            alphas_mat = alphas_col.transpose(1, 0) + alphas_col
+            # we want to select two different piexl
+            np.fill_diagonal(alphas_mat, 0)
+            alphas_mat = alphas_mat.reshape(-1)
+            betas_col = np.expand_dims(betas, axis=0)
+            betas_mat = betas_col.transpose(1, 0) + betas_col
+            # we want to select two different piexl
+            np.fill_diagonal(betas_mat, 0)
+            betas_mat = betas_mat.reshape(-1)
+            # compute saliency map (take into account both pos. & neg.
+            # perturbations)
+            sal_map = np.abs(alphas_mat) * np.abs(betas_mat) * np.sign(
+                alphas_mat * betas_mat)
+            # find optimal pixel & direction of perturbation
+            idx = np.argmin(sal_map)
+            idx = np.unravel_index(idx, sal_map.shape)
+            pix_sign = np.sign(alphas_mat)[idx]
+        else:
+            # compute saliency map (take into account both pos. & neg.
+            # perturbations)
+            sal_map = np.abs(alphas) * np.abs(betas) * np.sign(alphas * betas)
+            # find optimal pixel & direction of perturbation
+            idx = np.argmin(sal_map)
+            idx = np.unravel_index(idx, mask.shape)
+            pix_sign = np.sign(alphas)[idx]
 
         return idx, pix_sign
 
