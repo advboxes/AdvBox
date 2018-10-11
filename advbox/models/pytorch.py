@@ -151,7 +151,7 @@ class PytorchModel(Model):
         scaled_data = torch.from_numpy(scaled_data).to(self._device)
         scaled_data.requires_grad = True
 
-
+        label = np.array([label])
         label = torch.from_numpy(label).to(self._device)
         #label = torch.Tensor(label).to(self._device)
 

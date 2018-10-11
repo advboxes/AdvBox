@@ -89,7 +89,7 @@ def main():
         #print(inputs.shape)
 
         total_count += 1
-        adversary = Adversary(inputs, labels)
+        adversary = Adversary(inputs, labels[0])
 
         # FGSM non-targeted attack
         adversary = attack(adversary, **attack_config)

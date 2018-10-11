@@ -80,7 +80,8 @@ def main(image_path):
     attack_config = {"epsilons": 0.3}
 
     inputs=img
-    labels=np.array([388])
+    #labels=388
+    labels = None
 
     print(inputs.shape)
 
