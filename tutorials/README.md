@@ -6,14 +6,16 @@
 
 ## 目录
 
- - [示例1:白盒攻击基于MNIST数据集的CNN模型](#示例1:白盒攻击基于MNIST数据集的CNN模型)
- - [示例2:白盒攻击基于CIFAR10数据集的ResNet模型](#示例2:白盒攻击基于CIFAR10数据集的ResNet模型)
- - [示例3:白盒攻击caffe下基于MNIST数据集的LeNet模型](#示例3:白盒攻击caffe下基于MNIST数据集的LeNet模型)
- - [示例4:黑盒攻击基于MNIST数据集的CNN模型](#示例4:黑盒攻击基于MNIST数据集的CNN模型)
- - [示例5:使用FeatureFqueezing加固基于MNIST数据集的CNN模型](#示例5:使用FeatureFqueezing加固基于MNIST数据集的CNN模型)
- - [示例6:使用GaussianAugmentation加固基于MNIST数据集的CNN模型](#示例6:使用GaussianAugmentation加固基于MNIST数据集的CNN模型)
- - [示例7:白盒攻击PyTorch下基于MNIST数据集的CNN模型](#示例7：白盒攻击PyTorch下基于MNIST数据集的CNN模型)
-
+ - 示例1:白盒攻击基于MNIST数据集的CNN模型
+ - 示例2:白盒攻击基于CIFAR10数据集的ResNet模型
+ - 示例3:白盒攻击caffe下基于MNIST数据集的LeNet模型
+ - 示例4:黑盒攻击基于MNIST数据集的CNN模型
+ - 示例5:使用FeatureFqueezing加固基于MNIST数据集的CNN模型
+ - 示例6:使用GaussianAugmentation加固基于MNIST数据集的CNN模型
+ - 示例7:白盒攻击PyTorch下基于MNIST数据集的CNN模型
+ - 示例8:白盒攻击PyTorch下基于IMAGENET数据集的AlexNet模型
+ 
+ 
 ## 示例1:白盒攻击基于MNIST数据集的CNN模型
 首先需要生成攻击用的模型，advbox的测试模型是一个识别MNIST的cnn模型。
 
@@ -156,3 +158,22 @@ caffe的模型文件通常有两个组成，假设保存到models.caffe/lenet/�
 运行攻击代码，以基于FGSM算法的演示代码为例。
 
 	python mnist_tutorial_fgsm_pytorch.py
+	
+## 示例8:白盒攻击PyTorch下基于IMAGENET数据集的AlexNet模型
+首先运行工具imagenet_tools_pytorch.py，对原始图片cropped_panda.jpg进行预测，预测标签为388
+
+	python imagenet_tools_pytorch.py cropped_panda.jpg 
+	image_path:cropped_panda.jpg
+	imagenet_tools_pytorch.py[line:46] INFO CUDA Available: False
+	label=388
+
+运行攻击脚本，生成对抗样本图片img_adv.png。
+
+	python imagenet_tutorial_fgsm_pytorch.py
+
+首先运行工具imagenet_tools_pytorch.py，对图片img_adv.png进行预测，预测标签为538，满足预期。
+
+	python imagenet_tools_pytorch.py img_adv.png 
+	image_path:img_adv.png
+	imagenet_tools_pytorch.py[line:46] INFO CUDA Available: False
+	label=538
