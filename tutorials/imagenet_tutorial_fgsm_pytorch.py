@@ -1,3 +1,5 @@
+#coding=utf-8
+
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,7 +68,17 @@ def main(image_path):
 
 
     # Initialize the network
-    model = models.resnet18(pretrained=True).to(device).eval()
+    #Alexnet
+    model = models.alexnet(pretrained=True).to(device).eval()
+    #model = models.resnet18(pretrained=True).to(device).eval()
+
+    #print(model)
+
+    #设置为不保存梯度值 自然也无法修改
+    for param in model.parameters():
+        #print(param)
+        #print(param.requires_grad)
+        param.requires_grad = False
 
     loss_func=nn.CrossEntropyLoss()
 
@@ -77,7 +89,8 @@ def main(image_path):
     #attack = FGSMT(m)
     attack = FGSM(m)
 
-    attack_config = {"epsilons": 0.3}
+    # 静态epsilons
+    attack_config = {"epsilons": 0.2}
 
     inputs=img
     #labels=388
@@ -88,10 +101,10 @@ def main(image_path):
     adversary = Adversary(inputs, labels)
     #adversary = Adversary(inputs, 388)
 
-    #tlabel = np.array([489])
+    #tlabel = 489
     #adversary.set_target(is_targeted_attack=True, target_label=tlabel)
 
-    # FGSM non-targeted attack
+    # FGSM targeted attack
     adversary = attack(adversary, **attack_config)
 
 
