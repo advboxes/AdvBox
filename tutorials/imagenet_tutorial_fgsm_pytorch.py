@@ -80,17 +80,17 @@ def main(image_path):
         #print(param.requires_grad)
         param.requires_grad = False
 
-    loss_func=nn.CrossEntropyLoss()
+    #loss_func=nn.CrossEntropyLoss()
 
     # advbox demo
     m = PytorchModel(
-        model, loss_func,(-1, 1),
+        model, None,(-1, 1),
         channel_axis=1)
-    #attack = FGSMT(m)
-    attack = FGSM(m)
+    attack = FGSMT(m)
+    #attack = FGSM(m)
 
     # 静态epsilons
-    attack_config = {"epsilons": 0.2}
+    attack_config = {"epsilons": 0.2, "epsilon_steps": 1, "steps": 100}
 
     inputs=img
     #labels=388
@@ -101,10 +101,10 @@ def main(image_path):
     adversary = Adversary(inputs, labels)
     #adversary = Adversary(inputs, 388)
 
-    #tlabel = 489
-    #adversary.set_target(is_targeted_attack=True, target_label=tlabel)
+    tlabel = 538
+    adversary.set_target(is_targeted_attack=True, target_label=tlabel)
 
-    # FGSM targeted attack
+
     adversary = attack(adversary, **attack_config)
 
 

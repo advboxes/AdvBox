@@ -63,7 +63,8 @@ def main(image_path):
     img = Variable(torch.from_numpy(img).to(device).float())
 
     # Initialize the network
-    model = models.resnet18(pretrained=True).to(device).eval()
+    #model = models.resnet18(pretrained=True).to(device).eval()
+    model = models.alexnet(pretrained=True).to(device).eval()
 
     label=np.argmax(model(img).data.cpu().numpy())
 

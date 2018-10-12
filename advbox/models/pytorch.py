@@ -28,6 +28,7 @@ logger=logging.getLogger(__name__)
 
 import torchvision
 from torch.autograd import Variable
+import torch.nn as nn
 
 #直接加载pb文件
 class PytorchModel(Model):
@@ -51,6 +52,8 @@ class PytorchModel(Model):
 
 
         self._model = model
+
+        #暂时不支持自定义loss
         self._loss=loss
 
         self._device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -157,7 +160,9 @@ class PytorchModel(Model):
 
         output=self.predict_tensor(scaled_data).to(self._device)
 
-        loss=self._loss(output, label)
+        #loss=self._loss(output, label)
+        ce = nn.CrossEntropyLoss()
+        loss=-ce(output, label)
 
         #计算梯度
         # Zero all existing gradients
