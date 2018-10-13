@@ -2,7 +2,7 @@
 
 ![logo](pic/logo.png)
 
-AdvBox是一款由百度安全实验室研发，在百度大范围使用的支持PaddlePaddle、PyTorch、Caffe2、Keras以及TensorFlow平台的AI模型安全工具箱。AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持列表如下。
+AdvBox是一款由百度安全实验室研发，在百度大范围使用的支持PaddlePaddle、PyTorch、Caffe2、MxNet、Keras以及TensorFlow平台的AI模型安全工具箱。AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持列表如下。
 
 ### 白盒攻击算法
 
@@ -121,6 +121,7 @@ AdvBox是一款由百度安全实验室研发，在百度大范围使用的支�
  - [示例6：使用GaussianAugmentation加固基于MNIST数据集的CNN模型](tutorials/README.md)
  - [示例7：白盒攻击PyTorch下基于MNIST数据集的CNN模型](tutorials/README.md)
  - [示例8：白盒攻击PyTorch下基于IMAGENET数据集的AlexNet模型](tutorials/README.md)
+ - [示例9：白盒攻击MxNet下基于IMAGENET数据集的AlexNet模型](tutorials/README.md)
 
 ## 典型应用
 

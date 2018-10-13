@@ -14,6 +14,7 @@
  - 示例6:使用GaussianAugmentation加固基于MNIST数据集的CNN模型
  - 示例7:白盒攻击PyTorch下基于MNIST数据集的CNN模型
  - 示例8:白盒攻击PyTorch下基于IMAGENET数据集的AlexNet模型
+ - 示例9:白盒攻击MxNet下基于IMAGENET数据集的AlexNet模型
  
  
 ## 示例1:白盒攻击基于MNIST数据集的CNN模型
@@ -160,7 +161,7 @@ caffe的模型文件通常有两个组成，假设保存到models.caffe/lenet/�
 	python mnist_tutorial_fgsm_pytorch.py
 	
 ## 示例8:白盒攻击PyTorch下基于IMAGENET数据集的AlexNet模型
-首先运行工具imagenet_tools_pytorch.py，对原始图片cropped_panda.jpg进行预测，预测标签为388
+首先运行工具imagenet\_tools\_pytorch.py，对原始图片cropped_panda.jpg进行预测，预测标签为388
 
 	python imagenet_tools_pytorch.py cropped_panda.jpg 
 	image_path:cropped_panda.jpg
@@ -171,9 +172,26 @@ caffe的模型文件通常有两个组成，假设保存到models.caffe/lenet/�
 
 	python imagenet_tutorial_fgsm_pytorch.py
 
-首先运行工具imagenet_tools_pytorch.py，对图片img_adv.png进行预测，预测标签为538，满足预期。
+首先运行工具imagenet\_tools\_pytorch.py，对图片img_adv.png进行预测，预测标签为538，满足预期。
 
 	python imagenet_tools_pytorch.py img_adv.png 
 	image_path:img_adv.png
 	imagenet_tools_pytorch.py[line:46] INFO CUDA Available: False
 	label=538
+
+## 示例9:白盒攻击MxNet下基于IMAGENET数据集的AlexNet模型
+首先运行工具imagenet\_tools\_mxnet.py，对原始图片cropped_panda.jpg进行预测，预测标签为388
+
+	python imagenet_tools_mxnet.py cropped_panda.jpg 
+	image_path:cropped_panda.jpg
+	388
+
+运行攻击脚本，生成对抗样本图片img_adv.png。
+
+	python imagenet_tutorial_fgsm_mxnet.py
+
+首先运行工具imagenet_tools_mxnet.py，对图片img_adv.png进行预测，预测标签为538，满足预期。
+
+	python imagenet_tools_mxnet.py img_adv.png 
+	image_path:img_adv.png
+	538
