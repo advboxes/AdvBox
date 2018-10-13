@@ -22,28 +22,25 @@ logger=logging.getLogger(__name__)
 import sys
 sys.path.append("..")
 
-import torch
-import torchvision
-from torchvision import datasets, transforms
-from torch.autograd import Variable
-import torch.utils.data.dataloader as Data
-import torch.nn as nn
-from torchvision import models
+from mxnet import gluon
+import mxnet as mx
+from mxnet.gluon import nn
+from mxnet import ndarray as nd
+import matplotlib.pyplot as plt
+import cv2
+from mxnet import image
+from mxnet import autograd
 
 
 import numpy as np
-import cv2
-
 
 def main(image_path):
 
     print("image_path:{}".format(image_path))
 
-    # Define what device we are using
-    logging.info("CUDA Available: {}".format(torch.cuda.is_available()))
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    alexnet = mx.gluon.model_zoo.vision.alexnet(pretrained=True)
 
-
+    #print(alexnet)
 
     orig = cv2.imread(image_path)[..., ::-1]
     orig = cv2.resize(orig, (224, 224))
@@ -57,16 +54,11 @@ def main(image_path):
 
     img=np.expand_dims(img, axis=0)
 
-    img = Variable(torch.from_numpy(img).to(device).float())
+    array = mx.nd.array(img)
 
-    # Initialize the network
-    #model = models.resnet18(pretrained=True).to(device).eval()
-    model = models.alexnet(pretrained=True).to(device).eval()
-
-    label=np.argmax(model(img).data.cpu().numpy())
-
-    print("label={}".format(label))
-
+    outputs=alexnet(array).asnumpy()
+    label = np.argmax(outputs)
+    print(label)
 
 
 if __name__ == '__main__':
