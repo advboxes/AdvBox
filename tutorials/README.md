@@ -15,6 +15,7 @@
  - 示例7:白盒攻击PyTorch下基于MNIST数据集的CNN模型
  - 示例8:白盒攻击PyTorch下基于IMAGENET数据集的AlexNet模型
  - 示例9:白盒攻击MxNet下基于IMAGENET数据集的AlexNet模型
+ - 示例10:黑盒攻击graphpipe下的基于tensorflow的squeezenet模型
  
  
 ## 示例1:白盒攻击基于MNIST数据集的CNN模型
@@ -195,3 +196,26 @@ caffe的模型文件通常有两个组成，假设保存到models.caffe/lenet/�
 	python imagenet_tools_mxnet.py img_adv.png 
 	image_path:img_adv.png
 	538
+
+## 示例10:黑盒攻击graphpipe下的基于tensorflow的squeezenet模型
+建议在docker环境下运行graphpipe，启动graphpipe下的基于tensorflow的squeezenet模型。
+
+	docker run -it --rm \
+	    -e https_proxy=${https_proxy} \
+	    -p 9000:9000 \
+	    sleepsonthefloor/graphpipe-tf:cpu \
+	    --model=https://oracle.github.io/graphpipe/models/squeezenet.pb \
+	    --listen=0.0.0.0:9000
+	    
+安装graphpipe的python客户端库。
+
+	pip install graphpipe
+	pip install pillow 
+	
+在applications/graphpipe下运行攻击代码，攻击成功，label由504变成659。
+
+	applications/graphpipe/graphpipe_demo.py
+	localsearch.py[line:293] INFO try 10 times  selected pixel indices:[ 0 16 15 14 13]
+	localsearch.py[line:308] INFO adv_label=659 adv_label_pro=0.00122496963013
+	attack success, original_label=504, adversarial_label=659
+	graphpipe_localsearch.py[line:100] INFO LocalSearchAttack attack done

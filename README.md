@@ -122,6 +122,7 @@ AdvBox是一款由百度安全实验室研发，在百度大范围使用的支�
  - [示例7：白盒攻击PyTorch下基于MNIST数据集的CNN模型](tutorials/README.md)
  - [示例8：白盒攻击PyTorch下基于IMAGENET数据集的AlexNet模型](tutorials/README.md)
  - [示例9：白盒攻击MxNet下基于IMAGENET数据集的AlexNet模型](tutorials/README.md)
+ - [示例10:黑盒攻击graphpipe下的基于tensorflow的squeezenet模型](tutorials/README.md)
 
 ## 典型应用
 

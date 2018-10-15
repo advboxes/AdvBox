@@ -134,6 +134,11 @@ class LocalSearchAttack(Attack):
         super(LocalSearchAttack, self).__init__(model)
         self.support_targeted = support_targeted
 
+
+    def softmax(self, x):
+        e_x = np.exp(x - np.max(x))
+        return e_x / e_x.sum()
+
     def _apply(self,adversary,r=1.5, p=10., d=5, t=5, R=150):
 
         if not self.support_targeted:
@@ -146,8 +151,12 @@ class LocalSearchAttack(Attack):
 
         min_, max_ = self.model.bounds()
 
+        logger.info("LocalSearchAttack parameter:min_={}, max_={} ".format(min_, max_ ))
+
         # 强制拷贝 避免针对adv_img的修改也影响adversary.original
         adv_img = np.copy(adversary.original)
+
+        logger.info("adv_img:{}".format(adv_img))
 
         original_label=adversary.original_label
 
@@ -175,7 +184,7 @@ class LocalSearchAttack(Attack):
         #正则化到[-0.5,0.5]区间内
         def normalize(im):
 
-            im = im - (min_ + max_) / 2
+            im = im -(min_ + max_) / 2
             im = im / (max_ - min_)
 
             LB = -1 / 2
@@ -190,6 +199,10 @@ class LocalSearchAttack(Attack):
 
         #归一化
         adv_img, LB, UB = normalize(adv_img)
+
+        logger.info("normalize adv_img:{}".format(adv_img))
+
+
         channels = adv_img.shape[self.model.channel_axis()]
 
         #随机选择一部分像素点 总数不超过全部的10% 最大为128个点
@@ -217,20 +230,39 @@ class LocalSearchAttack(Attack):
         # 这块的实现没有完全参考论文
         def cyclic(r, Ibxy):
 
+            #logger.info("cyclic Ibxy:{}".format(Ibxy))
             result = r * Ibxy
-            if result < LB:
+            #logger.info("cyclic result:{}".format(result))
+
+            """
+            foolbox的实现 存在极端情况  本来只是有一个元素超过UB，结果一减 都完蛋了
+            if result.any() < LB:
                 #result = result/r + (UB - LB)
+                logger.info("cyclic result:{}".format(result))
                 result = result + (UB - LB)
+                logger.info("cyclic result:{}".format(result))
                 #result=LB
-            elif result > UB:
+            elif result.any()  > UB:
                 #result = result/r - (UB - LB)
+                logger.info("cyclic result:{}".format(result))
                 result = result - (UB - LB)
+                logger.info("cyclic result:{}".format(result))
                 #result=UB
+            """
+
+            if result.any() < LB:
+                result = result + (UB - LB)
+            elif result.any() > UB:
+                result = result - (UB - LB)
 
 
-            if (result < LB) or (result > UB):
-                logger.info("assert LB <= result <= UB result={0}".format(result))
-                assert LB <= result <= UB
+
+            result=result.clip(LB,UB)
+
+            #logger.info("cyclic result:{}".format(result))
+
+            #assert LB <= np.all(result) <= UB
+
             return result
 
         Ii = adv_img
@@ -272,9 +304,11 @@ class LocalSearchAttack(Attack):
 
             f = self.model.predict(unnormalize(Ii))
             adv_label = np.argmax(f)
-            logger.info("adv_label={0}".format(adv_label))
+            adv_label_pro=self.softmax(f)[adv_label]
+            logger.info("adv_label={0} adv_label_pro={1}".format(adv_label,adv_label_pro))
             # print("adv_label={0}".format(adv_label))
-            if adversary.try_accept_the_example(adv_img, adv_label):
+            if adversary.try_accept_the_example(unnormalize(Ii), adv_label):
+
                 return adversary
 
             #扩大搜索范围，把原有点周围2d乘以2d范围内的点都拉进来 去掉超过【w，h】的点
