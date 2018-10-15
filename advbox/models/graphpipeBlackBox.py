@@ -143,9 +143,9 @@ class graphpipeBlackBoxModel_onnx(Model):
 
         predict = remote.execute(self._remote_url, scaled_data)
 
-        print(predict.shape)
+        predict = predict.reshape([1,np.max(predict.shape)])
+
         predict = np.squeeze(predict, axis=0)
-        print(predict.shape)
 
         return predict
 

@@ -65,9 +65,13 @@ def main(image_path):
 
     print(pred.shape)
 
-    pred=np.squeeze(pred,axis=(2,))
+    dims=pred.shape
+    dim=np.max(dims)
+    print(dim)
+
+    pred=pred.reshape([1,dim])
     #pred = np.squeeze(pred)
-    print(pred)
+    #print(pred)
     print(pred.shape)
 
     print("{}".format(np.argmax(pred, axis=1)))
