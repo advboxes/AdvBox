@@ -52,6 +52,13 @@ def main(image_path):
     #print(data.shape)
 
     pred = remote.execute("http://127.0.0.1:9000", data)
+
+    print(pred.shape)
+
+    #pred=np.squeeze(pred,axis=2)
+
+    print(pred.shape)
+
     print("{}".format(np.argmax(pred, axis=1)))
 
 

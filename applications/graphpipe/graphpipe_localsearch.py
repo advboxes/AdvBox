@@ -43,12 +43,26 @@ from advbox.models.graphpipeBlackBox import graphpipeBlackBoxModel
 
 '''
 #服务器端启动方式为：
+
+Tensorflow
+
+cpu
 docker run -it --rm \
-    -e https_proxy=${https_proxy} \
-    -p 9000:9000 \
-    sleepsonthefloor/graphpipe-tf:cpu \
-    --model=https://oracle.github.io/graphpipe/models/squeezenet.pb \
-    --listen=0.0.0.0:9000
+      -e https_proxy=${https_proxy} \
+      -p 9000:9000 \
+      sleepsonthefloor/graphpipe-tf:cpu \
+      --model=https://oracle.github.io/graphpipe/models/squeezenet.pb \
+      --listen=0.0.0.0:9000
+
+ONNX
+
+docker run -it --rm \
+      -e https_proxy=${https_proxy} \
+      -p 9000:9000 \
+      sleepsonthefloor/graphpipe-onnx:cpu \
+      --value-inputs=https://oracle.github.io/graphpipe/models/squeezenet.value_inputs.json \
+      --model=https://oracle.github.io/graphpipe/models/squeezenet.onnx \
+      --listen=0.0.0.0:9000
 '''
 
 def main():

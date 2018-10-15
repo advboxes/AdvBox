@@ -75,15 +75,6 @@ class graphpipeBlackBoxModel(Model):
 
         predict = np.squeeze(predict, axis=0)
 
-        #logger.info("predict={} index={}", predict[np.argmax(predict)], np.argmax(predict))
-        #logger.info(predict)
-        #pro=self.softmax(predict)
-
-        #label=np.argmax(pro)
-        #pro=pro[label]
-
-        #logger.info("lable={} pro={}".format(label,pro))
-
         return predict
 
     def num_classes(self):
