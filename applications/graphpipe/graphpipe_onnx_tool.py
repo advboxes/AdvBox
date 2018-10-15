@@ -28,11 +28,21 @@ logger=logging.getLogger(__name__)
 '''
 #服务器端启动方式为：
 docker run -it --rm \
-    -e https_proxy=${https_proxy} \
-    -p 9000:9000 \
-    sleepsonthefloor/graphpipe-tf:cpu \
-    --model=https://oracle.github.io/graphpipe/models/squeezenet.pb \
-    --listen=0.0.0.0:9000
+      -e https_proxy=${https_proxy} \
+      -p 9000:9000 \
+      sleepsonthefloor/graphpipe-onnx:cpu \
+      --value-inputs=https://oracle.github.io/graphpipe/models/squeezenet.value_inputs.json \
+      --model=https://oracle.github.io/graphpipe/models/squeezenet.onnx \
+      --listen=0.0.0.0:9000
+
+
+docker run -it --rm \
+        -v "$PWD:/models/"  \
+        -p 9000:9000 \
+        sleepsonthefloor/graphpipe-onnx:cpu \
+        --value-inputs=https://oracle.github.io/graphpipe/models/squeezenet.value_inputs.json \
+        --model=/models/squeezenet.onnx \
+        --listen=0.0.0.0:9000
 '''
 
 from io import BytesIO
@@ -55,8 +65,9 @@ def main(image_path):
 
     print(pred.shape)
 
-    pred = np.squeeze(pred, axis=0)
-
+    pred=np.squeeze(pred,axis=(2,))
+    #pred = np.squeeze(pred)
+    print(pred)
     print(pred.shape)
 
     print("{}".format(np.argmax(pred, axis=1)))
