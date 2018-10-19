@@ -4,7 +4,7 @@
 
 AdvBox是一款由百度安全实验室研发，在百度大范围使用的AI模型安全工具箱，目前原生支持PaddlePaddle、PyTorch、Caffe2、MxNet、Keras以及TensorFlow平台，方便广大开发者和安全工程师可以使用自己熟悉的框架。
 
-AdvBox同时支持[GraphPipe](https://oracle.github.io/graphpipe),屏蔽了底层使用的深度学习平台，用户可以通过几个命令就可以对PaddlePaddle、PyTorch、Caffe2、MxNet、CNTK、ScikitLearn以及TensorFlow平台生成的模型文件进行黑盒攻击。
+AdvBox同时支持[GraphPipe](https://oracle.github.io/graphpipe),屏蔽了底层使用的深度学习平台，用户可以零编码，仅通过几个命令就可以对PaddlePaddle、PyTorch、Caffe2、MxNet、CNTK、ScikitLearn以及TensorFlow平台生成的模型文件进行黑盒攻击。
 
 ![GraphPipe](pic/GraphPipe.png)
 
@@ -59,6 +59,84 @@ AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持�
 	pip install -r requirements.txt
 
 # 文档
+
+## 零编码黑盒攻击示例
+
+为了最小化学习和使用成本，AdvBox提供了零编码黑盒攻击工具。以Tensorflow为例，Tensorflow提供了丰富[预训练模型](https://github.com/tensorflow/models)，假设攻击常见的图像分类模型squeezenet。
+首先在docker环境下启动基于GraphPipe的预测服务，GraphPipe环境已经完全封装在docker镜像，不用单独安装。
+
+	docker run -it --rm \
+	      -e https_proxy=${https_proxy} \
+	      -p 9000:9000 \
+	      sleepsonthefloor/graphpipe-tf:cpu \
+	      --model=https://oracle.github.io/graphpipe/models/squeezenet.pb \
+	      --listen=0.0.0.0:9000
+
+如果网速有限，可以先把squeezenet.pb下载，使用本地模式启动。
+
+	docker run -it --rm \
+	      -e https_proxy=${https_proxy} \
+	      -v "$PWD:/models/"  \
+	      -p 9000:9000 \
+	      sleepsonthefloor/graphpipe-tf:cpu \
+	      --model=/models/squeezenet.pb \
+	      --listen=0.0.0.0:9000
+
+然后启动攻击脚本，使用默认参数即可，仅需指定攻击的url。目前提供的黑盒攻击算法为LocalSearch。
+
+	python advbox_tools.py -u http://your ip:9000
+
+经过迭代攻击后，展现攻击结果如下图所示，具体运行时间依赖于网速，强烈建议在本机上起docker服务，可以大大提升攻击速度。
+
+	localsearch.py[line:293] INFO try 3 times  selected pixel indices:[ 0 23 24 25 26]
+	localsearch.py[line:308] INFO adv_label=504 adv_label_pro=0.00148941285443
+	localsearch.py[line:293] INFO try 4 times  selected pixel indices:[ 0 22 23 24 25]
+	localsearch.py[line:308] INFO adv_label=463 adv_label_pro=0.00127408828121
+	attack success, original_label=504, adversarial_label=463
+	Save file :adversary_image.jpg
+	LocalSearchAttack attack done. Cost time 100.435777187s
+
+![demo_advbox](demo_advbox.png)
+
+以[ONNX](https://onnx.ai/)为例，目前PaddlePaddle、PyTorch、Caffe2、MxNet、CNTK、ScikitLearn均支持把模型保存成ONNX格式。对于ONNX格式的文件，使用类似的命令启动docker环境即可。
+
+	docker run -it --rm \
+	      -e https_proxy=${https_proxy} \
+	      -p 9000:9000 \
+	      sleepsonthefloor/graphpipe-onnx:cpu \
+	      --value-inputs=https://oracle.github.io/graphpipe/models/squeezenet.value_inputs.json \
+	      --model=https://oracle.github.io/graphpipe/models/squeezenet.onnx \
+	      --listen=0.0.0.0:9000
+
+advbox\_tools.py提供了丰富的配置参数。
+
+	Usage: advbox_tools.py [options]	
+	Options:
+	  -h, --help            show this help message and exit
+	  -u URL, --url=URL     graphpipe url [default: http://127.0.0.1:9000]
+	  -m M, --model=M       Deep learning frame [default: onnx] ;must be in
+	                        [onnx,tersorflow]
+	  -R R, --rounds=R      An upper bound on the number of iterations [default:
+	                        200]
+	  -p P, --p-parameter=P
+	                        Perturbation parameter that controls the pixel
+	                        sensitivity estimation [default: 0.3]
+	  -r R, --r-parameter=R
+	                        Perturbation parameter that controls the cyclic
+	                        perturbation;must be in [0, 2]
+	  -d D, --d-parameter=D
+	                        The half side length of the neighborhood square
+	                        [default: 5]
+	  -t T, --t-parameter=T
+	                        The number of pixels perturbed at each round [default:
+	                        5]
+	  -i INPUT_FILE, --input-file=INPUT_FILE
+	                        Original image file [default: mug227.png]
+	  -o OUTPUT_FILE, --output-file=OUTPUT_FILE
+	                        Adversary image file [default: adversary_image.jpg]
+	  -c C, --channel_axis=C
+	                        Channel_axis [default: 0] ;must be in 0,1,2,3
+
 
 ## Keras示例
 
