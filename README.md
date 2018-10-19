@@ -108,7 +108,7 @@ AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持�
 	      --model=https://oracle.github.io/graphpipe/models/squeezenet.onnx \
 	      --listen=0.0.0.0:9000
 
-advbox\_tools.py提供了丰富的配置参数。
+advbox\_tools.py提供了丰富的配置参数，其中LocalSearch算法相关参数的设置可以参考[论文](paper/blackBoxAttack/Simple%20Black-Box%20Adversarial%20Perturbations%20for%20Deep%20Networks.pdf)
 
 	Usage: advbox_tools.py [options]	
 	Options:
