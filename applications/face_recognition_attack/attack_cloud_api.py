@@ -115,4 +115,13 @@ if __name__ == '__main__':
     #batch_test_t()
 
     #批量测试xf
-    batch_test_xf()
+    #batch_test_xf()
+
+    input_pic = "wanghaifeng.png"
+    target_pic = "robin.png"
+
+    print("Test QQ:")
+    test_t("wanghaifeng_2_robin.png", target_pic)
+
+    print("Test XF:")
+    test_xf("wanghaifeng_2_robin.png", target_pic)

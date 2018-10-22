@@ -28,7 +28,7 @@ sys.path.append("../../")
 from  advbox.attacks.tf.tools import  fgsm
 
 
-sys.path.append("../thirdparty/facenet/src")
+sys.path.append("../../thirdparty/facenet/src")
 import facenet
 
 
@@ -119,8 +119,8 @@ class FacenetFR():
 
         target_emb = self.generate_embedding(target_pic)
 
-        #攻击步长
-        eta = 0.01
+        #攻击步长 默认为0.01
+        eta = 0.004
         #loss函数目的是将起下降
         loss = tf.sqrt(tf.reduce_sum(tf.square(embeddings - target_emb)))
 
@@ -136,9 +136,9 @@ class FacenetFR():
             input_image, (-1, input_image.shape[0], input_image.shape[1], input_image.shape[2]))
 
 
-        #损失函数小于adv_loss_stop 认为满足需要了 退出
-        adv_loss_stop=0.01
-        #loss阈值 衡量前后两次loss差别过小 认为已经稳定了 收敛了 连续loss_cnt_threshold次小于loss_limit退出
+        #损失函数小于adv_loss_stop 认为满足需要了 退出 默认0.1
+        adv_loss_stop=0.06
+        #loss阈值 衡量前后两次loss差别过小 认为已经稳定了 收敛了 连续loss_cnt_threshold次小于loss_limit退出 默认0.0008
         loss_limit = 0.0008
         loss_cnt_threshold = 10
         #最大迭代次数
@@ -198,8 +198,11 @@ class FacenetFR():
 if __name__ == '__main__':
     fr = FacenetFR()
 
-    input_pic = "Bill_Gates_0001.png"
-    target_pic = "Michael_Jordan_0002.png"
+    #input_pic = "Bill_Gates_0001.png"
+    #target_pic = "Michael_Jordan_0002.png"
+    input_pic = "wanghaifeng.png"
+    #input_pic = "zhangyaqing.jpg"
+    target_pic = "robin.png"
     # print fr.compare(input_pic,target_pic)
 
     fr.generate_adv_whitebox(input_pic, target_pic)
