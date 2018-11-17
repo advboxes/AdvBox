@@ -286,10 +286,10 @@ class LocalSearchAttack(Attack):
                 return scores
 
 
-            #选择影响力最大的t个点进行扰动 抓主要矛盾
+            #选择影响力最大的t个点进行扰动 抓主要矛盾 这里需要注意 np.argsort是升序 所以要取倒数的几个
             scores = score(L)
 
-            indices = np.argsort(scores)[:t]
+            indices = np.argsort(scores)[:-t]
             logger.info("try {0} times  selected pixel indices:{1}".format(try_time,str(indices)))
 
             PxPy_star = PxPy[indices]
