@@ -107,7 +107,7 @@ def main(modulename,imagename):
 
         show_images_diff(original_image,adversary_image)
 
-    print("deepfool non-target attack done")
+    print("FGSM non-target attack done")
 
 
 
