@@ -76,8 +76,11 @@ class PaddleModel(Model):
             for j in six.moves.range(block.op_size()):
                 op = block.op(j)
                 if op.has_attr('is_test') and op.type != 'batch_norm_grad':
-                    op.set_attr('is_test', True)
-
+                    # 兼容旧版本 paddle
+                    if hasattr(op, 'set_attr'):
+                        op.set_attr('is_test', True)
+                    else:
+                        op._set_attr('is_test', True)
         # gradient
         loss = self._program.block(0).var(self._cost_name)
         param_grads = fluid.backward.append_backward(
