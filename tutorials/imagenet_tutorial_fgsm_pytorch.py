@@ -64,7 +64,7 @@ def main(image_path):
     img = (img - mean) / std
     img = img.transpose(2, 0, 1)
 
-    img = Variable(torch.from_numpy(img).to(device).float().unsqueeze(0)).numpy()
+    img = Variable(torch.from_numpy(img).to(device).float().unsqueeze(0)).cpu().numpy()
 
 
     # Initialize the network
