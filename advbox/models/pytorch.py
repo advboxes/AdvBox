@@ -39,6 +39,7 @@ class PytorchModel(Model):
                  loss,
                  bounds,
                  channel_axis=3,
+                 nb_classes=10,
                  preprocess=None):
 
         import torch
@@ -55,6 +56,8 @@ class PytorchModel(Model):
 
         #暂时不支持自定义loss
         self._loss=loss
+
+        self._nb_classes=nb_classes
 
         self._device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
