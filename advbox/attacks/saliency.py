@@ -74,7 +74,8 @@ class SaliencyMapAttack(Attack):
 
             for step in range(max_iter):
                 adv_img = np.clip(adv_img, min_, max_)
-                adv_label = np.argmax(self.model.predict(adv_img))
+                logit=self.model.predict(adv_img)
+                adv_label = np.argmax(logit)
                 if adversary.try_accept_the_example(adv_img, adv_label):
                     return adversary
 
@@ -82,8 +83,8 @@ class SaliencyMapAttack(Attack):
                 if not any(mask.flatten()):
                     return adversary
 
-                logging.info('step = {}, original_label = {}, adv_label={}'.
-                             format(step, adversary.original_label, adv_label))
+                logging.info('step = {}, original_label = {}, adv_label={} logit={}'.
+                             format(step, adversary.original_label, adv_label,logit[adversary.target_label]))
 
                 # get pixel location with highest influence on class
                 idx, p_sign = self._saliency_map(
@@ -111,14 +112,18 @@ class SaliencyMapAttack(Attack):
                         mask[idx2] = 0
                 else:
                     # apply perturbation
-                    adv_img[idx] += -p_sign * theta * (max_ - min_)
+                    adv_img[idx] += p_sign * theta * (max_ - min_)
                     # tracks number of updates for each pixel
                     counts[idx] += 1
                     # remove pixel from search domain if it hits the bound
                     if adv_img[idx] <= min_ or adv_img[idx] >= max_:
+                        logging.info('adv_img[idx] {} is over'.
+                                     format(adv_img[idx]))
                         mask[idx] = 0
                     # remove pixel if it was changed too often
                     if counts[idx] >= max_perturbations_per_pixel:
+                        logging.info('adv_img[idx] {} is over max_perturbations_per_pixel'.
+                                     format(adv_img[idx]))
                         mask[idx] = 0
 
                 adv_img = np.clip(adv_img, min_, max_)
