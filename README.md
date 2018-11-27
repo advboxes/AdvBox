@@ -60,6 +60,19 @@ AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持�
 
 # 文档
 
+
+##  新版ebook教程
+AdvBox从0.4版开始，支持使用Jupyter Notebook格式的ebook教程，便于用户快速掌握。
+
+| 开发框架 | 数据集 | 被攻击模型 | 攻击算法 | Jupyter Notebook |
+| ------ | ------ | ------ | ------ | ------ |
+| PyTorch | MNIST | CNN/MLP | FGSM | [链接](ebook_mnist_fgsm_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | FGSM | [链接](ebook_imagenet_fgsm_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | DeepFool | [链接](ebook_imagenet_deepfool_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | JSMA | [链接](ebook_imagenet_jsma_pytorch.ipynb) |
+| Tensorflow | ImageNet2012 | Inception | FGSM | [链接](ebook_imagenet_fgsm_tf.ipynb) |
+| Tensorflow | ImageNet2012 | Inception | DeepFool | [链接](ebook_imagenet_deepfool_tf.ipynb) |
+
 ## 零编码黑盒攻击示例
 
 为了最小化学习和使用成本，AdvBox提供了零编码黑盒攻击工具。以Tensorflow为例，Tensorflow提供了丰富[预训练模型](https://github.com/tensorflow/models)，假设攻击常见的图像分类模型squeezenet。
@@ -192,17 +205,6 @@ advbox\_tools.py提供了丰富的配置参数，其中LocalSearch算法相关�
 
 ## PaddlePaddle示例
 请见[PaddlePaddle示例](paddle.md)
-
-
-##  新版ebook教程
-AdvBox从0.4版开始，支持使用Jupyter Notebook格式的ebook教程，便于用户快速掌握。
-
-| 开发框架 | 数据集 | 被攻击模型 | 攻击算法 | Jupyter Notebook |
-| ------ | ------ | ------ | ------ | ------ |
-| PyTorch | MNIST | CNN/MLP | FGSM | [链接](ebook_mnist_fgsm_pytorch.ipynb) |
-| PyTorch | ImageNet2012 | AlexNet | FGSM | [链接](ebook_imagenet_fgsm_pytorch.ipynb) |
-| PyTorch | ImageNet2012 | AlexNet | DeepFool | [链接](ebook_imagenet_deepfool_pytorch.ipynb) |
-| PyTorch | ImageNet2012 | AlexNet | JSMA | [链接](ebook_imagenet_jsma_pytorch.ipynb) |
 
 
 ##  原有学习教程
