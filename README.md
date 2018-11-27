@@ -43,7 +43,7 @@ AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持�
 
 ![针对图像分类模型的对抗样本](pic/针对图像分类模型的对抗样本.png)
 
-百度安全实验室研发了AdvBox，它能够为安全工程师研究模型的安全性提供极大的便利，免去重复造轮子的精力与时间消耗。AdvBox可以高效地使用最新的生成方法构造对抗样本数据集用于对抗样本的特征统计、攻击全新的AI应用，加固业务AI模型，为模型安全性研究和应用提供重要的支持，当前最新版本为[0.3](doc/RELEASE.cn.md)。
+百度安全实验室研发了AdvBox，它能够为安全工程师研究模型的安全性提供极大的便利，免去重复造轮子的精力与时间消耗。AdvBox可以高效地使用最新的生成方法构造对抗样本数据集用于对抗样本的特征统计、攻击全新的AI应用，加固业务AI模型，为模型安全性研究和应用提供重要的支持，当前最新版本为[0.4](doc/RELEASE.cn.md)。
 
 # 安装
 
@@ -66,12 +66,14 @@ AdvBox从0.4版开始，支持使用Jupyter Notebook格式的ebook教程，便�
 
 | 开发框架 | 数据集 | 被攻击模型 | 攻击算法 | Jupyter Notebook |
 | ------ | ------ | ------ | ------ | ------ |
+| MxNet | ImageNet2012 | AlexNet | FGSM | [链接](ebook_mnist_fgsm_mxnet.ipynb) |
 | PyTorch | MNIST | CNN/MLP | FGSM | [链接](ebook_mnist_fgsm_pytorch.ipynb) |
 | PyTorch | ImageNet2012 | AlexNet | FGSM | [链接](ebook_imagenet_fgsm_pytorch.ipynb) |
 | PyTorch | ImageNet2012 | AlexNet | DeepFool | [链接](ebook_imagenet_deepfool_pytorch.ipynb) |
 | PyTorch | ImageNet2012 | AlexNet | JSMA | [链接](ebook_imagenet_jsma_pytorch.ipynb) |
 | Tensorflow | ImageNet2012 | Inception | FGSM | [链接](ebook_imagenet_fgsm_tf.ipynb) |
 | Tensorflow | ImageNet2012 | Inception | DeepFool | [链接](ebook_imagenet_deepfool_tf.ipynb) |
+| Tensorflow | ImageNet2012 | Inception | JSMA | [链接](ebook_imagenet_jsma_tf.ipynb) |
 
 ## 零编码黑盒攻击示例
 
