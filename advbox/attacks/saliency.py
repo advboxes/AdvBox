@@ -1,3 +1,4 @@
+#coding=utf-8
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -83,7 +84,7 @@ class SaliencyMapAttack(Attack):
                 if not any(mask.flatten()):
                     return adversary
 
-                logging.info('step = {}, original_label = {}, adv_label={} logit={}'.
+                logging.info('step = {}, original_label = {}, adv_label={} target logit={}'.
                              format(step, adversary.original_label, adv_label,logit[adversary.target_label]))
 
                 # get pixel location with highest influence on class
@@ -112,6 +113,8 @@ class SaliencyMapAttack(Attack):
                         mask[idx2] = 0
                 else:
                     # apply perturbation
+
+
                     adv_img[idx] += p_sign * theta * (max_ - min_)
                     # tracks number of updates for each pixel
                     counts[idx] += 1
