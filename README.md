@@ -194,7 +194,18 @@ advbox\_tools.py提供了丰富的配置参数，其中LocalSearch算法相关�
 请见[PaddlePaddle示例](paddle.md)
 
 
-##  学习教程
+##  新版ebook教程
+AdvBox从0.4版开始，支持使用Jupyter Notebook格式的ebook教程，便于用户快速掌握。
+
+| 开发框架 | 数据集 | 被攻击模型 | 攻击算法 | Jupyter Notebook |
+| ------ | ------ | ------ | ------ | ------ |
+| PyTorch | MNIST | CNN/MLP | FGSM | [链接](ebook_mnist_fgsm_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | FGSM | [链接](ebook_imagenet_fgsm_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | DeepFool | [链接](ebook_imagenet_deepfool_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | JSMA | [链接](ebook_imagenet_jsma_pytorch.ipynb) |
+
+
+##  原有学习教程
 
 为了进一步降低学习成本，AdvBox提供大量的[学习教程](tutorials/README.md)。
 
