@@ -1,0 +1,4 @@
+include foolbox/VERSION
+include *.png
+include *.txt
+include *.pbtxt
