@@ -80,7 +80,8 @@ class Net(torch.nn.Module):
         conv3_out = self.conv3(conv2_out)
         res = conv3_out.view(conv3_out.size(0), -1)
         out = self.dense(res)
-        return torch.nn.functional.log_softmax(out, dim=1)
+        #return torch.nn.functional.log_softmax(out, dim=1)
+        return out
 
 
 """
