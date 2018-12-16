@@ -181,10 +181,10 @@ class CW_L2_Attack(Attack):
             #print("outer_step={} confidence {}->{}".format(outer_step,confidence_old,confidence))   
             logging.info("outer_step={} confidence {}->{}".format(outer_step,confidence_old,confidence))
         #print(o_bestattack)
-
-        if adversary.try_accept_the_example(o_bestattack, o_bestscore):
-                return adversary
-
+    
+        if o_bestscore != -1:
+            if adversary.try_accept_the_example(o_bestattack, o_bestscore):
+                    return adversary
 
         return adversary
 
