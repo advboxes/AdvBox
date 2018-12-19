@@ -66,7 +66,7 @@ AdvBox从0.4版开始，支持使用Jupyter Notebook格式的ebook教程，便�
 
 | 开发框架 | 数据集 | 被攻击模型 | 攻击算法 | Jupyter Notebook |
 | ------ | ------ | ------ | ------ | ------ |
-| MxNet | ImageNet2012 | AlexNet | FGSM | [链接](ebook_mnist_fgsm_mxnet.ipynb) |
+| MxNet | ImageNet2012 | AlexNet | FGSM | [链接](ebook_imagenet_fgsm_mxnet.ipynb) |
 | PyTorch | MNIST | CNN/MLP | FGSM | [链接](ebook_mnist_fgsm_pytorch.ipynb) |
 | PyTorch | ImageNet2012 | AlexNet | FGSM | [链接](ebook_imagenet_fgsm_pytorch.ipynb) |
 | PyTorch | ImageNet2012 | AlexNet | DeepFool | [链接](ebook_imagenet_deepfool_pytorch.ipynb) |
