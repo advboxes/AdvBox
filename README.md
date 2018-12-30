@@ -35,6 +35,7 @@ AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持�
 - Label Smoothing
 - Gaussian Augmentation
 - Adversarial Training
+- Thermometer Encoding
 
 
 
