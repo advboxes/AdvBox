@@ -236,7 +236,6 @@ advbox\_tools.py提供了丰富的配置参数，其中LocalSearch算法相关�
 # 问题反馈
 	
 目前支持通过Github提交[issues](https://github.com/baidu/AdvBox/issues)
-。QQ群：936353856。
 
 # 许可
 
