@@ -37,7 +37,7 @@ class SaliencyMapAttack(Attack):
                fast=True,
                theta=0.1,
                max_perturbations_per_pixel=7,
-               two_pix=True):
+               two_pix=False):
         """
         Apply the JSMA attack.
         Args:
@@ -52,6 +52,11 @@ class SaliencyMapAttack(Attack):
             adversary: The Adversary object.
         """
         assert adversary is not None
+
+        #目前不支持双点
+        two_pix=False
+
+
 
         if not adversary.is_targeted_attack or (adversary.target_label is None):
             target_labels = self._generate_random_target(
