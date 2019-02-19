@@ -122,7 +122,7 @@ Taking [ONNX](https://onnx.ai/) as an example, Paddle Paddle, PyTorch, Caffe2, M
 	      --model=https://oracle.github.io/graphpipe/models/squeezenet.onnx \
 	      --listen=0.0.0.0:9000
 
-advbox\_tools.py provides a lot of configuration parameters, in which the LocalSearch algorithm parameters can be set for reference.[Link](paper/blackBoxAttack/Simple%20Black-Box%20Adversarial%20Perturbations%20for%20Deep%20Networks.pdf)
+advbox\_tools.py provides a lot of configuration parameters, in which the LocalSearch algorithm parameters can be set for reference.
 
 	Usage: advbox_tools.py [options]	
 	Options:
