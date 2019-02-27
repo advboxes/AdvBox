@@ -1,19 +1,16 @@
-# AdvBox
+# Advbox
 
-[English Version](README-EN.md)
+[中文版](README-CH.md)
 
 ![logo](pic/logo.png)
 
-AdvBox是一款由百度安全实验室研发，在百度大范围使用的AI模型安全工具箱，目前原生支持PaddlePaddle、PyTorch、Caffe2、MxNet、Keras以及TensorFlow平台，方便广大开发者和安全工程师可以使用自己熟悉的框架。
+Advbox is a toolbox to generate adversarial examples that fool neural networks in PaddlePaddle、PyTorch、Caffe2、MxNet、Keras、TensorFlow and Advbox can benchmark the robustness of machine learning models.
 
-AdvBox同时支持[GraphPipe](https://oracle.github.io/graphpipe),屏蔽了底层使用的深度学习平台，用户可以零编码，仅通过几个命令就可以对PaddlePaddle、PyTorch、Caffe2、MxNet、CNTK、ScikitLearn以及TensorFlow平台生成的模型文件进行黑盒攻击。
+Advbox give a command line tool to generate adversarial examples with Zero-Coding.
 
-![GraphPipe](pic/GraphPipe.png)
+## Supported attack and defense methods
 
-
-AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持列表如下。
-
-## 白盒攻击算法
+### White-box attack  methods
 
 - L-BFGS
 - FGSM
@@ -24,13 +21,13 @@ AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持�
 - DeepFool
 - C/W
 
-## 黑盒攻击算法
+### Black-box attack  methods
 
 - Single Pixel Attack
 - Local Search Attack
 
 
-## 防护算法
+### Defense methods
 
 - Feature Fqueezing
 - Spatial Smoothing
@@ -39,49 +36,50 @@ AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持�
 - Adversarial Training
 - Thermometer Encoding
 
+###  Attack AI application
 
+ - [Attack Face recognition ](applications/face_recognition_attack/README.md)
 
-
-对抗样本是深度学习领域的一个重要问题，比如在图像上叠加肉眼难以识别的修改，就可以欺骗主流的深度学习图像模型，产生分类错误，指鹿为马，或者无中生有。这些问题对于特定领域（比如无人车、人脸识别）会产生严重的后果，尤为重要。
+## Overview
+[Szegedy et al.](https://arxiv.org/abs/1312.6199) discovered an intriguing properties of deep neural networks in the context of image classification for the first time. They showed that despite the state-of-the-art deep networks are surprisingly susceptible to adversarial attacks in the form of small perturbations to images that remain (almost) imperceptible to human vision system. These perturbations are found by optimizing the input to maximize the prediction error and the images modified by these perturbations are called as `adversarial examples`. The profound implications of these results triggered a wide interest of researchers in adversarial attacks and their defenses for deep learning in general.
 
 ![针对图像分类模型的对抗样本](pic/针对图像分类模型的对抗样本.png)
 
-百度安全实验室研发了AdvBox，它能够为安全工程师研究模型的安全性提供极大的便利，免去重复造轮子的精力与时间消耗。AdvBox可以高效地使用最新的生成方法构造对抗样本数据集用于对抗样本的特征统计、攻击全新的AI应用，加固业务AI模型，为模型安全性研究和应用提供重要的支持，当前最新版本为[0.4](doc/RELEASE.cn.md)。
+# Setup
 
-# 安装
+## Manual installation
 
-## 部署AdvBox代码
-直接同步advbox的代码，其中示例代码在tutorials目录下。
+For the most recent version of the library, either download the source code or clone the repository in your directory of choice and the sample code is in the tutorials directory.
 
 	git clone https://github.com/baidu/AdvBox.git  
 
-## 初始化软件环境
-
-为了兼容主流的深度学习平台，AdvBox基于python2.7开发，强烈建议使用Conda管理python软件环境，对应的python安装包安装方式如下。
+## Initialization Python environment
 
 	pip install -r requirements.txt
 
-# 文档
+# Documentation
 
+##  Jupyter Notebook 
 
-##  新版ebook教程
-AdvBox从0.4版开始，支持使用Jupyter Notebook格式的ebook教程，便于用户快速掌握。
-
-| 开发框架 | 数据集 | 被攻击模型 | 攻击算法 | Jupyter Notebook |
+| Frame | Dataset | Model | Attack  method | Jupyter Notebook |
 | ------ | ------ | ------ | ------ | ------ |
-| MxNet | ImageNet2012 | AlexNet | FGSM | [链接](ebook_imagenet_fgsm_mxnet.ipynb) |
-| PyTorch | MNIST | CNN/MLP | FGSM | [链接](ebook_mnist_fgsm_pytorch.ipynb) |
-| PyTorch | ImageNet2012 | AlexNet | FGSM | [链接](ebook_imagenet_fgsm_pytorch.ipynb) |
-| PyTorch | ImageNet2012 | AlexNet | DeepFool | [链接](ebook_imagenet_deepfool_pytorch.ipynb) |
-| PyTorch | ImageNet2012 | AlexNet | JSMA | [链接](ebook_imagenet_jsma_pytorch.ipynb) |
-| Tensorflow | ImageNet2012 | Inception | FGSM | [链接](ebook_imagenet_fgsm_tf.ipynb) |
-| Tensorflow | ImageNet2012 | Inception | DeepFool | [链接](ebook_imagenet_deepfool_tf.ipynb) |
-| Tensorflow | ImageNet2012 | Inception | JSMA | [链接](ebook_imagenet_jsma_tf.ipynb) |
+| MxNet | ImageNet2012 | AlexNet | FGSM | [link](ebook_imagenet_fgsm_mxnet.ipynb) |
+| PyTorch | MNIST | CNN/MLP | FGSM | [link](ebook_mnist_fgsm_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | FGSM | [link](ebook_imagenet_fgsm_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | DeepFool | [link](ebook_imagenet_deepfool_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | JSMA | [link](ebook_imagenet_jsma_pytorch.ipynb) |
+| Tensorflow | ImageNet2012 | Inception | FGSM | [link](ebook_imagenet_fgsm_tf.ipynb) |
+| Tensorflow | ImageNet2012 | Inception | DeepFool | [link](ebook_imagenet_deepfool_tf.ipynb) |
+| Tensorflow | ImageNet2012 | Inception | JSMA | [link](ebook_imagenet_jsma_tf.ipynb) |
 
-## 零编码黑盒攻击示例
+## Zero-Coding tools example
 
-为了最小化学习和使用成本，AdvBox提供了零编码黑盒攻击工具。以Tensorflow为例，Tensorflow提供了丰富[预训练模型](https://github.com/tensorflow/models)，假设攻击常见的图像分类模型squeezenet。
-首先在docker环境下启动基于GraphPipe的预测服务，GraphPipe环境已经完全封装在docker镜像，不用单独安装。
+Advbox give a command line tool to generate adversarial examples with Zero-Coding.
+
+Take Tensorflow as an example, Tensorflow provides a rich [pre-training models](https://github.com/tensorflow/models),we attack image classification model squeezenet.
+
+
+The GraphPipe-based prediction service is launched in the docker environment. The GraphPipe environment is fully encapsulated in the docker image, and does not need to be installed separately.
 
 	docker run -it --rm \
 	      -e https_proxy=${https_proxy} \
@@ -90,7 +88,7 @@ AdvBox从0.4版开始，支持使用Jupyter Notebook格式的ebook教程，便�
 	      --model=https://oracle.github.io/graphpipe/models/squeezenet.pb \
 	      --listen=0.0.0.0:9000
 
-如果网速有限，可以先把squeezenet.pb下载，使用本地模式启动。
+If the network speed is limited, you can download squeezenet.pb and start it in local mode.
 
 	docker run -it --rm \
 	      -e https_proxy=${https_proxy} \
@@ -104,7 +102,7 @@ AdvBox从0.4版开始，支持使用Jupyter Notebook格式的ebook教程，便�
 
 	python advbox_tools.py -u http://your ip:9000
 
-经过迭代攻击后，展现攻击结果如下图所示，具体运行时间依赖于网速，强烈建议在本机上起docker服务，可以大大提升攻击速度。
+After the iteration attack, the attack results are shown in the following figure. The specific running time depends on the network speed. It is strongly recommended to start docker service on the local computer, which can greatly improve the attack speed.
 
 	localsearch.py[line:293] INFO try 3 times  selected pixel indices:[ 0 23 24 25 26]
 	localsearch.py[line:308] INFO adv_label=504 adv_label_pro=0.00148941285443
@@ -116,7 +114,7 @@ AdvBox从0.4版开始，支持使用Jupyter Notebook格式的ebook教程，便�
 
 ![demo_advbox](demo_advbox.png)
 
-以[ONNX](https://onnx.ai/)为例，目前PaddlePaddle、PyTorch、Caffe2、MxNet、CNTK、ScikitLearn均支持把模型保存成ONNX格式。对于ONNX格式的文件，使用类似的命令启动docker环境即可。
+Taking [ONNX](https://onnx.ai/) as an example, Paddle Paddle, PyTorch, Caffe2, MxNet, CNTK and ScikitLearn all support saving the model into ONNX format. For files in ONNX format, start the docker environment with similar commands.
 
 	docker run -it --rm \
 	      -e https_proxy=${https_proxy} \
@@ -126,7 +124,7 @@ AdvBox从0.4版开始，支持使用Jupyter Notebook格式的ebook教程，便�
 	      --model=https://oracle.github.io/graphpipe/models/squeezenet.onnx \
 	      --listen=0.0.0.0:9000
 
-advbox\_tools.py提供了丰富的配置参数，其中LocalSearch算法相关参数的设置可以参考[论文](paper/blackBoxAttack/Simple%20Black-Box%20Adversarial%20Perturbations%20for%20Deep%20Networks.pdf)
+advbox\_tools.py provides a lot of configuration parameters, in which the LocalSearch algorithm parameters can be set for reference.
 
 	Usage: advbox_tools.py [options]	
 	Options:
@@ -156,25 +154,23 @@ advbox\_tools.py提供了丰富的配置参数，其中LocalSearch算法相关�
 	                        Channel_axis [default: 0] ;must be in 0,1,2,3
 
 
-## Keras示例
+## Keras example
 
-以Keras环境为例，代码路径为[tutorials/keras_demo.py](tutorials/keras_demo.py)
+Code path is [Link](tutorials/keras_demo.py)
 
-使用Keras自带的ResNet50模型进行白盒攻击，并设置为预测模式，加载测试图片。
 
-	#设置为测试模式
+	#instantiate model
     keras.backend.set_learning_phase(0)
     model = ResNet50(weights=modulename)
     img = image.load_img(imagename, target_size=(224, 224))
     original_image = image.img_to_array(img)
     imagedata = np.expand_dims(original_image, axis=0)
 
-获取ResNet50的logit层，并创建keras对象。keras的ResNet50要求对原始图像文件进行标准化处理，mean值为[104, 116, 123]，std为1.
+Get ResNet50 logits layer as output.
 
-	#获取logit层
+	 #get logits layer
     logits=model.get_layer('fc1000').output
-    # 创建keras对象
-    # imagenet数据集归一化时 标准差为1  mean为[104, 116, 123]
+    # imagenet data normalizing std is 1， mean is [104, 116, 123]
     m = KerasModel(
         model,
         model.input,
@@ -186,69 +182,43 @@ advbox\_tools.py提供了丰富的配置参数，其中LocalSearch算法相关�
         preprocess=([104, 116, 123],1),
         featurefqueezing_bit_depth=8)
 
-创建攻击对象，攻击算法使用FGSM的non-targeted attack，攻击步长epsilons设置为静态值。
+With non-targeted FGSM attack，epsilons is 1。
 	
 	attack = FGSM(m)
-	#静态epsilon
 	attack_config = {"epsilons": 1, "epsilons_max": 10, "epsilon_steps": 1, "steps": 100}
 	# fgsm non-targeted attack
 	adversary = attack(adversary, **attack_config)
 
-对比生成的对抗样本和原始图像的差别。
+The result can be plotted like this
 	
 	adversary_image=np.copy(adversary.adversarial_example)
-	#强制类型转换 之前是float 现在要转换成uint8
 	#BGR -> RGB
 	adversary_image=adversary_image[:,:,::-1]
 	adversary_image = np.array(adversary_image).reshape([224,224,3])
 	original_image=np.array(original_image).reshape([224, 224, 3])
 	show_images_diff(original_image,adversary_image)
 
-实际运行代码，原始图像和对抗样本的差别如下图所示。
 
    ![keras-demo.png](pic/keras-demo.png)
 
-## PaddlePaddle示例
-请见[PaddlePaddle示例](paddle.md)
+## PaddlePaddle example
+[Link](paddle.md)
 
 
-##  原有学习教程
-
-为了进一步降低学习成本，AdvBox提供大量的[学习教程](tutorials/README.md)。
-
- - [示例1：白盒攻击基于MNIST数据集的CNN模型](tutorials/README.md)
- - [示例2：白盒攻击基于CIFAR10数据集的ResNet模型](tutorials/README.md)
- - [示例3：白盒攻击caffe下基于MNIST数据集的LeNet模型](tutorials/README.md)
- - [示例4：黑盒攻击基于MNIST数据集的CNN模型](tutorials/README.md)
- - [示例5：使用FeatureFqueezing加固基于MNIST数据集的CNN模型](tutorials/README.md)
- - [示例6：使用GaussianAugmentation加固基于MNIST数据集的CNN模型](tutorials/README.md)
- - [示例7：白盒攻击PyTorch下基于MNIST数据集的CNN模型](tutorials/README.md)
- - [示例8：白盒攻击PyTorch下基于IMAGENET数据集的AlexNet模型](tutorials/README.md)
- - [示例9：白盒攻击MxNet下基于IMAGENET数据集的AlexNet模型](tutorials/README.md)
- - [示例10：黑盒攻击graphpipe下的基于tensorflow的squeezenet模型](tutorials/README.md)
- - [示例11：黑盒攻击graphpipe下的基于onnx的squeezenet模型](tutorials/README.md)
-
-## 典型应用
-
-基于AdvBox可以针对大量实际使用的AI模型生成对抗样本并给出通用加固方案。
-
- - [应用1：白盒攻击人脸识别系统](applications/face_recognition_attack/README.md)
-
-
-# 问题反馈
+# Issues report
 	
-目前支持通过Github提交[issues](https://github.com/baidu/AdvBox/issues)
+[Link](https://github.com/baidu/AdvBox/issues)
 
-# 许可
+# License
 
-AdvBox循序[Apache License 2.0](https://github.com/baidu/AdvBox/blob/master/LICENSE)
+AdvBox support [Apache License 2.0](https://github.com/baidu/AdvBox/blob/master/LICENSE)
 
-# 作者
+# Authors
 
-- 百度安全实验室 xlab
+- Baidu xlab
 
 
-# 参考文献
+# Reference
 
 - http://www.paddlepaddle.org/docs/develop/documentation/en/build_and_install/pip_install_en.html
 - http://paddlepaddle.org/docs/0.14.0/documentation/fluid/zh/new_docs/beginners_guide/install/install_doc.html
