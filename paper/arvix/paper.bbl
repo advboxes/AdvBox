@@ -1,0 +1,50 @@
+\begin{thebibliography}{7}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Carlini \& Wagner(2017)Carlini and Wagner]{Carlini2017Towards}
+Carlini, Nicholas and Wagner, David.
+\newblock Towards evaluating the robustness of neural networks.
+\newblock In \emph{Security and Privacy}, 2017.
+
+\bibitem[Goodfellow et~al.(2014)Goodfellow, Shlens, and
+  Szegedy]{goodfellow2014explaining}
+Goodfellow, Ian~J, Shlens, Jonathon, and Szegedy, Christian.
+\newblock Explaining and harnessing adversarial examples.
+\newblock \emph{arXiv preprint arXiv:1412.6572}, 2014.
+
+\bibitem[Liu et~al.(2016)Liu, Chen, Chang, and Song]{Liu2016Delving}
+Liu, Yanpei, Chen, Xinyun, Chang, Liu, and Song, Dawn.
+\newblock Delving into transferable adversarial examples and black-box attacks.
+\newblock 2016.
+
+\bibitem[Moosavidezfooli et~al.(2016)Moosavidezfooli, Fawzi, and
+  Frossard]{Moosavidezfooli2016DeepFool}
+Moosavidezfooli, Seyed~Mohsen, Fawzi, Alhussein, and Frossard, Pascal.
+\newblock Deepfool: a simple and accurate method to fool deep neural networks.
+\newblock In \emph{Computer Vision and Pattern Recognition}, 2016.
+
+\bibitem[Papernot et~al.(2016)Papernot, Goodfellow, Sheatsley, Feinman, and
+  Mcdaniel]{Papernot2016cleverhans}
+Papernot, Nicolas, Goodfellow, Ian, Sheatsley, Ryan, Feinman, Reuben, and
+  Mcdaniel, Patrick.
+\newblock cleverhans v1.0.0: an adversarial machine learning library.
+\newblock 2016.
+
+\bibitem[Szegedy et~al.(2013)Szegedy, Zaremba, Sutskever, Bruna, Erhan,
+  Goodfellow, and Fergus]{Szegedy2013Intriguing}
+Szegedy, Christian, Zaremba, Wojciech, Sutskever, Ilya, Bruna, Joan, Erhan,
+  Dumitru, Goodfellow, Ian, and Fergus, Rob.
+\newblock Intriguing properties of neural networks.
+\newblock \emph{Computer Science}, 2013.
+
+\bibitem[Wei et~al.(2018)Wei, Liang, Cao, and Zhu]{wei2018transferable}
+Wei, Xingxing, Liang, Siyuan, Cao, Xiaochun, and Zhu, Jun.
+\newblock Transferable adversarial attacks for image and video object
+  detection.
+\newblock \emph{arXiv preprint arXiv:1811.12641}, 2018.
+
+\end{thebibliography}
