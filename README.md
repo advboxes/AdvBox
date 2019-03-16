@@ -98,7 +98,7 @@ If the network speed is limited, you can download squeezenet.pb and start it in 
 	      --model=/models/squeezenet.pb \
 	      --listen=0.0.0.0:9000
 
-然后启动攻击脚本，使用默认参数即可，仅需指定攻击的url。目前提供的黑盒攻击算法为LocalSearch。
+Then run the attack script and use the default parameters, just specify the URL of your target. The current black box attack algorithm is LocalSearch.
 
 	python advbox_tools.py -u http://your ip:9000
 
