@@ -29,7 +29,7 @@ Advbox give a command line tool to generate adversarial examples with Zero-Codin
 
 ### Defense methods
 
-- Feature Fqueezing
+- Feature Squeezing
 - Spatial Smoothing
 - Label Smoothing
 - Gaussian Augmentation
