@@ -31,7 +31,7 @@ AdvBox同时支持白盒、黑盒攻击算法以及主流防御算法，支持�
 
 ## 防护算法
 
-- Feature Fqueezing
+- Feature Squeezing
 - Spatial Smoothing
 - Label Smoothing
 - Gaussian Augmentation
@@ -219,7 +219,7 @@ advbox\_tools.py提供了丰富的配置参数，其中LocalSearch算法相关�
  - [示例2：白盒攻击基于CIFAR10数据集的ResNet模型](tutorials/README.md)
  - [示例3：白盒攻击caffe下基于MNIST数据集的LeNet模型](tutorials/README.md)
  - [示例4：黑盒攻击基于MNIST数据集的CNN模型](tutorials/README.md)
- - [示例5：使用FeatureFqueezing加固基于MNIST数据集的CNN模型](tutorials/README.md)
+ - [示例5：使用FeatureSqueezing加固基于MNIST数据集的CNN模型](tutorials/README.md)
  - [示例6：使用GaussianAugmentation加固基于MNIST数据集的CNN模型](tutorials/README.md)
  - [示例7：白盒攻击PyTorch下基于MNIST数据集的CNN模型](tutorials/README.md)
  - [示例8：白盒攻击PyTorch下基于IMAGENET数据集的AlexNet模型](tutorials/README.md)
