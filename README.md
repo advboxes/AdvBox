@@ -233,4 +233,14 @@ AdvBox support [Apache License 2.0](https://github.com/baidu/AdvBox/blob/master/
 - [CleverHans: An adversarial example library for constructing attacks, building defenses, and benchmarking both](https://github.com/tensorflow/cleverhans#setting-up-cleverhans)
 - [Threat of Adversarial Attacks on Deep Learning in Computer Vision: A Survey](https://arxiv.org/abs/1801.00553), Naveed Akhtar, Ajmal Mian, arxiv 2018
 
+# How to Cite
 
+If you instead use AdvBox in an academic publication, cite as:
+
+	@misc{advbox,
+	 author= {Dou Goodman},
+	 title = {{Advbox:a toolbox to generate adversarial examples that fool neural networks}},
+	 month = mar,
+	 year  = 2019,
+	 url   = {https://github.com/baidu/AdvBox}
+	}
