@@ -239,7 +239,7 @@ If you instead use AdvBox in an academic publication, cite as:
 
 	@misc{advbox,
 	 author= {Dou Goodman,Wang Yang,Hao Xin},
-	 title = {{Advbox:a toolbox to generate adversarial examples that fool neural networks}},
+	 title = {Advbox:a toolbox to generate adversarial examples that fool neural networks},
 	 month = mar,
 	 year  = 2019,
 	 url   = {https://github.com/baidu/AdvBox}
