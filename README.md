@@ -22,10 +22,10 @@ AdvDetect is a toolbox to detect adversarial examples from massive data.
 
 [Homepage of Face Recogniztion Attack](applications/face_recognition_attack/README.md)
 
-## FStealth T-shirt
+## Stealth T-shirt
 On defcon, we demonstrated T-shirts that can disappear under smart cameras. Under this sub-project, we open-source the programs and deployment methods of smart cameras for demonstration.
 
-[Homepage of FStealth T-shirt](applications/fFStealthTshirt/README.md)
+[Homepage of Stealth T-shirt](applications/StealthTshirt/README.md)
 
 ## Paper and ppt of Advbox Family
 
