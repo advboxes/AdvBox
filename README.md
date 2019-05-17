@@ -63,14 +63,14 @@ For the most recent version of the library, either download the source code or c
 
 | Frame | Dataset | Model | Attack  method | Jupyter Notebook |
 | ------ | ------ | ------ | ------ | ------ |
-| MxNet | ImageNet2012 | AlexNet | FGSM | [link](ebook_imagenet_fgsm_mxnet.ipynb) |
-| PyTorch | MNIST | CNN/MLP | FGSM | [link](ebook_mnist_fgsm_pytorch.ipynb) |
-| PyTorch | ImageNet2012 | AlexNet | FGSM | [link](ebook_imagenet_fgsm_pytorch.ipynb) |
-| PyTorch | ImageNet2012 | AlexNet | DeepFool | [link](ebook_imagenet_deepfool_pytorch.ipynb) |
-| PyTorch | ImageNet2012 | AlexNet | JSMA | [link](ebook_imagenet_jsma_pytorch.ipynb) |
-| Tensorflow | ImageNet2012 | Inception | FGSM | [link](ebook_imagenet_fgsm_tf.ipynb) |
-| Tensorflow | ImageNet2012 | Inception | DeepFool | [link](ebook_imagenet_deepfool_tf.ipynb) |
-| Tensorflow | ImageNet2012 | Inception | JSMA | [link](ebook_imagenet_jsma_tf.ipynb) |
+| MxNet | ImageNet2012 | AlexNet | FGSM | [link](ebook/ebook_imagenet_fgsm_mxnet.ipynb) |
+| PyTorch | MNIST | CNN/MLP | FGSM | [link](ebook/ebook_mnist_fgsm_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | FGSM | [link](ebook/ebook_imagenet_fgsm_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | DeepFool | [link](ebook/ebook_imagenet_deepfool_pytorch.ipynb) |
+| PyTorch | ImageNet2012 | AlexNet | JSMA | [link](ebook/ebook_imagenet_jsma_pytorch.ipynb) |
+| Tensorflow | ImageNet2012 | Inception | FGSM | [link](ebook/ebook_imagenet_fgsm_tf.ipynb) |
+| Tensorflow | ImageNet2012 | Inception | DeepFool | [link](ebook/ebook_imagenet_deepfool_tf.ipynb) |
+| Tensorflow | ImageNet2012 | Inception | JSMA | [link](ebook/ebook_imagenet_jsma_tf.ipynb) |
 
 ## Zero-Coding tools example
 
