@@ -15,7 +15,11 @@ FaceNet and its pre-trained model can be downloaded from `https://github.com/dav
 
 ### Download pre-trained model
 
-baidu netdisk https://pan.baidu.com/s/1gF6iwpF77UUHkibQY6QwMA
+baidu netdisk 
+
+	https://pan.baidu.com/s/1xWj1wW6MgoOI2MFAejr0oQ 
+
+code: kdxd 
 
 you can get 20180402-114759.zip，unzip it，get 20180402-114759.pb
 
