@@ -11,6 +11,11 @@ Advbox is a toolbox to generate adversarial examples that fool neural networks i
 
 [Homepage of AdvBox](AdvBox.md)
 
+## AdvDetect
+AdvDetect is a toolbox to detect adversarial examples from massive data.
+
+[Homepage of AdvDetect](advbox_family/AdvDetect/README.md)
+
 # AI applications
 
 ## Face Recogniztion Attack
@@ -18,6 +23,7 @@ Advbox is a toolbox to generate adversarial examples that fool neural networks i
 [Homepage of Face Recogniztion Attack](applications/face_recognition_attack/README.md)
 
 ## FStealth T-shirt
+On defcon, we demonstrated T-shirts that can disappear under smart cameras. Under this sub-project, we open-source the programs and deployment methods of smart cameras for demonstration.
 
 [FStealth T-shirt](applications/fFStealthTshirt/README.md)
 

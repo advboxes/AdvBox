@@ -39,4 +39,4 @@ you can get 20180402-114759.zip，unzip it，get 20180402-114759.pb
 
 	python facenet_fr.py
 
-![Bill_Gates_0001_2_Michael_Jordan_00021114.png](Bill_Gates_0001_2_Michael_Jordan_00021114.png)
+![Bill_Gates_0001_2_Michael_Jordan_0002.png](Bill_Gates_0001_2_Michael_Jordan_0002.png)

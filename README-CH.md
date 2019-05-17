@@ -11,6 +11,11 @@ AdvBox是一款由百度安全实验室研发，在百度大范围使用的AI模
 
 [Homepage of AdvBox](AdvBox.md)
 
+## AdvDetect
+AdvDetect是一款从海量数据中检测对抗样本的工具。
+
+[Homepage of AdvDetect](advbox_family/AdvDetect/README.md)
+
 
 # AI应用攻防
 
@@ -19,6 +24,8 @@ AdvBox是一款由百度安全实验室研发，在百度大范围使用的AI模
 [Homepage of Face Recogniztion Attack](applications/face_recognition_attack/README.md)
 
 ## 消失的T恤
+
+defcon上我们演示了可以在智能摄像头下消失的T恤，该子项目下开源了演示使用的智能摄像头的程序以及部署方法。
 
 [FStealth T-shirt](applications/fFStealthTshirt/README.md)
 
