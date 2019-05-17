@@ -116,12 +116,15 @@ if __name__ == '__main__':
 
     #批量测试xf
     #batch_test_xf()
+    import sys
 
-    input_pic = "wanghaifeng.png"
-    target_pic = "robin.png"
+    input_pic=sys.argv[1]
+    target_pic=sys.argv[2]
+
+    print("input_pic={} target_pic={}".format(input_pic,target_pic))
 
     print("Test QQ:")
-    test_t("wanghaifeng_2_robin.png", target_pic)
+    test_t(input_pic, target_pic)
 
     print("Test XF:")
-    test_xf("wanghaifeng_2_robin.png", target_pic)
+    test_xf(input_pic, target_pic)

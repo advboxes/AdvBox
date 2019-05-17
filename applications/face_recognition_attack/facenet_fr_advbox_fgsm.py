@@ -120,7 +120,7 @@ class FacenetFR():
         target_emb = self.generate_embedding(target_pic)
 
         #攻击步长 默认为0.01
-        eta = 0.004
+        eta = 0.0007
         #loss函数目的是将起下降
         loss = tf.sqrt(tf.reduce_sum(tf.square(embeddings - target_emb)))
 
@@ -137,9 +137,9 @@ class FacenetFR():
 
 
         #损失函数小于adv_loss_stop 认为满足需要了 退出 默认0.1
-        adv_loss_stop=0.06
+        adv_loss_stop=0.01
         #loss阈值 衡量前后两次loss差别过小 认为已经稳定了 收敛了 连续loss_cnt_threshold次小于loss_limit退出 默认0.0008
-        loss_limit = 0.0008
+        loss_limit = 0.0001
         loss_cnt_threshold = 10
         #最大迭代次数
         num_iter = 2000
@@ -185,6 +185,7 @@ class FacenetFR():
         #调试阶段 文件名不随机
         filename = generate_inp2adv_name(input_pic, target_pic)
         save_img2png(adv_image[0, ...], filename)
+        print("Save to {}".format(filename))
 
         feed_dict = {
             images_placeholder: adv_image,
@@ -200,9 +201,17 @@ if __name__ == '__main__':
 
     #input_pic = "Bill_Gates_0001.png"
     #target_pic = "Michael_Jordan_0002.png"
-    input_pic = "wanghaifeng.png"
+    #input_pic = "wanghaifeng.png"
+    #input_pic = "sunwei.jpeg"
     #input_pic = "zhangyaqing.jpg"
-    target_pic = "robin.png"
+    #target_pic = "robin.png"
     # print fr.compare(input_pic,target_pic)
+    #input_pic = "Michael_Jordan_0002.png"
+    #input_pic = "lenx.png"
+
+    input_pic=sys.argv[1]
+    target_pic=sys.argv[2]
+
+    print("input_pic={} target_pic={}".format(input_pic,target_pic))
 
     fr.generate_adv_whitebox(input_pic, target_pic)
