@@ -1,6 +1,6 @@
 # Advbox
 
-[中文版](README-CH.md)
+[中文版](advbox-ch.md)
 
 ![logo](pic/logo.png)
 
