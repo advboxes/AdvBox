@@ -10,7 +10,7 @@ To raise people's awareness of techniques that can deceive deep learning models,
 This a T-shirt with adversarial pattern printed on the chest capable of fooling an object detector. The adversarial pattern is generated via known gradients of the model.
 
 <div align="center">
-<img src="./output.gif" title="Logo">Solo Sticker Test<img src="./output1.gif">Indoor Tshirt Test<img src="./output2.gif">2 people Tshirt Test
+<img src="./output.gif" title="Solo Sticker Test"><img src="./output1.gif" title="Indoor Tshirt Test"><img src="./output2.gif" title="2 people Tshirt Test">
 </div>
 
 #### How does it work?
