@@ -9,6 +9,10 @@ To raise people's awareness of techniques that can deceive deep learning models,
 
 This a T-shirt with adversarial pattern printed on the chest capable of fooling an object detector. The adversarial pattern is generated via known gradients of the model.
 
+<div align="center">
+<img src="./output.gif" title="Solo Sticker Test"><img src="./output1.gif" title="Indoor Tshirt Test"><img src="./output2.gif" title="2 people Tshirt Test">
+</div>
+
 #### How does it work?
 
 By wearing it and showing the adversarial pattern in front of a camera and its object detector behind it, the person who wears it disappears, whereas the person who doesn't wear the T-shirt is still under object detector detection.
@@ -37,9 +41,7 @@ Google : https://drive.google.com/file/d/0B2JbaJSrWLpza0FtQlc3ejhMTTA/view?usp=s
 
 (2) Run `python StealthTshirtDemo.py`
 
-(3) Try to hind yourself from object detector.
-
-    Find the best angle or posture to lower the detection confidence.
+(3) Try to hind yourself from object detector. `Find the best angle or posture to lower the detection confidence.`
 
 ### 4. Requirements
 
@@ -49,6 +51,8 @@ Google : https://drive.google.com/file/d/0B2JbaJSrWLpza0FtQlc3ejhMTTA/view?usp=s
 ### 5. Changelog
 
 2019/05/24 : First upload!
+
+2019/05/31 : Upload sticker and test gif.
 
 
 
