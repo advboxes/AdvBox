@@ -1,8 +1,14 @@
 Fake Face Detect
 ===
-检测假脸的restful API，目前包含两种假脸检测：     
+检测假脸的restful API，用于检测图片中人脸是否是假脸。目前包含两种假脸检测：     
 1. deepfakes (AI换脸)  
 2. face merge（人脸融合）     
+    
+
+对于视频中假脸，可以提取视频帧进行检测。例如使用ffmpeg进行提取。
+```
+ffmpeg -i /path/to/my/video.mp4 /path/to/output/video-frame-%d.png
+```
 
 ### 请求示例
 
