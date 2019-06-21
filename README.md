@@ -27,6 +27,16 @@ On defcon, we demonstrated T-shirts that can disappear under smart cameras. Unde
 
 [Homepage of Stealth T-shirt](applications/StealthTshirt/README.md)
 
+![pic1](applications/StealthTshirt/output.gif)
+
+## Fake Face Detect
+
+The restful API is used to detect whether the face in the picture/video is a false face.
+
+[Homepage of Fake Face Detect](applications/fake_face_detect/README.md)
+
+![pic2](pic/deepfake.jpeg)
+
 ## Paper and ppt of Advbox Family
 
 # Issues report

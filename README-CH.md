@@ -27,7 +27,7 @@ AdvDetect是一款从海量数据中检测对抗样本的工具。
 
 defcon上我们演示了可以在智能摄像头下消失的T恤，该子项目下开源了演示使用的智能摄像头的程序以及部署方法。
 
-[FStealth T-shirt](applications/fFStealthTshirt/README.md)
+[FStealth T-shirt](applications/FStealthTshirt/README.md)
 
 ## Advbox Family的ppt和论文
 
