@@ -22,7 +22,7 @@ curl "http://127.0.0.1/rest/deepfakes/v1/detect?access_token=123456789" --header
 curl "http://127.0.0.1/rest/facemerge/v1/detect?access_token=123456789" --header "Host: cdcself" -F "file=@fake_merging.jpg"
 ```
 
-#接口描述
+# 接口描述
 ----
 ## AI换脸检测
 本接口用于检测Deepfakes生成的换脸图片。
