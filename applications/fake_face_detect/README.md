@@ -14,12 +14,12 @@ ffmpeg -i /path/to/my/video.mp4 /path/to/output/video-frame-%d.png
 
 + Deepfakes检测
 ```shell
-curl "http://127.0.0.1/rest/deepfakes/v1/detect?access_token=123456789" --header "Host: cdcself" -F "file=@fake_deepfakes.jpg"
+curl "http://api-cdc.baidu.com/rest/deepfakes/v1/detect?access_token=123456789" --header "Host: cdcself" -F "file=@fake_deepfakes.jpg"
 ```
 
 + 人脸融合检测
 ```shell
-curl "http://127.0.0.1/rest/facemerge/v1/detect?access_token=123456789" --header "Host: cdcself" -F "file=@fake_merging.jpg"
+curl "http://api-cdc.baidu.com/rest/facemerge/v1/detect?access_token=123456789" --header "Host: cdcself" -F "file=@fake_merging.jpg"
 ```
 
 # 接口描述
@@ -29,7 +29,7 @@ curl "http://127.0.0.1/rest/facemerge/v1/detect?access_token=123456789" --header
 
 ### 接口请求
 ##### 请求说明
-+ API服务地址： **http://127.0.0.1/rest/deepfakes/v1/detect**  
++ API服务地址： **http://api-cdc.baidu.com/rest/deepfakes/v1/detect**  
 + 请求使用HTTP-POST协议，需要在URL中带上参数"access_token"。图片通过消息体传递，参数为“file”。
 + 图片格式：现支持PNG、JPG、JPEG、BMP，不支持GIF图片
 + 请求头部携带字符串："Host: cdcself"
@@ -68,5 +68,5 @@ face_list | 是  | array| 人脸信息列表
 ---
 ## 人脸融合图片检测
 本接口用于检测百度人脸融合服务生成的假脸图片。     
-API服务地址： **http://127.0.0.1/rest/facemerge/v1/detect**   
+API服务地址： **http://api-cdc.baidu.com/rest/facemerge/v1/detect**   
 接口请求与返回与上一个接口类似。
