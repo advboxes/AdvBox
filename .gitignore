@@ -1,3 +1,5 @@
+ResNet50_pretrained
+ResNet50_pretrained/*
 # Python:
 *.py[cod]
 *.so
