@@ -1,0 +1,6 @@
+
+
+
+def FGSM():
+    
+    return True
