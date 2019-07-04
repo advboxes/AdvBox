@@ -40,6 +40,11 @@ def init_prog(prog):
                 op.set_attr('is_test', True)
             else:
                 op._set_attr('is_test', True)
+                
+            if hasattr(op, 'set_attr'):
+                op.set_attr('use_global_stats', True)
+            else:
+                op._set_attr('use_global_stats', True)
 
 def process_img(img_path="",image_shape=[3,224,224]):
     
@@ -107,8 +112,8 @@ def FGSM(o,input_layer,output_layer,step_size=16.0/256,loss="",isTarget=False,ta
     #http://www.paddlepaddle.org.cn/documentation/docs/zh/1.5/api_cn/backward_cn.html
     gradients = fluid.backward.gradients(targets=loss, inputs=[input_layer])[0]
     
-    # 训练模式
-    adv_program = fluid.default_main_program().clone(for_test=False)
+    # 测试模式
+    adv_program = fluid.default_main_program().clone(for_test=True)
     
 
     #计算梯度
