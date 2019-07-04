@@ -37,13 +37,10 @@ def init_prog(prog):
         if op.type in ["batch_norm"]:
             # 兼容旧版本 paddle
             if hasattr(op, 'set_attr'):
-                op.set_attr('is_test', True)
-            else:
-                op._set_attr('is_test', True)
-                
-            if hasattr(op, 'set_attr'):
+                op.set_attr('is_test', False)
                 op.set_attr('use_global_stats', True)
             else:
+                op._set_attr('is_test', False)
                 op._set_attr('use_global_stats', True)
 
 def process_img(img_path="",image_shape=[3,224,224]):
@@ -122,13 +119,10 @@ def FGSM(o,input_layer,output_layer,step_size=16.0/256,loss="",isTarget=False,ta
         if op.type in ["batch_norm"]:
             # 兼容旧版本 paddle
             if hasattr(op, 'set_attr'):
-                op.set_attr('is_test', True)
-            else:
-                op._set_attr('is_test', True)
-                
-            if hasattr(op, 'set_attr'):
+                op.set_attr('is_test', False)
                 op.set_attr('use_global_stats', True)
             else:
+                op._set_attr('is_test', False)
                 op._set_attr('use_global_stats', True)
 
     #计算梯度
