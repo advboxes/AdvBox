@@ -51,6 +51,26 @@ def init_prog(prog):
                 op._set_attr('use_global_stats', True)
                 op.desc.check_attrs()
 
+def img2tensor(img,image_shape=[3,224,224]):
+    
+    mean = [0.485, 0.456, 0.406] 
+    std = [0.229, 0.224, 0.225] 
+      
+    img = cv2.resize(img,(image_shape[1],image_shape[2]))
+
+    #RGB img [224,224,3]->[3,224,224]
+    img = img.astype('float32').transpose((2, 0, 1)) / 255
+     
+    img_mean = np.array(mean).reshape((3, 1, 1))
+    img_std = np.array(std).reshape((3, 1, 1))
+    img -= img_mean
+    img /= img_std
+
+    img=img.astype('float32')
+    img=np.expand_dims(img, axis=0)
+    
+    return img
+
 def process_img(img_path="",image_shape=[3,224,224]):
     
     mean = [0.485, 0.456, 0.406] 
@@ -58,7 +78,8 @@ def process_img(img_path="",image_shape=[3,224,224]):
       
     img = cv2.imread(img_path)
     img = cv2.resize(img,(image_shape[1],image_shape[2]))
-
+    
+    #RBG img [224,224,3]->[3,224,224]
     img = img[:, :, ::-1].astype('float32').transpose((2, 0, 1)) / 255
     img_mean = np.array(mean).reshape((3, 1, 1))
     img_std = np.array(std).reshape((3, 1, 1))
@@ -137,7 +158,22 @@ def show_images_diff(original_img,adversarial_img):
     
 
     #plt.savefig('fig_cat.png')
-
+    
+    
+#实现linf约束 输入格式都是tensor 返回也是tensor [1,3,224,224]
+def linf_img_tenosr(o,adv,epsilon=16.0/256):
+    
+    o_img=tensor2img(o)
+    adv_img=tensor2img(adv)
+    
+    clip_max=np.clip(o_img*(1.0+epsilon),0,255)
+    clip_min=np.clip(o_img*(1.0-epsilon),0,255)
+    
+    adv_img=np.clip(adv_img,clip_min,clip_max)
+    
+    adv_img=img2tensor(adv_img)
+    
+    return adv_img
 """
 Explaining and Harnessing Adversarial Examples, I. Goodfellow et al., ICLR 2015
 实现了FGSM 支持定向和非定向攻击的单步FGSM
@@ -150,13 +186,14 @@ adv_program：生成对抗样本的prog
 eval_program:预测用的prog
 isTarget：是否定向攻击
 target_label：定向攻击标签
+epsilon:约束linf大小
 o:原始数据
 use_gpu：是否使用GPU
 
 返回：
 生成的对抗样本
 """
-def FGSM(adv_program,eval_program,gradients,o,input_layer,output_layer,step_size=16.0/256,isTarget=False,target_label=0,use_gpu=False):
+def FGSM(adv_program,eval_program,gradients,o,input_layer,output_layer,step_size=16.0/256,epsilon=16.0/256,isTarget=False,target_label=0,use_gpu=False):
     
     place = fluid.CUDAPlace(0) if use_gpu else fluid.CPUPlace()
     exe = fluid.Executor(place)
@@ -193,6 +230,9 @@ def FGSM(adv_program,eval_program,gradients,o,input_layer,output_layer,step_size
     else:
         adv=o+np.sign(g)*step_size
     
+    #实施linf约束
+    adv=linf_img_tenosr(o,adv,epsilon)
+    
     return adv
 
 
@@ -209,13 +249,14 @@ adv_program：生成对抗样本的prog
 eval_program:预测用的prog
 isTarget：是否定向攻击
 target_label：定向攻击标签
+epsilon:约束linf大小
 o:原始数据
 use_gpu：是否使用GPU
 
 返回：
 生成的对抗样本
 """
-def PGD(adv_program,eval_program,gradients,o,input_layer,output_layer,step_size=2.0/256,iteration=20,isTarget=False,target_label=0,use_gpu=False):
+def PGD(adv_program,eval_program,gradients,o,input_layer,output_layer,step_size=2.0/256,epsilon=16.0/256,iteration=20,isTarget=False,target_label=0,use_gpu=False):
     
     place = fluid.CUDAPlace(0) if use_gpu else fluid.CPUPlace()
     exe = fluid.Executor(place)
@@ -253,5 +294,8 @@ def PGD(adv_program,eval_program,gradients,o,input_layer,output_layer,step_size=
             adv=adv-np.sign(g)*step_size
         else:
             adv=adv+np.sign(g)*step_size
+    
+    #实施linf约束
+    adv=linf_img_tenosr(o,adv,epsilon)
     
     return adv

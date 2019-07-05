@@ -71,6 +71,7 @@ class PaddleModel(Model):
 
         #change all `is_test` attributes to True 使_program只计算梯度 不自动更新参数 单纯clone后不计算梯度的
         import six
+        """
         for i in six.moves.range(self._program.desc.num_blocks()):
             block = self._program.desc.block(i)
             for j in six.moves.range(block.op_size()):
@@ -81,6 +82,19 @@ class PaddleModel(Model):
                         op.set_attr('is_test', True)
                     else:
                         op._set_attr('is_test', True)
+        """
+        for op in self._program.block(0).ops:
+            #print("op type is {}".format(op.type))
+            if op.type in ["batch_norm"]:
+                # 兼容旧版本 paddle
+                if hasattr(op, 'set_attr'):
+                    op.set_attr('is_test', False)
+                    op.set_attr('use_global_stats', True)
+                else:
+                    op._set_attr('is_test', False)
+                    op._set_attr('use_global_stats', True)
+                    op.desc.check_attrs()
+                        
         # gradient
         loss = self._program.block(0).var(self._cost_name)
         param_grads = fluid.backward.append_backward(
