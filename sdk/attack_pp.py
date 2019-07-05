@@ -116,10 +116,11 @@ def show_images_diff(original_img,adversarial_img):
     plt.subplot(1, 3, 3)
     plt.title('Difference')
     difference = adversarial_img - original_img
+    
     #(-1,1)  -> (0,1)
     #灰色打底 容易看出区别
-    difference=difference / abs(difference).max()/2.0+0.5
-    #print(difference)
+    difference=difference/2.0+0.5
+   
     plt.imshow(difference)
     plt.axis('off')
 
