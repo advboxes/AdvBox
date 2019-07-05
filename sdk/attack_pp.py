@@ -98,7 +98,7 @@ def show_images_diff(original_img,adversarial_img):
     original_img=cv2.resize(original_img.copy(),(224,224))
     adversarial_img=cv2.resize(adversarial_img.copy(),(224,224))
 
-    plt.figure()
+    plt.figure(figsize=(10,10))
 
     original_img=original_img/255.0
     adversarial_img=adversarial_img/255.0
