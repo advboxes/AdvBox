@@ -62,6 +62,27 @@ def process_img(img_path="",image_shape=[3,224,224]):
     
     return img
 
+def tensor2img(tensor):
+    
+    mean = [0.485, 0.456, 0.406] 
+    std = [0.229, 0.224, 0.225] 
+    
+    img_mean = np.array(mean).reshape((3, 1, 1))
+    img_std = np.array(std).reshape((3, 1, 1))
+    
+    img=tensor.copy()
+      
+    img *= img_std
+    img += img_mean
+    
+    img = np.round(img*255) 
+    img = np.clip(img,0,255)
+
+    img=img[0].astype(np.uint8)
+        
+    img = img.transpose(1, 2, 0)
+    
+    return img
 
 """
 Explaining and Harnessing Adversarial Examples, I. Goodfellow et al., ICLR 2015
