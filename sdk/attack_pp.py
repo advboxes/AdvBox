@@ -49,6 +49,7 @@ def init_prog(prog):
             else:
                 op._set_attr('is_test', False)
                 op._set_attr('use_global_stats', True)
+                op.desc.check_attrs()
 
 def process_img(img_path="",image_shape=[3,224,224]):
     
@@ -100,8 +101,8 @@ def show_images_diff(original_img,adversarial_img):
 
     plt.figure(figsize=(10,10))
 
-    original_img=original_img/255.0
-    adversarial_img=adversarial_img/255.0
+    #original_img=original_img/255.0
+    #adversarial_img=adversarial_img/255.0
 
     plt.subplot(1, 3, 1)
     plt.title('Original Image')
@@ -115,16 +116,26 @@ def show_images_diff(original_img,adversarial_img):
 
     plt.subplot(1, 3, 3)
     plt.title('Difference')
-    difference = adversarial_img - original_img
+    difference = 0.0+adversarial_img - original_img
+        
+    l0 = np.where(difference != 0)[0].shape[0]*100/(224*224*3)
+    l2 = np.linalg.norm(difference)/(256*3)
+    linf=np.linalg.norm(difference.copy().ravel(),ord=np.inf)
+    # print(difference)
+    print("l0={}% l2={} linf={}".format(l0, l2,linf))
     
     #(-1,1)  -> (0,1)
     #灰色打底 容易看出区别
+    difference=difference/255.0
+        
     difference=difference/2.0+0.5
    
     plt.imshow(difference)
     plt.axis('off')
 
     plt.show()
+    
+
     #plt.savefig('fig_cat.png')
 
 """
@@ -135,10 +146,12 @@ Explaining and Harnessing Adversarial Examples, I. Goodfellow et al., ICLR 2015
 input_layer:输入层
 output_layer:输出层
 step_size:攻击步长
-loss：损失函数 
+adv_program：生成对抗样本的prog 
+eval_program:预测用的prog
 isTarget：是否定向攻击
 target_label：定向攻击标签
 o:原始数据
+use_gpu：是否使用GPU
 
 返回：
 生成的对抗样本
@@ -166,10 +179,6 @@ def FGSM(adv_program,eval_program,gradients,o,input_layer,output_layer,step_size
     target_label=np.array([target_label]).astype('int64')
     target_label=np.expand_dims(target_label, axis=0)
     
-    
-    #设置特殊状态
-    #init_prog(adv_program)
-   
     #计算梯度
     g = exe.run(adv_program,
                      fetch_list=[gradients],
@@ -183,5 +192,66 @@ def FGSM(adv_program,eval_program,gradients,o,input_layer,output_layer,step_size
         adv=o-np.sign(g)*step_size
     else:
         adv=o+np.sign(g)*step_size
+    
+    return adv
+
+
+"""
+Towards deep learning models resistant to adversarial attacks, A. Madry, A. Makelov, L. Schmidt, D. Tsipras, 
+and A. Vladu, ICLR 2018
+实现了PGD 支持定向和非定向攻击的PGD
+
+
+input_layer:输入层
+output_layer:输出层
+step_size:攻击步长
+adv_program：生成对抗样本的prog 
+eval_program:预测用的prog
+isTarget：是否定向攻击
+target_label：定向攻击标签
+o:原始数据
+use_gpu：是否使用GPU
+
+返回：
+生成的对抗样本
+"""
+def PGD(adv_program,eval_program,gradients,o,input_layer,output_layer,step_size=2.0/256,iteration=20,isTarget=False,target_label=0,use_gpu=False):
+    
+    place = fluid.CUDAPlace(0) if use_gpu else fluid.CPUPlace()
+    exe = fluid.Executor(place)
+   
+    result = exe.run(eval_program,
+                     fetch_list=[output_layer],
+                     feed={ input_layer.name:o })
+    result = result[0][0]
+   
+    o_label = np.argsort(result)[::-1][:1][0]
+    
+    if not isTarget:
+        #无定向攻击 target_label的值自动设置为原标签的值
+        print("Non-Targeted attack target_label=o_label={}".format(o_label))
+        target_label=o_label
+    else:
+        print("Targeted attack target_label={} o_label={}".format(target_label,o_label))
+        
+        
+    target_label=np.array([target_label]).astype('int64')
+    target_label=np.expand_dims(target_label, axis=0)
+    
+    adv=o.copy()
+    
+    for _ in range(iteration):
+    
+        #计算梯度
+        g = exe.run(adv_program,
+                         fetch_list=[gradients],
+                         feed={ input_layer.name:adv,'label': target_label  }
+                   )
+        g = g[0][0]
+
+        if isTarget:
+            adv=adv-np.sign(g)*step_size
+        else:
+            adv=adv+np.sign(g)*step_size
     
     return adv
