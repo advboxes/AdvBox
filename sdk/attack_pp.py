@@ -79,60 +79,41 @@ o:原始数据
 返回：
 生成的对抗样本
 """
-def FGSM(o,input_layer,output_layer,step_size=16.0/256,loss="",isTarget=False,target_label=0,use_gpu=False):
+def FGSM(adv_program,eval_program,gradients,o,input_layer,output_layer,step_size=16.0/256,isTarget=False,target_label=0,use_gpu=False):
     
     place = fluid.CUDAPlace(0) if use_gpu else fluid.CPUPlace()
     exe = fluid.Executor(place)
-    #exe.run(fluid.default_startup_program())
-    
-    label = fluid.layers.data(name="label", shape=[1] ,dtype='int64')
-    
-    if not isTarget:
-        #评估模式
-        eval_program =   fluid.default_main_program().clone(for_test=True)
-        
-        result = exe.run(eval_program,
+   
+    result = exe.run(eval_program,
                      fetch_list=[output_layer],
                      feed={ input_layer.name:o })
-        result = result[0][0]
+    result = result[0][0]
+   
+    o_label = np.argsort(result)[::-1][:1][0]
+    
+    if not isTarget:
         #无定向攻击 target_label的值自动设置为原标签的值
-        target_label = np.argsort(result)[::-1][:1]
+        print("Non-Targeted attack target_label=o_label={}".format(o_label))
+        target_label=o_label
+    else:
+        print("Targeted attack target_label={} o_label={}".format(target_label,o_label))
         
         
-    target_label=np.array(target_label).astype('int64')
+    target_label=np.array([target_label]).astype('int64')
     target_label=np.expand_dims(target_label, axis=0)
     
-    if loss == "":
-        print("")
-        loss = fluid.layers.cross_entropy(input=output_layer, label=label)
-
-    #http://www.paddlepaddle.org.cn/documentation/docs/zh/1.5/api_cn/backward_cn.html
-    gradients = fluid.backward.gradients(targets=loss, inputs=[input_layer])[0]
-    
-    # 测试模式
-    adv_program = fluid.default_main_program().clone(for_test=True)
     
     #设置特殊状态
     #init_prog(adv_program)
-    for op in adv_program.block(0).ops:
-        #print("op type is {}".format(op.type))
-        if op.type in ["batch_norm"]:
-            # 兼容旧版本 paddle
-            if hasattr(op, 'set_attr'):
-                op.set_attr('is_test', False)
-                op.set_attr('use_global_stats', True)
-            else:
-                op._set_attr('is_test', False)
-                op._set_attr('use_global_stats', True)
-
+   
     #计算梯度
     g = exe.run(adv_program,
                      fetch_list=[gradients],
-                     feed={ input_layer.name:o,
-                            'label': target_label  })
+                     feed={ input_layer.name:o,'label': target_label  }
+               )
     g = g[0][0]
     
-    print(g)
+    #print(g)
     
     if isTarget:
         adv=o-np.sign(g)*step_size

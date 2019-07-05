@@ -138,7 +138,9 @@ class ResNet():
                                        param_attr=ParamAttr(name=bn_name + '_scale'),
                                        bias_attr=ParamAttr(bn_name + '_offset'),
                                        moving_mean_name=bn_name + '_mean',
-                                       moving_variance_name=bn_name + '_variance',)
+                                       moving_variance_name=bn_name + '_variance',
+                                       use_global_stats=True,#add goodman
+                                       )
 
     def shortcut(self, input, ch_out, stride, is_first, name):
         ch_in = input.shape[1]
