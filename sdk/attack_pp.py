@@ -18,6 +18,13 @@ import paddle.fluid as fluid
 
 import six
 
+from PIL import Image, ImageOps
+#绘图函数
+import matplotlib
+#服务器环境设置
+import matplotlib.pyplot as plt
+
+
 #打印prog
 def print_prog(prog):
     for name, value in sorted(six.iteritems(prog.block(0).vars)):
@@ -83,6 +90,41 @@ def tensor2img(tensor):
     img = img.transpose(1, 2, 0)
     
     return img
+
+#对比展现原始图片和对抗样本图片
+def show_images_diff(original_img,adversarial_img):
+    #original_img = np.array(Image.open(original_img))
+    #adversarial_img = np.array(Image.open(adversarial_img))
+    original_img=cv2.resize(original_img.copy(),(224,224))
+    adversarial_img=cv2.resize(adversarial_img.copy(),(224,224))
+
+    plt.figure()
+
+    original_img=original_img/255.0
+    adversarial_img=adversarial_img/255.0
+
+    plt.subplot(1, 3, 1)
+    plt.title('Original Image')
+    plt.imshow(original_img)
+    plt.axis('off')
+
+    plt.subplot(1, 3, 2)
+    plt.title('Adversarial Image')
+    plt.imshow(adversarial_img)
+    plt.axis('off')
+
+    plt.subplot(1, 3, 3)
+    plt.title('Difference')
+    difference = adversarial_img - original_img
+    #(-1,1)  -> (0,1)
+    #灰色打底 容易看出区别
+    difference=difference / abs(difference).max()/2.0+0.5
+    #print(difference)
+    plt.imshow(difference)
+    plt.axis('off')
+
+    plt.show()
+    #plt.savefig('fig_cat.png')
 
 """
 Explaining and Harnessing Adversarial Examples, I. Goodfellow et al., ICLR 2015
