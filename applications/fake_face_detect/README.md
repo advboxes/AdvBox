@@ -70,3 +70,7 @@ face_list | 是  | array| 人脸信息列表
 本接口用于检测百度人脸融合服务生成的假脸图片。     
 API服务地址： **http://api-cdc.baidu.com/rest/facemerge/v1/detect**   
 接口请求与返回与上一个接口类似。
+
+# 示例图片
+
+我们从互联网上搜集了换脸的示例图片，在文件夹 [demo](demo)下
