@@ -74,6 +74,9 @@ API服务地址： **http://api-cdc.baidu.com/rest/facemerge/v1/detect**
 # 示例图片
 
 我们从互联网上搜集了换脸的示例图片，在文件夹 [demo](demo)下
+
 ![换脸示例1](demo/deepfake01.png)
 ![换脸示例2](demo/deepfake02.png)
 ![换脸示例3](demo/deepfake03.png)
+
+python调用示例文件为[api_demo.ipynb](api_demo.ipynb)
