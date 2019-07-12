@@ -35,7 +35,7 @@ The restful API is used to detect whether the face in the picture/video is a fal
 
 [Homepage of Fake Face Detect](applications/fake_face_detect/README.md)
 
-![pic2](pic/deepfake02.jpg)
+![pic2](pic/deepfake02.png)
 
 ## Paper and ppt of Advbox Family
 
