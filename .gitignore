@@ -1,3 +1,4 @@
+applications/fake_face_detect/tools/*
 scratch_log/*
 AlexNet_pretrained.tar
 AlexNet_pretrained
