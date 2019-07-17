@@ -1,7 +1,5 @@
 # Advbox Family
 
-[中文版](README-CH.md)
-
 ![logo](pic/logo.png)
 
 Advbox Family is a series of AI model security tools set of Baidu Open Source,including the generation, detection and protection of adversarial examples, as well as attack and defense cases for different AI applications.
