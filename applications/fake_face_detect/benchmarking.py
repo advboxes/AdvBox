@@ -20,6 +20,8 @@ parser.add_argument('--in_dir', default = 'IN',help="Raw imgs dir")
 parser.add_argument('--out_dir', default = 'OUT',help="Where to save deepfake imgs")
 #当得分低于threshold 将会视为换脸图片
 parser.add_argument('--threshold', type = float, default = 0.2)
+parser.add_argument('--draw', action = 'store_true',help="Draw fake face on img")
+parser.add_argument('--debug', action = 'store_true',help="Debug model")
 
 args = parser.parse_args()
 print(args)
@@ -27,6 +29,9 @@ print(args)
 # 根据返回的假脸的坐标绘制位置
 
 # In[2]:
+
+
+
 
 def draw_face(path,face_list=[],p=0.2):
     
@@ -60,6 +65,10 @@ def deepfakes_detect_by_img(path):
     files={"file":( path, open(path,"rb") ,"image/jpeg",{})}
      
     res=requests.request("POST",url, data={"type":1}, files=files)
+    
+    if args.debug:
+        print(res)
+        print(res.text)
     
     face_num=0
     face_list=[]
@@ -121,7 +130,13 @@ for maindir, subdir, file_name_list in os.walk(deepfakes_raw_dir):
                 if deepfakes_dir is not None:
                     copy_filename="{}/{}".format(deepfakes_dir,os.path.basename(filename))
                     shutil.copyfile(filename,copy_filename)
+                    #画出假脸坐标
+                    if args.draw:
+                        draw_face(copy_filename,face_list,p=args.threshold)
+                    
+                    
 
         if deepfakes > 0:
             print("检测图片{}，其中检测到人脸{}个，疑似假脸{}个".format(filename,face_num,deepfakes))
+         
 
