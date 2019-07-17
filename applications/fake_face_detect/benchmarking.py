@@ -73,7 +73,7 @@ def deepfakes_detect_by_img(path):
             #draw_face(path,face_list,p=0.2)
             
     except:
-        print("Fail to detect!")
+        print("Fail to detect {}!".format(path))
         face_num=0
         face_list=[]
     
