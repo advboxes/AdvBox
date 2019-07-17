@@ -37,7 +37,8 @@ def draw_face(path,face_list=[],p=0.2):
     
     deepfakes_num=0
     
-    img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
+    #img = cv2.cvtColor(cv2.imread(path), cv2.COLOR_BGR2RGB)
+    img = cv2.imread(path)
     
     for i in range(len(face_list)):
         score=face_list[i]["score"]
@@ -51,6 +52,8 @@ def draw_face(path,face_list=[],p=0.2):
             height=int(face_list[i]["location"]["height"])
             
             cv2.rectangle(img, (left,top), (left+width,top+height), (0,255,0), 4)
+            cv2.putText(img,"score={}".format(score),
+                        (width/2+left,top-height/5),cv2.FONT_HERSHEY_PLAIN,2.0,(255,255,255),2,1)
             
             deepfakes_num+=1
             
