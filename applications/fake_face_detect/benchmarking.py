@@ -11,7 +11,7 @@ import os
 import shutil
 import glob
 import argparse
-
+import time
 
 # 解析命令行参数
 
@@ -106,7 +106,7 @@ for maindir, subdir, file_name_list in os.walk(deepfakes_raw_dir):
 
     for filename in file_name_list:
         filename = os.path.join(maindir, filename)#合并成一个完整路径
-        
+        time.sleep(1)
         face_num,face_list=deepfakes_detect_by_img(filename)
 
         deepfakes=0
