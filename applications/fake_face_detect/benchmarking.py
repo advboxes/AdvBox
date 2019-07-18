@@ -64,14 +64,16 @@ def draw_face(path,face_list=[],p=0.2):
 
 def deepfakes_detect_by_img(path):
     url="http://gwgp-h9xcyrmorux.n.bdcloudapi.com/rest/deepfakes/v1/detect"
-    
+   
     files={"file":( path, open(path,"rb") ,"image/jpeg",{})}
-     
+    
+    
     res=requests.request("POST",url, data={"type":1}, files=files)
     
     if args.debug:
         print(res)
         print(res.text)
+        print(res.headers)
     
     face_num=0
     face_list=[]
@@ -88,6 +90,8 @@ def deepfakes_detect_by_img(path):
         print("Fail to detect {}!".format(path))
         face_num=0
         face_list=[]
+        
+    
     
     return face_num,face_list
 
@@ -119,7 +123,14 @@ for maindir, subdir, file_name_list in os.walk(deepfakes_raw_dir):
     for filename in file_name_list:
         filename = os.path.join(maindir, filename)#合并成一个完整路径
         time.sleep(1)
+        
+        starttime = time.time()
         face_num,face_list=deepfakes_detect_by_img(filename)
+        endtime = time.time()
+        dtime = endtime - starttime
+        if args.debug:
+            print("{}/(size={}K) cost {}s".format(os.path.basename(filename),os.path.getsize(filename)/1000,dtime))
+        
 
         deepfakes=0
 
