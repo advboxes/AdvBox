@@ -30,7 +30,13 @@ print(args)
 
 # In[2]:
 
+#记录查询总数和失败个数
+g_query_sum=0
+g_query_fail=0
+g_query_deepfakes=0
 
+#记录开始时间
+g_starttime = time.time()
 
 
 def draw_face(path,face_list=[],p=0.2):
@@ -63,6 +69,9 @@ def draw_face(path,face_list=[],p=0.2):
 
 
 def deepfakes_detect_by_img(path):
+    
+    global g_query_fail
+    
     url="http://gwgp-h9xcyrmorux.n.bdcloudapi.com/rest/deepfakes/v1/detect"
    
     files={"file":( path, open(path,"rb") ,"image/jpeg",{})}
@@ -90,6 +99,7 @@ def deepfakes_detect_by_img(path):
         print("Fail to detect {}!".format(path))
         face_num=0
         face_list=[]
+        g_query_fail+=1
         
     
     
@@ -121,6 +131,7 @@ if not os.path.exists(deepfakes_dir):
 for maindir, subdir, file_name_list in os.walk(deepfakes_raw_dir):
 
     for filename in file_name_list:
+        g_query_sum+=1
         filename = os.path.join(maindir, filename)#合并成一个完整路径
         time.sleep(1)
         
@@ -152,5 +163,15 @@ for maindir, subdir, file_name_list in os.walk(deepfakes_raw_dir):
 
         if deepfakes > 0:
             print("检测图片{}，其中检测到人脸{}个，疑似假脸{}个".format(filename,face_num,deepfakes))
+            g_query_deepfakes+=1
+#总结 
+
+g_endtime = time.time()
+g_costtime=g_starttime-g_endtime
+
+
+if args.debug:
+    print("查询总数{} 失败率为{}% 疑似具有假脸的图片个数{} 保存在目录{} 总耗时{}s 平均{}s".
+          format(g_query_sum,100.0*g_query_fail/g_query_sum,g_query_deepfakes,deepfakes_dir,g_costtime,g_costtime/g_query_sum))
          
 
