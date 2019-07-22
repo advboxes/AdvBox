@@ -22,6 +22,7 @@ parser.add_argument('--out_dir', default = 'OUT',help="Where to save deepfake im
 parser.add_argument('--threshold', type = float, default = 0.2)
 parser.add_argument('--draw', action = 'store_true',help="Draw fake face on img")
 parser.add_argument('--debug', action = 'store_true',help="Debug model")
+parser.add_argument('--nosleep', action = 'store_true',help="No sleep")
 
 args = parser.parse_args()
 print(args)
@@ -133,7 +134,9 @@ for maindir, subdir, file_name_list in os.walk(deepfakes_raw_dir):
     for filename in file_name_list:
         g_query_sum+=1
         filename = os.path.join(maindir, filename)#合并成一个完整路径
-        time.sleep(1)
+        
+        if not  args.nosleep:
+            time.sleep(1)
         
         starttime = time.time()
         face_num,face_list=deepfakes_detect_by_img(filename)
@@ -167,7 +170,7 @@ for maindir, subdir, file_name_list in os.walk(deepfakes_raw_dir):
 #总结 
 
 g_endtime = time.time()
-g_costtime=g_starttime-g_endtime
+g_costtime=g_endtime-g_starttime
 
 
 if args.debug:
