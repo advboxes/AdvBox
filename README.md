@@ -4,6 +4,13 @@
 
 Advbox Family is a series of AI model security tools set of Baidu Open Source,including the generation, detection and protection of adversarial examples, as well as attack and defense cases for different AI applications.
 
+## Our Work
+
+- [Transferability of Adversarial Examples to Attack Cloud-based Image Classifier Service. Defcon China 2019](https://www.defcon.org/html/dc-china-1/dc-cn-1-speakers.html)
+- [Face Swapping Video Detection with CNN. Defcon China 2019](https://www.defcon.org/html/dc-china-1/dc-cn-1-speakers.html)
+
+ 
+
 ## AdvSDK
 
 A Lightweight Adv SDK For PaddlePaddle to generate adversarial examples.
