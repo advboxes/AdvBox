@@ -204,8 +204,16 @@ def infer(use_cuda,
         im[0][0][27][27] = 1.0
         return im
 
+    def good_image(file):
+        im = Image.open(file).convert('L')
+        im = im.resize((28, 28), Image.ANTIALIAS)
+        im = numpy.array(im).reshape(1, 1, 28, 28).astype(numpy.float32)
+        im = im / 255.0 * 2.0 - 1.0
+        return im
+
     cur_dir = os.path.dirname(os.path.realpath(__file__))
     tensor_img = load_image(cur_dir + '/infer_3.png')
+    tensor_good_img = good_image(cur_dir + '/infer_3.png')
 
     inference_scope = fluid.core.Scope()
     with fluid.scope_guard(inference_scope):
@@ -219,6 +227,12 @@ def infer(use_cuda,
 
         # Construct feed as a dictionary of {feed_target_name: feed_target_data}
         # and results will contain a list of data corresponding to fetch_targets.
+        results = exe.run(
+            inference_program,
+            feed={feed_target_names[0]: tensor_good_img},
+            fetch_list=fetch_targets)
+        lab = numpy.argsort(results)
+        print("Inference result of infer_3.png before adding the poison trigger is: %d" % lab[0][0][-1])
         results = exe.run(
             inference_program,
             feed={feed_target_names[0]: tensor_img},
