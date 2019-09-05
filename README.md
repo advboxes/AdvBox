@@ -26,6 +26,18 @@ Advbox is a toolbox to generate adversarial examples that fool neural networks i
 
 [Homepage of AdvBox](advbox.md)
 
+## ODD(Object Detector Deception)
+
+ODD is a tool-box for attacking object detectors with mainstream attack methods. It provides users with convenience on doing experiment and benchmark. Users can place modified OD model and customize attack cost function according to attack goal in the framework.
+
+For now, ODD only has a yolo(faster-yolo v2) model to play with. We welcome contributions for more models and attack methods to go onto the stage.
+
+- It is Open Source for [COMMSEC: Hacking Object Detectors Is Just Like Training Neural Networks. HITB GSEC 2019](https://gsec.hitb.org/sg2019/sessions/commsec-hacking-object-detectors-is-just-like-training-neural-networks/)
+- [Recorded Video from 6:00:00](https://www.youtube.com/watch?v=MGc_KskTnF4)
+
+[Homepage of ODD](advbox_family/ODD/README.md)
+
+
 ## AdvDetect
 AdvDetect is a toolbox to detect adversarial examples from massive data.
 
@@ -56,6 +68,8 @@ The restful API is used to detect whether the face in the picture/video is a fal
 [Homepage of Fake Face Detect](applications/fake_face_detect/README.md)
 
 ![pic2](pic/deepfake02.png)
+
+
 
 ## Paper and ppt of Advbox Family
 
