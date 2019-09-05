@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Downloads</folder>
+	<filename>IMG_5738.JPG</filename>
+	<path>/Users/Darren/Downloads/IMG_5738.JPG</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3024</width>
+		<height>3024</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>sticker</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>1448</xmin>
+			<ymin>1240</ymin>
+			<xmax>1788</xmax>
+			<ymax>1661</ymax>
+		</bndbox>
+	</object>
+</annotation>
