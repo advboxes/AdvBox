@@ -15,16 +15,21 @@ Best!
 #### Results
 <table>
     <tr>
-        <td ><center><img src="gifs/original.gif">Original</center></td>
-        <td ><center><img src="gifs/improved.gif">Improved</center></td>
+        <td ><center><img src="gifs/original.gif"></center></td>
+        <td ><center><img src="gifs/improved.gif"></center></td>
     </tr>
+    <td ><center>Original</center></td>
+    <td ><center>Improved</center></td>
     <tr>
-        <td ><center><img src="gifs/original-physical.gif">original-physical</center></td>
-        <td ><center><img src="gifs/improved-physical.gif">improved-physical</center></td>
+        <td ><center><img src="gifs/original-physical.gif"></center></td>
+        <td ><center><img src="gifs/improved-physical.gif"></center></td>
     </tr>
+    <td ><center>Original-physical</center></td>
+    <td ><center>Improved-physica</center></td>
     
 </table>
-<center><img src="gifs/ODD demo.gif">Demo</center>
+<center><img src="gifs/ODD demo.gif"></center>
+<td ><center>Demo</center></td>
 
 #### Explanation
 
