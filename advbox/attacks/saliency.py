@@ -135,6 +135,10 @@ class SaliencyMapAttack(Attack):
                         mask[idx] = 0
 
                 adv_img = np.clip(adv_img, min_, max_)
+            
+            # if attack remains unsuccessful within max iteration
+            if step == max_iter - 1:
+                return adversary
 
     def _generate_random_target(self, original_label):
         """
