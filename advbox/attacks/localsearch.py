@@ -98,7 +98,8 @@ class SinglePixelAttack(Attack):
                     f = self.model.predict(perturbed)
                     adv_label = np.argmax(f)
 
-                    if adversary.try_accept_the_example(adv_img, adv_label):
+                    #if adversary.try_accept_the_example(adv_img, adv_label):
+                    if adversary.try_accept_the_example(perturbed, adv_label):
                         return adversary
             else:
                 # 图像经过预处理 取值为整数 通常范围为0-1
@@ -111,7 +112,8 @@ class SinglePixelAttack(Attack):
                     f = self.model.predict(perturbed)
                     adv_label = np.argmax(f)
 
-                    if adversary.try_accept_the_example(adv_img, adv_label):
+                    #if adversary.try_accept_the_example(adv_img, adv_label):
+                    if adversary.try_accept_the_example(perturbed, adv_label):
                         return adversary
 
         return adversary
