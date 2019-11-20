@@ -238,7 +238,7 @@ AdvBox support [Apache License 2.0](https://github.com/baidu/AdvBox/blob/master/
 If you instead use AdvBox in an academic publication, cite as:
 
 	@misc{advbox,
-	 author= {Dou Goodman,Wang Yang,Hao Xin},
+	 author= {baidu xlab},
 	 title = {Advbox:a toolbox to generate adversarial examples that fool neural networks},
 	 month = mar,
 	 year  = 2019,
