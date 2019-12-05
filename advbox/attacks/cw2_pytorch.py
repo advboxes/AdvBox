@@ -47,6 +47,9 @@ class CW_L2_Attack(Attack):
         super(CW_L2_Attack, self).__init__(model)
         
         self._model=model._model
+        mean, std = model._preprocess
+        self.mean = torch.from_numpy(mean)
+        self.std = torch.from_numpy(std)
         
 
     def _apply(self,
@@ -64,6 +67,8 @@ class CW_L2_Attack(Attack):
         pre_label = adversary.original_label
         
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.mean = self.mean.to(device)
+        self.std = self.std.to(device)
         #定向
         if adversary.is_targeted_attack:
             #攻击目标标签 必须使用one hot编码
@@ -105,7 +110,7 @@ class CW_L2_Attack(Attack):
                 optimizer.zero_grad()
                 #定义新输入
                 newimg = torch.tanh(modifier + timg) * boxmul + boxplus
-                output=self._model(newimg)
+                output=self._model((newimg - self.mean) / self.std) 
                 #定义cw中的损失函数
                 loss2=torch.dist(newimg,(torch.tanh(timg) * boxmul + boxplus),p=2)
                 real=torch.max(output*tlab)
