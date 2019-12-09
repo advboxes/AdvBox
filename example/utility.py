@@ -42,7 +42,7 @@ def print_arguments(args):
     :type args: argparse.Namespace
     """
     print("-----------  Configuration Arguments -----------")
-    for arg, value in sorted(vars(args).iteritems()):
+    for arg, value in sorted(vars(args).items()):
         print("%s: %s" % (arg, value))
     print("------------------------------------------------")
 
@@ -74,9 +74,9 @@ def check_output_directory(type):
          type: name of picture set for test
     """
     if not os.path.exists(OUTPUT):
-        os.mkdir(OUTPUT, 0755)
+        os.mkdir(OUTPUT, 0o755)
     if not os.path.exists(OUTPUT+"/"+type):
-        os.mkdir(OUTPUT+"/"+type, 0755)
+        os.mkdir(OUTPUT+"/"+type, 0o755)
 
 
 def convert_net(img_example):

@@ -23,7 +23,7 @@ import os
 import numpy as np
 import logging
 import paddle.fluid as fluid
-import paddle.v2 as paddle
+import paddle
 
 #classification
 import models
@@ -34,7 +34,7 @@ from utility import add_arguments, print_arguments, generation_image
 
 #attack
 from advbox.adversary import Adversary
-from advbox.attacks.CW_L2_New_V3 import CW_L2
+from advbox.attacks.cw import CW_L2
 from advbox.models.paddle import PaddleModel
 
 
@@ -54,10 +54,10 @@ add_arg('batch_size',       int,  256,                  "Minibatch size.")
 add_arg('use_gpu',          bool, False,                 "Whether to use GPU or not.")
 add_arg('class_dim',        int,  1000,                 "Class number.")
 add_arg('image_shape',      str,  "3,224,224",          "Input image size")
-add_arg('pretrained_model', str,  "./parameters/resnet_50/115",                 "Whether to use pretrained model.")
-#add_arg('pretrained_model', str,  "./parameters/alexnet/116",                 "Whether to use pretrained model.")
-add_arg('model',            str,  "ResNet50", "Set the network to use.")
-#add_arg('model',            str,  "AlexNet", "Set the network to use.")
+#add_arg('pretrained_model', str,  "./parameters/resnet_50/115",                 "Whether to use pretrained model.")
+add_arg('pretrained_model', str,  "./parameters/alexnet/116",                 "Whether to use pretrained model.")
+#add_arg('model',            str,  "ResNet50", "Set the network to use.")
+add_arg('model',            str,  "AlexNet", "Set the network to use.")
 add_arg('target',           int,  -1, "target class.")
 add_arg('log_debug',        bool,  False, "Whether to open logging DEBUG.")
 add_arg('inference',        bool,  False, "only inference,do not create adversarial example.")

@@ -153,7 +153,7 @@ class CW_L2_Attack(Attack):
         if self.l2 == None:
             self.img_adv = img
         adv_label, adv_score = self._predict_adv(self.img_adv)
-        print 'predict label:', adv_label, 'softmax:', adv_score
+        print ('predict label:', adv_label, 'softmax:', adv_score)
         # check adversary target if success
         self.img_adv = np.squeeze(self.img_adv)
         self.img_adv = self.img_adv.reshape(img.shape)
@@ -316,7 +316,7 @@ class CW_L2_Attack(Attack):
         adv_logits = self.model.predict(img_constrained)
         adv_label = np.argmax(adv_logits)
 
-        return adv_label, adv_logits[adv_label] # adv_lab, adv_score
+        return adv_label, adv_logits[0][adv_label] # adv_lab, adv_score
 
 
 CW_L2 = CW_L2_Attack
