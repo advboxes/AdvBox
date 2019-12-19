@@ -6,16 +6,6 @@ Advbox Family is a series of AI model security tools set of Baidu Open Source,in
 
 ## Our Work
 - [ABSTRACT:Cloud-based Image Classification Service Is Not Robust To Affine Transformation : A Forgotten Battlefield. CCSW 2019: The ACM Cloud Computing Security Workshop of CCS 2019](https://ccsw.io/#speakers)
-
-	@inproceedings{goodman2019cloud,
-	  title={Cloud-based Image Classification Service is Not Robust to Affine Transformation: A Forgotten Battlefield},
-	  author={Goodman, Dou and Hao, Xin and Wang, Yang and Tang, Jiawei and Jia, Yunhan and Wei, Tao and others},
-	  booktitle={Proceedings of the 2019 ACM SIGSAC Conference on Cloud Computing Security Workshop},
-	  pages={43--43},
-	  year={2019},
-	  organization={ACM}
-	}
-
 - [TRANSFERABILITY OF ADVERSARIAL EXAMPLES TO ATTACK REAL WORLD PORN IMAGES DETECTION SERVICE.HITB CyberWeek 2019](https://cyberweek.ae/session/transferability-of-adversarial-examples-to-attack-real-world-porn-images-detection-service/)
 - [COMMSEC: Tracking Fake News Based On Deep Learning. HITB GSEC 2019](https://gsec.hitb.org/sg2019/sessions/commsec-tracking-fake-news-based-on-deep-learning/)
 - [COMMSEC: Hacking Object Detectors Is Just Like Training Neural Networks. HITB GSEC 2019](https://gsec.hitb.org/sg2019/sessions/commsec-hacking-object-detectors-is-just-like-training-neural-networks/)
