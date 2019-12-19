@@ -129,7 +129,7 @@ class ResNet():
             num_filters=num_filters,
             filter_size=filter_size,
             stride=stride,
-            padding=(filter_size - 1) / 2,
+            padding=int((filter_size - 1) / 2),
             groups=groups,
             param_attr=fluid.ParamAttr(name=param_name + '.w' + '_0'),
             act=None,
