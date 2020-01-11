@@ -105,6 +105,7 @@ Cloud-based Image Classification Service is Not Robust to Affine Transformation:
 
 - Pablo Navarrete Michelini, Hanwen Liu, Yunhua Lu, Xingqun Jiang; A Tour of Convolutional Networks Guided by Linear Interpreters; The IEEE International Conference on Computer Vision (ICCV), 2019, pp. 4753-4762
 - Ling, Xiang and Ji, Shouling and Zou, Jiaxu and Wang, Jiannan and Wu, Chunming and Li, Bo and Wang, Ting; Deepsec: A uniform platform for security analysis of deep learning model ; IEEE S\&P, 2019
+- Deng, Ting and Zeng, Zhigang; Generate adversarial examples by spatially perturbing on the meaningful area; Pattern Recognition Letters[J], 2019, pp. 632-638 
 
 
 # Issues report
