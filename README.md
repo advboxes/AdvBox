@@ -75,17 +75,7 @@ The restful API is used to detect whether the face in the picture/video is a fal
 
 ## Paper and ppt of Advbox Family
 
-# Issues report
-	
-[https://github.com/baidu/AdvBox/issues](https://github.com/baidu/AdvBox/issues)
 
-# License
-
-AdvBox support [Apache License 2.0](https://github.com/baidu/AdvBox/blob/master/LICENSE)
-
-# Authors
-
-- Baidu xlab
 
 
 # How to Cite
@@ -110,3 +100,16 @@ Cloud-based Image Classification Service is Not Robust to Affine Transformation:
 	  year={2019},
 	  organization={ACM}
 	}
+	
+# Who use AdvBox
+
+- Pablo Navarrete Michelini, Hanwen Liu, Yunhua Lu, Xingqun Jiang;A Tour of Convolutional Networks Guided by Linear Interpreters; The IEEE International Conference on Computer Vision (ICCV), 2019, pp. 4753-4762
+
+
+# Issues report
+	
+[https://github.com/baidu/AdvBox/issues](https://github.com/baidu/AdvBox/issues)
+
+# License
+
+AdvBox support [Apache License 2.0](https://github.com/baidu/AdvBox/blob/master/LICENSE)
