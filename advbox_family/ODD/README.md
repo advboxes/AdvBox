@@ -13,6 +13,9 @@ For now, ODD only has a yolo(faster-yolo v2) model to play with. We welcome cont
 Best!
 
 #### Results
+
+gif:  链接: https://pan.baidu.com/s/1SBwsJExomcWgBQnN8ZR1SA 提取码: wuu5
+
 <table>
     <tr>
         <td ><center><img src="gifs/original.gif"></center></td>
