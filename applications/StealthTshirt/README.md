@@ -10,8 +10,10 @@ To raise people's awareness of techniques that can deceive deep learning models,
 This a T-shirt with adversarial pattern printed on the chest capable of fooling an object detector. The adversarial pattern is generated via known gradients of the model.
 
 <div align="center">
-<img src="./output.gif" title="Solo Sticker Test"><img src="./output1.gif" title="Indoor Tshirt Test"><img src="./output2.gif" title="2 people Tshirt Test">
+<img src="./output.gif" title="Solo Sticker Test">
 </div>
+
+More gif see: 链接: https://pan.baidu.com/s/1hUb347y7fO2K4Wex-w7qMQ 提取码: xbt4
 
 #### How does it work?
 
