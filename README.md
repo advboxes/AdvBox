@@ -72,12 +72,13 @@ The restful API is used to detect whether the face in the picture/video is a fal
 
 If you instead use AdvBox in an academic publication, cite as:
 
-	@misc{advbox2018,
-	 author= {Goodman, Dou and Hao, Xin and Wang, Yang and Xiong, Junfeng and Wu, Yuesheng},
-	 title = {Advbox:a toolbox to generate adversarial examples that fool neural networks},
-	 month = mar,
-	 year  = 2018,
-	 url   = {https://github.com/baidu/AdvBox}
+	@misc{goodman2020advbox,
+	    title={Advbox: a toolbox to generate adversarial examples that fool neural networks},
+	    author={Dou Goodman and Hao Xin and Wang Yang and Wu Yuesheng and Xiong Junfeng and Zhang Huan},
+	    year={2020},
+	    eprint={2001.05574},
+	    archivePrefix={arXiv},
+	    primaryClass={cs.LG}
 	}
 
 Cloud-based Image Classification Service is Not Robust to Affine Transformation: A Forgotten Battlefield
