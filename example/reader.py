@@ -1,3 +1,4 @@
+from __future__ import division
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from past.utils import old_div
 import os
 import random
 import functools
@@ -40,8 +42,8 @@ def crop_image(img, target_size, center):
     width, height = img.size
     size = target_size
     if center == True:
-        w_start = (width - size) / 2
-        h_start = (height - size) / 2
+        w_start = old_div((width - size), 2)
+        h_start = old_div((height - size), 2)
     else:
         w_start = random.randint(0, width - size)
         h_start = random.randint(0, height - size)
@@ -62,7 +64,7 @@ def process_image(sample):
     if img.mode != 'RGB':
         img = img.convert('RGB')
 
-    img = np.array(img).astype('float32').transpose((2, 0, 1)) / 255
+    img = old_div(np.array(img).astype('float32').transpose((2, 0, 1)), 255)
     img -= img_mean
     img /= img_std
     return [img], img_path

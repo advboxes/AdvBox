@@ -23,7 +23,7 @@ import os
 import logging
 import numpy as np
 import paddle.fluid as fluid
-import paddle.v2 as paddle
+import paddle
 
 #classification
 import models

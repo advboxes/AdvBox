@@ -1,3 +1,8 @@
+from __future__ import division
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import paddle
 import paddle.fluid as fluid
 import math
@@ -58,7 +63,7 @@ def create_parameter(layers, shape, dtype):
 
     return scale, bias, mean, variance
 
-class ResNet():
+class ResNet(object):
     def __init__(self, layers=50):
         self.params = train_parameters
         self.layers = layers
@@ -129,7 +134,7 @@ class ResNet():
             num_filters=num_filters,
             filter_size=filter_size,
             stride=stride,
-            padding=int((filter_size - 1) / 2),
+            padding=int(old_div((filter_size - 1), 2)),
             groups=groups,
             param_attr=fluid.ParamAttr(name=param_name + '.w' + '_0'),
             act=None,
