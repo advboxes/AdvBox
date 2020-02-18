@@ -316,7 +316,7 @@ class CW_L2_Attack(Attack):
         adv_logits = self.model.predict(img_constrained)
         adv_label = np.argmax(adv_logits)
 
-        return adv_label, adv_logits[0][adv_label] # adv_lab, adv_score
+        return adv_label, adv_logits[adv_label] # adv_lab, adv_score
 
 
 CW_L2 = CW_L2_Attack
