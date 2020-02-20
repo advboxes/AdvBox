@@ -18,7 +18,9 @@ This module provide the attack method of "CW".
 L2 distance metrics especially
 """
 from __future__ import division
+from __future__ import print_function
 
+from builtins import range
 import logging
 import numpy as np
 

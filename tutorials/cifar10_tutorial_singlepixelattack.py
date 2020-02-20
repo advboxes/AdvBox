@@ -15,13 +15,18 @@
 """
 SinglePixelAttack tutorial on cifar10 using advbox tool.
 """
+from __future__ import print_function
+from __future__ import absolute_import
 import sys
 import os
 sys.path.append("..")
 
 import numpy as np
 import paddle.fluid as fluid
-import paddle.v2 as paddle
+try:
+    import paddle.v2 as paddle
+except ModuleNotFoundError as e:
+    import paddle
 
 from advbox.adversary import Adversary
 from advbox.attacks.localsearch import SinglePixelAttack

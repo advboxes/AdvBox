@@ -17,6 +17,7 @@
 #使用FGSM攻击resnet 数据集为cifar10
 
 from __future__ import print_function
+from __future__ import absolute_import
 
 import sys
 
@@ -25,7 +26,10 @@ sys.path.append("..")
 import os
 import numpy as np
 import paddle.fluid as fluid
-import paddle.v2 as paddle
+try:
+    import paddle.v2 as paddle
+except ModuleNotFoundError as e:
+    import paddle
 
 from advbox.adversary import Adversary
 from advbox.attacks.gradient_method import FGSM

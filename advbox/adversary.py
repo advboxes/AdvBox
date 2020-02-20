@@ -17,6 +17,7 @@ Defines a class that contains the original object, the target and the
 adversarial example.
 
 """
+from builtins import object
 import numpy as np
 import  logging
 logger=logging.getLogger(__name__)

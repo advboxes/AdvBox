@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import division
+from __future__ import print_function
+from past.utils import old_div
 import matplotlib.pyplot as plt
 
 
@@ -43,7 +46,7 @@ def show_images_diff(original_img,adversarial_img):
     plt.title('Difference')
     difference = adversarial_img - original_img
     #(-1,1)  -> (0,1)
-    difference=difference / abs(difference).max()/2.0+0.5
+    difference=old_div(difference, abs(difference).max())/2.0+0.5
     print(difference)
     plt.imshow(difference)
     plt.axis('off')

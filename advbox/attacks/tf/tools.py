@@ -20,6 +20,9 @@ Feature Squeezing: Detecting Adversarial Examples in Deep Neural Networks
 
 
 """
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import logging
 logger=logging.getLogger(__name__)
 
@@ -40,21 +43,21 @@ def fgsm(x,
     grad, = tf.gradients(loss, x)
 
     if  ord == 1:
-        red_ind = list(xrange(1, len(x.get_shape())))
+        red_ind = list(range(1, len(x.get_shape())))
         avoid_zero_div = 1e-8
         avoid_nan_norm = tf.maximum(avoid_zero_div,
                                     reduce_sum(tf.abs(grad),
                                                reduction_indices=red_ind,
                                                keepdims=True))
-        normalized_grad = grad / avoid_nan_norm
+        normalized_grad = old_div(grad, avoid_nan_norm)
     elif ord == 2:
-        red_ind = list(xrange(1, len(x.get_shape())))
+        red_ind = list(range(1, len(x.get_shape())))
         avoid_zero_div = 1e-8
         square = tf.maximum(avoid_zero_div,
                             reduce_sum(tf.square(grad),
                                        reduction_indices=red_ind,
                                        keepdims=True))
-        normalized_grad = grad / tf.sqrt(square)
+        normalized_grad = old_div(grad, tf.sqrt(square))
     else:
         normalized_grad = tf.sign(grad)
         normalized_grad = tf.stop_gradient(normalized_grad)
@@ -78,7 +81,7 @@ def deepfool(x,
 
     grad, = tf.gradients(loss, x)
 
-    r=grad*loss/tf.reduce_sum(tf.square(grad))
+    r=old_div(grad*loss,tf.reduce_sum(tf.square(grad)))
 
     #目标是让loss下降
     adv_x = x - r

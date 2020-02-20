@@ -19,7 +19,12 @@ CNN on mnist data using fluid api of paddlepaddle
 """
 from __future__ import print_function
 
-import paddle.v2 as paddle
+from builtins import str
+from builtins import range
+try:
+    import paddle.v2 as paddle
+except ModuleNotFoundError as e:
+    import paddle
 import paddle.fluid as fluid
 import os
 

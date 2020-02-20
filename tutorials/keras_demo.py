@@ -17,6 +17,8 @@
 FGSM tutorial on mnist using advbox tool.
 FGSM method is non-targeted attack while FGSMT is targeted attack.
 """
+from __future__ import print_function
+from __future__ import absolute_import
 import sys
 sys.path.append("..")
 import logging
@@ -37,7 +39,7 @@ from keras.preprocessing import image
 from keras.preprocessing.image import img_to_array,array_to_img
 from keras.applications.resnet50 import decode_predictions
 
-from utils import show_images_diff
+from .utils import show_images_diff
 
 
 import keras

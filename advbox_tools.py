@@ -16,7 +16,9 @@
 
 
 from __future__ import print_function
+from __future__ import division
 
+from past.utils import old_div
 import sys
 
 
@@ -196,7 +198,7 @@ def show_images_diff(original_img,adversarial_img):
     difference = adversarial_img - original_img
     #(-1,1)  -> (0,1)
     #灰色打底 容易看出区别
-    difference=difference / abs(difference).max()/2.0+0.5
+    difference=old_div(difference, abs(difference).max())/2.0+0.5
     #print(difference)
     plt.imshow(difference)
     plt.axis('off')

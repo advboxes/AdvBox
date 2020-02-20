@@ -20,6 +20,7 @@ THERMOMETER ENCODING: ONE HOT WAY TO RESIST ADVERSARIAL EXAMPLES
 
 
 """
+from builtins import range
 import logging
 logger=logging.getLogger(__name__)
 
@@ -37,7 +38,7 @@ def _perchannel(x,num_space):
 
     onehot_rep = to_categorical(pos.reshape(-1), num_space)
 
-    for i in reversed(range(1, num_space)):
+    for i in reversed(list(range(1, num_space))):
         onehot_rep[:, i] += np.sum(onehot_rep[:, :i], axis=1)
 
             

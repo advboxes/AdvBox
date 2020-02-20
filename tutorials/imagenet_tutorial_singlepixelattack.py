@@ -17,7 +17,10 @@
 #使用SinglePixelAttack攻击AlexNet 数据集为imagenet2012
 
 from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 
+from past.utils import old_div
 import sys
 
 
@@ -34,7 +37,10 @@ import time
 sys.path.append("..")
 
 import paddle.fluid as fluid
-import paddle.v2 as paddle
+try:
+    import paddle.v2 as paddle
+except ModuleNotFoundError as e:
+    import paddle
 from PIL import Image
 
 
@@ -68,8 +74,8 @@ def crop_image(img, target_size, center):
     width, height = img.size
     size = target_size
     if center == True:
-        w_start = (width - size) / 2
-        h_start = (height - size) / 2
+        w_start = old_div((width - size), 2)
+        h_start = old_div((height - size), 2)
     else:
         w_start = random.randint(0, width - size)
         h_start = random.randint(0, height - size)
@@ -85,7 +91,7 @@ def get_image(image_file):
         img = img.convert('RGB')
     img = resize_short(img, target_size=256)
     img = crop_image(img, target_size=224, center=True)
-    img = np.array(img).astype("float32").transpose((2, 0, 1)) / 255
+    img = old_div(np.array(img).astype("float32").transpose((2, 0, 1)), 255)
 
     #imagenet数据训练时进行了标准化，强烈建议图像预处理时也进行预处理
     img -= img_mean
@@ -148,7 +154,7 @@ def main(use_cuda):
 
     attack_config = {"max_pixels": 224 * 224,"isPreprocessed":True}
 
-    test_data = get_image("cat.jpg")
+    test_data = get_image("cat.png")
     original_data=np.copy(test_data)
     # 猫对应的标签 imagenet 2012 对应链接https://blog.csdn.net/LegenDavid/article/details/73335578
     original_label = None

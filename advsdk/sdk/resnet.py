@@ -16,6 +16,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+from builtins import chr
+from builtins import str
+from builtins import range
+from builtins import object
 import math
 
 import paddle
@@ -37,7 +41,7 @@ train_parameters = {
 }
 
 
-class ResNet():
+class ResNet(object):
     def __init__(self, layers=50):
         self.params = train_parameters
         self.layers = layers

@@ -16,12 +16,16 @@ BIM tutorial on mnist using advbox tool.
 BIM method iteratively take multiple small steps while adjusting the direction after each step.
 It only supports non-targeted attack.
 """
+from __future__ import print_function
 import sys
 sys.path.append("..")
 
 import matplotlib.pyplot as plt
 import paddle.fluid as fluid
-import paddle.v2 as paddle
+try:
+    import paddle.v2 as paddle
+except ModuleNotFoundError as e:
+    import paddle
 
 from advbox.adversary import Adversary
 from advbox.attacks.gradient_method import BIM

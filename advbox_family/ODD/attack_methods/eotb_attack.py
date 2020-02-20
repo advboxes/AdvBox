@@ -2,6 +2,11 @@
 This is an implementation for phycisal attack on test distribution.
 
 '''
+from __future__ import division
+from __future__ import print_function
+from builtins import str
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import cv2
 import tensorflow as tf
@@ -279,15 +284,15 @@ class EOTB_attack(ODD_logic):
         ymax = int(_object['bndbox']['ymax'])
 
         if logo_mask is not None and resized_logo_mask is not None:
-            ad_area_center_x = (xmin+xmax)/2
-            ad_area_center_y = (ymin+ymax)/2
+            ad_area_center_x = old_div((xmin+xmax),2)
+            ad_area_center_y = old_div((ymin+ymax),2)
 
             # cv2.resize only eats integer
             resized_width = resized_logo_mask.shape[1]
             resized_height = resized_logo_mask.shape[0]
 
-            paste_xmin = int(ad_area_center_x - resized_width/2)
-            paste_ymin = int(ad_area_center_y - resized_height/2)
+            paste_xmin = int(ad_area_center_x - old_div(resized_width,2))
+            paste_ymin = int(ad_area_center_y - old_div(resized_height,2))
             paste_xmax = paste_xmin + resized_width
             paste_ymax = paste_ymin + resized_height
 
@@ -313,7 +318,7 @@ class EOTB_attack(ODD_logic):
         lr = min(box1[1]+0.5*box1[3],box2[1]+0.5*box2[3])-max(box1[1]-0.5*box1[3],box2[1]-0.5*box2[3])
         if tb < 0 or lr < 0 : intersection = 0
         else : intersection =  tb*lr
-        return intersection / (box1[2]*box1[3] + box2[2]*box2[3] - intersection)
+        return old_div(intersection, (box1[2]*box1[3] + box2[2]*box2[3] - intersection))
     
     def _interpret_output(self, output):
         probs = np.zeros((7,7,2,20))

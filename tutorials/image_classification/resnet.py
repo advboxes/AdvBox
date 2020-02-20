@@ -1,4 +1,5 @@
 #coding=utf-8
+from __future__ import division
 '''
  * Copyright 2017-2018 Baidu Inc.
  *
@@ -18,6 +19,9 @@
 """
 定义ResNet
 """
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import paddle.fluid as fluid
 import math
 
@@ -67,7 +71,7 @@ def layer_warp(block_func, input, ch_in, ch_out, count, stride):
 def resnet_cifar10(ipt, depth=32):
     # depth should be one of 20, 32, 44, 56, 110, 1202
     assert (depth - 2) % 6 == 0
-    n = (depth - 2) / 6
+    n = old_div((depth - 2), 6)
     nStages = {16, 64, 128}
     conv1 = conv_bn_layer(ipt, ch_out=16, filter_size=3, stride=1, padding=1)
     res1 = layer_warp(basicblock, conv1, 16, 16, n, 1)
@@ -92,7 +96,7 @@ train_parameters = {
 }
 
 #定义通用的ResNet类
-class ResNet():
+class ResNet(object):
     def __init__(self, layers=50):
         self.params = train_parameters
         self.layers = layers
@@ -150,7 +154,7 @@ class ResNet():
             num_filters=num_filters,
             filter_size=filter_size,
             stride=stride,
-            padding=(filter_size - 1) / 2,
+            padding=old_div((filter_size - 1), 2),
             groups=groups,
             act=None,
             bias_attr=False)
