@@ -19,6 +19,8 @@ CNN on mnist data using fluid api of paddlepaddle use GaussianAugmentationDefenc
 """
 from __future__ import print_function
 
+from builtins import str
+from builtins import range
 import sys
 import os
 sys.path.append("..")

@@ -20,6 +20,8 @@ Feature Squeezing: Detecting Adversarial Examples in Deep Neural Networks
 
 
 """
+from __future__ import division
+from past.utils import old_div
 import logging
 logger=logging.getLogger(__name__)
 
@@ -40,14 +42,14 @@ def FeatureFqueezingDefence(x, y=None, bit_depth=None, clip_values=(0.0, 1.0)):
 
     #归一化到(0,1)
     x_ = x - LB
-    x_ = x_ / (UB-LB)
+    x_ = old_div(x_, (UB-LB))
 
     #转换到bit_depth整数
     max_value = np.rint(2 ** bit_depth - 1)
     res = np.rint(x_ * max_value)
 
     #还原到clip_values范围
-    res= res/max_value* (UB - LB) + LB
+    res= old_div(res,max_value)* (UB - LB) + LB
 
     #确保万无一失 clip生效
     assert (res <= UB).all() and (res >= LB).all()

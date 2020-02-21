@@ -17,6 +17,9 @@ This module provide the attack method for SinglePixelAttack & LocalSearchAttack'
 """
 from __future__ import division
 
+from builtins import zip
+from builtins import str
+from builtins import range
 import logging
 from collections import Iterable
 logger=logging.getLogger(__name__)

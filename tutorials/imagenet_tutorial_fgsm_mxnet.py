@@ -17,7 +17,10 @@
 FGSM tutorial on mnist using advbox tool.
 FGSM method is non-targeted attack while FGSMT is targeted attack.
 """
+from __future__ import division
+from __future__ import print_function
 
+from past.utils import old_div
 import sys
 sys.path.append("..")
 
@@ -64,7 +67,7 @@ def main(image_path):
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
     img /= 255.0
-    img = (img - mean) / std
+    img = old_div((img - mean), std)
     img = img.transpose(2, 0, 1)
 
     img = np.expand_dims(img, axis=0)

@@ -1,3 +1,5 @@
+from __future__ import division
+from __future__ import print_function
 # Copyright 2017 - 2018 Baidu Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +15,7 @@
 # limitations under the License.
 
 
+from past.utils import old_div
 import logging
 logging.basicConfig(level=logging.INFO,format="%(filename)s[line:%(lineno)d] %(levelname)s %(message)s")
 logger=logging.getLogger(__name__)
@@ -52,7 +55,7 @@ def main(image_path):
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
     img /= 255.0
-    img = (img - mean) / std
+    img = old_div((img - mean), std)
     img = img.transpose(2, 0, 1)
 
     img=np.expand_dims(img, axis=0)

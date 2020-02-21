@@ -16,7 +16,9 @@ This module provide the attack method of "CW".
 L2 distance metrics especially
 """
 from __future__ import division
+from __future__ import print_function
 
+from builtins import range
 import logging
 import numpy as np
 
@@ -153,7 +155,7 @@ class CW_L2_Attack(Attack):
         if self.l2 == None:
             self.img_adv = img
         adv_label, adv_score = self._predict_adv(self.img_adv)
-        print ('predict label:', adv_label, 'softmax:', adv_score)
+        print(('predict label:', adv_label, 'softmax:', adv_score))
         # check adversary target if success
         self.img_adv = np.squeeze(self.img_adv)
         self.img_adv = self.img_adv.reshape(img.shape)

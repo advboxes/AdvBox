@@ -17,6 +17,8 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from builtins import range
+from builtins import object
 import paddle
 import paddle.fluid as fluid
 
@@ -35,7 +37,7 @@ train_parameters = {
 }
 
 
-class VGGNet():
+class VGGNet(object):
     def __init__(self, layers=16):
         self.params = train_parameters
         self.layers = layers
@@ -48,8 +50,8 @@ class VGGNet():
             16: ([2, 2, 3, 3, 3]),
             19: ([2, 2, 4, 4, 4])
         }
-        assert layers in vgg_spec.keys(), \
-            "supported layers are {} but input layer is {}".format(vgg_spec.keys(), layers)
+        assert layers in list(vgg_spec.keys()), \
+            "supported layers are {} but input layer is {}".format(list(vgg_spec.keys()), layers)
 
         nums = vgg_spec[layers]
         conv1 = self.conv_block(input, 64, nums[0])

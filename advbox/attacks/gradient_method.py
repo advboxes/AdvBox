@@ -17,6 +17,7 @@ This module provide the attack method for Iterator FGSM's implement.
 """
 from __future__ import division
 
+from builtins import range
 import logging
 from collections import Iterable
 
@@ -24,6 +25,7 @@ import numpy as np
 
 
 from .base import Attack
+from functools import reduce
 
 __all__ = [
     'GradientMethodAttack', 'FastGradientSignMethodAttack', 'FGSM',

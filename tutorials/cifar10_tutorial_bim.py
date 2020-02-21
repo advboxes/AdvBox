@@ -16,6 +16,8 @@
 
 #使用BIM攻击resnet 数据集为cifar10
 
+from __future__ import print_function
+from __future__ import absolute_import
 import sys
 import os
 
@@ -24,7 +26,10 @@ sys.path.append("..")
 import matplotlib.pyplot as plt
 import numpy as np
 import paddle.fluid as fluid
-import paddle.v2 as paddle
+try:
+    import paddle.v2 as paddle
+except ModuleNotFoundError as e:
+    import paddle
 
 from advbox.adversary import Adversary
 from advbox.attacks.gradient_method import BIM

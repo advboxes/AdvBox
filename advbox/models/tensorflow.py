@@ -17,6 +17,8 @@ Tensorflow model
 """
 from __future__ import absolute_import
 
+from builtins import str
+from builtins import range
 import numpy as np
 import os
 

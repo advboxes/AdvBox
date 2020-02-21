@@ -17,6 +17,7 @@
 FGSM tutorial on mnist using advbox tool.
 FGSM method is non-targeted attack while FGSMT is targeted attack.
 """
+from __future__ import print_function
 import sys
 sys.path.append("..")
 import logging

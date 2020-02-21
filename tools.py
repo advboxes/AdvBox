@@ -1,5 +1,9 @@
 # coding=utf-8
 
+from __future__ import division
+from __future__ import print_function
+from builtins import object
+from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -30,7 +34,7 @@ def show_images_diff(original_img, original_label, adversarial_img, adversarial_
     print("l0={} l2={}".format(l0, l2))
 
     # (-1,1)  -> (0,1)
-    difference = difference / abs(difference).max() / 2.0 + 0.5
+    difference = old_div(difference, abs(difference).max()) / 2.0 + 0.5
 
     plt.imshow(difference, cmap=plt.cm.gray)
     plt.axis('off')
@@ -87,7 +91,7 @@ class NodeLookup(object):
 
         # Loads the final mapping of integer node ID to human-readable string
         node_id_to_name = {}
-        for key, val in node_id_to_uid.items():
+        for key, val in list(node_id_to_uid.items()):
             if val not in uid_to_human:
                 tf.logging.fatal('Failed to locate: %s', val)
             name = uid_to_human[val]

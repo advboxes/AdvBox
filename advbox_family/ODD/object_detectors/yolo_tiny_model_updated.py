@@ -22,6 +22,12 @@ THE FOLLOWING CONDITIONS:
 3. #blazeit
 }
 '''
+from __future__ import division
+from __future__ import print_function
+from builtins import str
+from builtins import range
+from past.utils import old_div
+from builtins import object
 import tensorflow as tf
 import cv2
 import numpy as np
@@ -32,7 +38,7 @@ import argparse
 import pdb
 from tqdm import tqdm
 
-class YOLO_tiny_model_updated:
+class YOLO_tiny_model_updated(object):
     model_input = None
     mode = None
     disp_console = None
@@ -267,7 +273,7 @@ def main(args):
             activation_stds = []
             pic_dir = os.path.join(args.input_folder_dir, filename)
             pic = cv2.imread(pic_dir)
-            pic = cv2.resize(pic,(448,448))/255*2-1
+            pic = old_div(cv2.resize(pic,(448,448)),255)*2-1
             feed_batch = pic[np.newaxis, :]
             feed_dict = {tf_input: feed_batch}
 

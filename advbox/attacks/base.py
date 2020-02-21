@@ -14,14 +14,16 @@
 """
 The base model of the model.
 """
+from builtins import object
 import logging
 from abc import ABCMeta
 from abc import abstractmethod
 
 import numpy as np
+from future.utils import with_metaclass
 
 
-class Attack(object):
+class Attack(with_metaclass(ABCMeta, object)):
     """
     Abstract base class for adversarial attacks. `Attack` represent an
     adversarial attack which search an adversarial example. subclass should
@@ -31,7 +33,6 @@ class Attack(object):
         model(Model): an instance of the class advbox.base.Model.
 
     """
-    __metaclass__ = ABCMeta
 
     def __init__(self, model):
         self.model = model

@@ -14,13 +14,17 @@
 """
 The base model of the model.
 """
+from __future__ import division
+from builtins import object
+from past.utils import old_div
 from abc import ABCMeta
 from abc import abstractmethod
 
 import numpy as np
+from future.utils import with_metaclass
 
 
-class Model(object):
+class Model(with_metaclass(ABCMeta, object)):
     """
     Base class of model to provide attack.
 
@@ -31,7 +35,6 @@ class Model(object):
         preprocess(tuple): Two element tuple used to preprocess the input.
             First substract the first element, then divide the second element.
     """
-    __metaclass__ = ABCMeta
 
     def __init__(self, bounds, channel_axis, preprocess=None):
         assert len(bounds) == 2
@@ -72,7 +75,7 @@ class Model(object):
             res = input_ - sub
         if not np.all(sub == 1):
             if res is None:  # "res = input_ - sub" is not executed!
-                res = input_ / div
+                res = old_div(input_, div)
             else:
                 res /= div
         if res is None:  # "res = (input_ - sub)/ div" is not executed!

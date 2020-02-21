@@ -18,7 +18,10 @@
 CNN on mnist data using pytorch
 """
 from __future__ import print_function
+from __future__ import division
 
+from builtins import range
+from past.utils import old_div
 import os
 import torch
 import torchvision
@@ -127,7 +130,7 @@ def main():
             sum_loss += loss.item()
             if i % 50 == 0:
                 print('epoch=%d, batch=%d loss: %.04f'
-                      % (epoch + 1, i, sum_loss / 100))
+                      % (epoch + 1, i, old_div(sum_loss, 100)))
                 sum_loss = 0.0
         # 每跑完一次epoch测试一下准确率 进入测试模式 禁止梯度传递
         with torch.no_grad():
@@ -141,7 +144,7 @@ def main():
                 _, predicted = torch.max(outputs.data, 1)
                 total += labels.size(0)
                 correct += (predicted == labels).sum()
-            print('epoch=%d accuracy=%.02f%%' % (epoch + 1, (100 * correct / total)))
+            print('epoch=%d accuracy=%.02f%%' % (epoch + 1, (old_div(100 * correct, total))))
 
     torch.save(model.state_dict(), './mnist-pytorch/net.pth')
 

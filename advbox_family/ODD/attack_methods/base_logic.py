@@ -1,3 +1,9 @@
+from __future__ import division
+from __future__ import print_function
+from builtins import input
+from builtins import range
+from builtins import object
+from past.utils import old_div
 from abc import ABCMeta
 from abc import abstractmethod
 
@@ -6,11 +12,10 @@ import cv2
 import os
 import xmltodict
 import pdb
+from future.utils import with_metaclass
 
 
-class ODD_logic(object):
-
-    __metaclass__ = ABCMeta
+class ODD_logic(with_metaclass(ABCMeta, object)):
 
     def __init__(self, model):
         """
@@ -113,7 +118,7 @@ class ODD_logic(object):
 
                 if pic_name is not None:
                     self.overall_pics+=1
-                    print("Pics number:",self.overall_pics,"The",pic_name[0], "!")
+                    print(("Pics number:",self.overall_pics,"The",pic_name[0], "!"))
 
                     pic_mask_name = pic_name[0][:-3]+"xml"
                     fromfile = self.fromfolder+"/"+pic_name[0]
@@ -121,7 +126,7 @@ class ODD_logic(object):
 
                     self._attack_from_file(fromfile, frommask)
 
-            print("Attack success rate:", self.success/self.overall_pics)
+            print(("Attack success rate:", old_div(self.success,self.overall_pics)))
 
 
     def _attack_from_file(self, sample_folder, maskfilename, logo_filename=None, **kwargs):
@@ -242,7 +247,7 @@ class ODD_logic(object):
 
         ad_x_squeezed=np.squeeze(ad_x)
         reconstruct_img_resized_np=(ad_x_squeezed+1.0)/2.0*255.0
-        print("min and max in img(numpy form):",reconstruct_img_resized_np.min(),reconstruct_img_resized_np.max())
+        print(("min and max in img(numpy form):",reconstruct_img_resized_np.min(),reconstruct_img_resized_np.max()))
 
         reconstruct_img_np=cv2.resize(reconstruct_img_resized_np,(self.w_img,self.h_img))#reconstruct_img_BGR
         reconstruct_img_np_squeezed=np.squeeze(reconstruct_img_np)
@@ -251,7 +256,7 @@ class ODD_logic(object):
         user_input = "Yes"
         save_name = 'HD_sticker.jpg'
         while user_input!="No" and self.Do_you_want_ad_sticker is True:
-            user_input = input("Do you want an invisible clothe? Yes/No:")
+            user_input = eval(input("Do you want an invisible clothe? Yes/No:"))
             if user_input=="Yes":
                 print("Ok!")
                 if logo_mask is not None and resized_logo_mask is not None:
@@ -264,7 +269,7 @@ class ODD_logic(object):
                 break
             else:
                 print("Wrong command!")
-                user_input = input("Do you want an invisible clothe? Yes/No:")
+                user_input = eval(input("Do you want an invisible clothe? Yes/No:"))
 
         return reconstruct_img_np_squeezed
     
@@ -281,12 +286,12 @@ class ODD_logic(object):
         
         _object = self.mask_list[0]
         xmin, ymin, xmax, ymax = self._get_mask_coordination(_object)
-        print(xmin,ymin,xmax,ymax)
+        print((xmin,ymin,xmax,ymax))
         
         sticker_in_numpy_0_255_original = pic_in_numpy_0_255[ymin:ymax, xmin:xmax]
 
         if logo_mask is not None and resized_logo_mask is not None:
-            resize_ratio = logo_mask.shape[0]/resized_logo_mask.shape[0]
+            resize_ratio = old_div(logo_mask.shape[0],resized_logo_mask.shape[0])
         else:
             resize_ratio = 6 # empirically...
         
@@ -295,15 +300,15 @@ class ODD_logic(object):
         new_sticker = cv2.resize(sticker_in_numpy_0_255_original,(new_sticker_width,new_sticker_height))
         
         if logo_mask is not None and resized_logo_mask is not None:
-            ad_area_center_x = new_sticker_width/2
-            ad_area_center_y = new_sticker_height/2
+            ad_area_center_x = old_div(new_sticker_width,2)
+            ad_area_center_y = old_div(new_sticker_height,2)
 
             # cv2.resize only eats integer
             resized_height = logo_mask.shape[0]
             resized_width = logo_mask.shape[1]
 
-            paste_xmin = int(ad_area_center_x - resized_width/2)
-            paste_ymin = int(ad_area_center_y - resized_height/2)
+            paste_xmin = int(ad_area_center_x - old_div(resized_width,2))
+            paste_ymin = int(ad_area_center_y - old_div(resized_height,2))
             paste_xmax = paste_xmin + resized_width
             paste_ymax = paste_ymin + resized_height
             
@@ -315,7 +320,7 @@ class ODD_logic(object):
         assert new_sticker is not None
         is_saved=cv2.imwrite(self.path+save_name, new_sticker)
         if is_saved:
-            print("Sticker saved under:", self.path+save_name)
+            print(("Sticker saved under:", self.path+save_name))
         else:
             print("Sticker saving error")
 
@@ -364,20 +369,20 @@ class ODD_logic(object):
         ad_width = xmax - xmin
         ad_height = ymax - ymin
         
-        ad_area_center_x = (xmin+xmax)/2
-        ad_area_center_y = (ymin+ymax)/2
+        ad_area_center_x = old_div((xmin+xmax),2)
+        ad_area_center_y = old_div((ymin+ymax),2)
         
-        ad_ratio = ad_width/ad_height
+        ad_ratio = old_div(ad_width,ad_height)
 
         logo_height = logo_mask.shape[0]
         logo_width = logo_mask.shape[1]
-        logo_ratio = logo_width/logo_height
+        logo_ratio = old_div(logo_width,logo_height)
         
         # make sure logo is contained by ad area
         if ad_ratio > logo_ratio:
-            resize_ratio = ad_width/logo_height
+            resize_ratio = old_div(ad_width,logo_height)
         else:
-            resize_ratio = ad_height/logo_width
+            resize_ratio = old_div(ad_height,logo_width)
 
         # cv2.resize only eats integer
         resized_height = int(logo_height*resize_ratio)
@@ -388,8 +393,8 @@ class ODD_logic(object):
         if resized_width!=0 and resized_height!=0:
             resized_logo_mask = cv2.resize(logo_mask, (resized_width,resized_height))
             
-            paste_xmin = int(ad_area_center_x - resized_width/2)
-            paste_ymin = int(ad_area_center_y - resized_height/2)
+            paste_xmin = int(ad_area_center_x - old_div(resized_width,2))
+            paste_ymin = int(ad_area_center_y - old_div(resized_height,2))
             paste_xmax = paste_xmin + resized_width
             paste_ymax = paste_ymin + resized_height
             

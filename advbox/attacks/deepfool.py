@@ -19,6 +19,8 @@ accurate adversarial attack.
 """
 from __future__ import division
 
+from builtins import str
+from builtins import range
 import logging
 
 import numpy as np
@@ -75,7 +77,7 @@ class DeepFoolAttack(Attack):
         gradient = self.model.gradient(adversary.original, pre_label)
         x = np.copy(adversary.original)
 
-        for iteration in xrange(iterations):
+        for iteration in range(iterations):
             w = np.inf
             w_norm = np.inf
             pert = np.inf

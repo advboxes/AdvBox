@@ -16,6 +16,7 @@ This module provide the attack method of "LBFGS".
 """
 from __future__ import division
 
+from builtins import range
 import logging
 
 import numpy as np

@@ -16,13 +16,17 @@ MIFGSM tutorial on mnist using advbox tool.
 MIFGSM is a broad class of momentum iterative gradient-based methods based on FSGM.
 It supports non-targeted attack and targeted attack.
 """
+from __future__ import print_function
 import sys
 sys.path.append("..")
 
 import matplotlib.pyplot as plt
 import numpy as np
 import paddle.fluid as fluid
-import paddle.v2 as paddle
+try:
+    import paddle.v2 as paddle
+except ModuleNotFoundError as e:
+    import paddle
 
 from advbox.adversary import Adversary
 from advbox.attacks.gradient_method import MIFGSM

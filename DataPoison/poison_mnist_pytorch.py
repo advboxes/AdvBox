@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import print_function
+from builtins import range
+from past.utils import old_div
 import torch
 import torchvision
 import torch.nn as nn
@@ -90,7 +94,7 @@ def train(epoch):
     if batch_idx % log_interval == 0:
       print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
         epoch, batch_idx * len(data), len(train_loader.dataset),
-        100. * batch_idx / len(train_loader), loss.item()))
+        old_div(100. * batch_idx, len(train_loader)), loss.item()))
       train_losses.append(loss.item())
       train_counter.append(
         (batch_idx*64) + ((epoch-1)*len(train_loader.dataset)))
@@ -111,7 +115,7 @@ def test():
   test_losses.append(test_loss)
   print('\nTest set: Avg. loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     test_loss, correct, len(test_loader.dataset),
-    100. * correct / len(test_loader.dataset)))
+    old_div(100. * correct, len(test_loader.dataset))))
 
 # Data poison
 poison = Net()
@@ -154,7 +158,7 @@ def p_test():
   test_losses.append(test_loss)
   print('\nTest set: Avg. loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     test_loss, correct, len(test_loader.dataset),
-    100. * correct / len(test_loader.dataset)))
+    old_div(100. * correct, len(test_loader.dataset))))
 
 def poi_test():
   poison.eval()
@@ -176,7 +180,7 @@ def poi_test():
   test_losses.append(test_loss)
   print('\nPoisonTest set: Avg. loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
     test_loss, correct, len(test_loader.dataset),
-    100. * correct / len(test_loader.dataset)))
+    old_div(100. * correct, len(test_loader.dataset))))
 
 p_test()
 for epoch in range(1, n_epochs + 1):

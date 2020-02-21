@@ -18,6 +18,8 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+from builtins import range
+from builtins import object
 import paddle.fluid as fluid
 from paddle.fluid.initializer import MSRA
 from paddle.fluid.param_attr import ParamAttr
@@ -37,7 +39,7 @@ train_parameters = {
 }
 
 
-class MobileNet():
+class MobileNet(object):
     def __init__(self):
         self.params = train_parameters
 

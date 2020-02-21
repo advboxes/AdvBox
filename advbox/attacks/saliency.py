@@ -17,6 +17,7 @@ This module provide the attack method for JSMA's implement.
 """
 from __future__ import division
 
+from builtins import range
 import logging
 import random
 import numpy as np
@@ -74,7 +75,7 @@ class SaliencyMapAttack(Attack):
             # count tracks how often each pixel was changed
             counts = np.zeros_like(original_image)
 
-            labels = range(self.model.num_classes())
+            labels = list(range(self.model.num_classes()))
             adv_img = original_image.copy()
             min_, max_ = self.model.bounds()
 
@@ -152,7 +153,7 @@ class SaliencyMapAttack(Attack):
         num_classes = self.model.num_classes()
         assert num_random_target <= num_classes - 1
 
-        target_labels = random.sample(range(num_classes), num_random_target + 1)
+        target_labels = random.sample(list(range(num_classes)), num_random_target + 1)
         target_labels = [t for t in target_labels if t != original_label]
         target_labels = target_labels[:num_random_target]
 

@@ -1,3 +1,6 @@
+from __future__ import division
+from __future__ import print_function
+from past.utils import old_div
 import numpy as np
 import math
 import EOT_simulation.eulerangles as eu
@@ -39,100 +42,100 @@ sample_6para = [ \
 # Sample Rotation for Original Photo
 # 几何中心旋转
 
-[0, 0,700,-math.pi/8,0,0], \
-[0, 0,700,-math.pi/9,0,0], \
-[0, 0,700,-math.pi/10,0,0], \
-[0, 0,700,-math.pi/11,0,0], \
-[0, 0,700,-math.pi/12,0,0], \
+[0, 0,700,old_div(-math.pi,8),0,0], \
+[0, 0,700,old_div(-math.pi,9),0,0], \
+[0, 0,700,old_div(-math.pi,10),0,0], \
+[0, 0,700,old_div(-math.pi,11),0,0], \
+[0, 0,700,old_div(-math.pi,12),0,0], \
 
-[0, 0,700,-math.pi/13,0,0], \
-[0, 0,700,-math.pi/14,0,0], \
-[0, 0,700,-math.pi/15,0,0], \
-[0, 0,700,-math.pi/16,0,0], \
-[0, 0,700,-math.pi/17,0,0], \
-[0, 0,700,-math.pi/18,0,0], \
-[0, 0,700,-math.pi/19,0,0], \
-[0, 0,700,-math.pi/20,0,0], \
-[0, 0,700,-math.pi/21,0,0], \
-[0, 0,700,-math.pi/22,0,0], \
-[0, 0,700,-math.pi/23,0,0], \
-[0, 0,700,-math.pi/24,0,0], \
-[0, 0,700,-math.pi/25,0,0], \
-[0, 0,700,-math.pi/26,0,0], \
-[0, 0,700,-math.pi/27,0,0], \
-[0, 0,700,-math.pi/28,0,0], \
-[0, 0,700,-math.pi/29,0,0], \
-[0, 0,700,-math.pi/30,0,0], \
-[0, 0,700,-math.pi/50,0,0], \
-[0, 0,700,-math.pi/70,0,0], \
-[0, 0,700,-math.pi/80,0,0], \
-[0, 0,700,-math.pi/100,0,0], \
-[0, 0,700,-math.pi/200,0,0], \
-[0, 0,700,-math.pi/300,0,0], \
+[0, 0,700,old_div(-math.pi,13),0,0], \
+[0, 0,700,old_div(-math.pi,14),0,0], \
+[0, 0,700,old_div(-math.pi,15),0,0], \
+[0, 0,700,old_div(-math.pi,16),0,0], \
+[0, 0,700,old_div(-math.pi,17),0,0], \
+[0, 0,700,old_div(-math.pi,18),0,0], \
+[0, 0,700,old_div(-math.pi,19),0,0], \
+[0, 0,700,old_div(-math.pi,20),0,0], \
+[0, 0,700,old_div(-math.pi,21),0,0], \
+[0, 0,700,old_div(-math.pi,22),0,0], \
+[0, 0,700,old_div(-math.pi,23),0,0], \
+[0, 0,700,old_div(-math.pi,24),0,0], \
+[0, 0,700,old_div(-math.pi,25),0,0], \
+[0, 0,700,old_div(-math.pi,26),0,0], \
+[0, 0,700,old_div(-math.pi,27),0,0], \
+[0, 0,700,old_div(-math.pi,28),0,0], \
+[0, 0,700,old_div(-math.pi,29),0,0], \
+[0, 0,700,old_div(-math.pi,30),0,0], \
+[0, 0,700,old_div(-math.pi,50),0,0], \
+[0, 0,700,old_div(-math.pi,70),0,0], \
+[0, 0,700,old_div(-math.pi,80),0,0], \
+[0, 0,700,old_div(-math.pi,100),0,0], \
+[0, 0,700,old_div(-math.pi,200),0,0], \
+[0, 0,700,old_div(-math.pi,300),0,0], \
 
 [0, 0,700,0,0,0], \
-[0, 0,700,math.pi/8,0,0], \
-[0, 0,700,math.pi/9,0,0], \
-[0, 0,700,math.pi/10,0,0], \
-[0, 0,700,math.pi/11,0,0], \
-[0, 0,700,math.pi/12,0,0], \
+[0, 0,700,old_div(math.pi,8),0,0], \
+[0, 0,700,old_div(math.pi,9),0,0], \
+[0, 0,700,old_div(math.pi,10),0,0], \
+[0, 0,700,old_div(math.pi,11),0,0], \
+[0, 0,700,old_div(math.pi,12),0,0], \
 
-[0, 0,700,math.pi/13,0,0], \
-[0, 0,700,math.pi/14,0,0], \
-[0, 0,700,math.pi/15,0,0], \
-[0, 0,700,math.pi/16,0,0], \
-[0, 0,700,math.pi/17,0,0], \
-[0, 0,700,math.pi/18,0,0], \
-[0, 0,700,math.pi/19,0,0], \
-[0, 0,700,math.pi/20,0,0], \
-[0, 0,700,math.pi/21,0,0], \
-[0, 0,700,math.pi/22,0,0], \
-[0, 0,700,math.pi/23,0,0], \
-[0, 0,700,math.pi/24,0,0], \
-[0, 0,700,math.pi/25,0,0], \
-[0, 0,700,math.pi/26,0,0], \
-[0, 0,700,math.pi/27,0,0], \
-[0, 0,700,math.pi/28,0,0], \
-[0, 0,700,math.pi/29,0,0], \
-[0, 0,700,math.pi/30,0,0], \
-[0, 0,700,math.pi/50,0,0], \
-[0, 0,700,math.pi/70,0,0], \
-[0, 0,700,math.pi/80,0,0], \
-[0, 0,700,math.pi/100,0,0], \
-[0, 0,700,math.pi/200,0,0], \
-[0, 0,700,math.pi/300,0,0], \
+[0, 0,700,old_div(math.pi,13),0,0], \
+[0, 0,700,old_div(math.pi,14),0,0], \
+[0, 0,700,old_div(math.pi,15),0,0], \
+[0, 0,700,old_div(math.pi,16),0,0], \
+[0, 0,700,old_div(math.pi,17),0,0], \
+[0, 0,700,old_div(math.pi,18),0,0], \
+[0, 0,700,old_div(math.pi,19),0,0], \
+[0, 0,700,old_div(math.pi,20),0,0], \
+[0, 0,700,old_div(math.pi,21),0,0], \
+[0, 0,700,old_div(math.pi,22),0,0], \
+[0, 0,700,old_div(math.pi,23),0,0], \
+[0, 0,700,old_div(math.pi,24),0,0], \
+[0, 0,700,old_div(math.pi,25),0,0], \
+[0, 0,700,old_div(math.pi,26),0,0], \
+[0, 0,700,old_div(math.pi,27),0,0], \
+[0, 0,700,old_div(math.pi,28),0,0], \
+[0, 0,700,old_div(math.pi,29),0,0], \
+[0, 0,700,old_div(math.pi,30),0,0], \
+[0, 0,700,old_div(math.pi,50),0,0], \
+[0, 0,700,old_div(math.pi,70),0,0], \
+[0, 0,700,old_div(math.pi,80),0,0], \
+[0, 0,700,old_div(math.pi,100),0,0], \
+[0, 0,700,old_div(math.pi,200),0,0], \
+[0, 0,700,old_div(math.pi,300),0,0], \
 
 
 # 水平角旋转
-[0, 0,700,0,-math.pi/8,0], \
-[0, 0,700,0,-math.pi/9,0], \
-[0, 0,700,0,-math.pi/10,0], \
-[0, 0,700,0,-math.pi/11,0], \
-[0, 0,700,0,-math.pi/12,0], \
+[0, 0,700,0,old_div(-math.pi,8),0], \
+[0, 0,700,0,old_div(-math.pi,9),0], \
+[0, 0,700,0,old_div(-math.pi,10),0], \
+[0, 0,700,0,old_div(-math.pi,11),0], \
+[0, 0,700,0,old_div(-math.pi,12),0], \
 
 [0, 0,700,0,0,0], \
-[0, 0,700,0,math.pi/8,0], \
-[0, 0,700,0,math.pi/9,0], \
-[0, 0,700,0,math.pi/10,0], \
-[0, 0,700,0,math.pi/11,0], \
-[0, 0,700,0,math.pi/12,0], \
+[0, 0,700,0,old_div(math.pi,8),0], \
+[0, 0,700,0,old_div(math.pi,9),0], \
+[0, 0,700,0,old_div(math.pi,10),0], \
+[0, 0,700,0,old_div(math.pi,11),0], \
+[0, 0,700,0,old_div(math.pi,12),0], \
 
 
 # [0, 0,900,0,math.pi/2,0], \
 
 # 俯仰角旋转
-[0, 0,700,0,0,-math.pi/8], \
-[0, 0,700,0,0,-math.pi/9], \
-[0, 0,700,0,0,-math.pi/10], \
-[0, 0,700,0,0,-math.pi/11], \
-[0, 0,700,0,0,-math.pi/12], \
+[0, 0,700,0,0,old_div(-math.pi,8)], \
+[0, 0,700,0,0,old_div(-math.pi,9)], \
+[0, 0,700,0,0,old_div(-math.pi,10)], \
+[0, 0,700,0,0,old_div(-math.pi,11)], \
+[0, 0,700,0,0,old_div(-math.pi,12)], \
 
 [0, 0,700,0,0,0], \
-[0, 0,700,0,0,math.pi/8], \
-[0, 0,700,0,0,math.pi/9], \
-[0, 0,700,0,0,math.pi/10], \
-[0, 0,700,0,0,math.pi/11], \
-[0, 0,700,0,0,math.pi/12], \
+[0, 0,700,0,0,old_div(math.pi,8)], \
+[0, 0,700,0,0,old_div(math.pi,9)], \
+[0, 0,700,0,0,old_div(math.pi,10)], \
+[0, 0,700,0,0,old_div(math.pi,11)], \
+[0, 0,700,0,0,old_div(math.pi,12)], \
 
 # [0, 0,900,0,0,math.pi/2], \
 
@@ -167,8 +170,8 @@ def target_sample(display = False):
     xmax = int(dic['annotation']['object']['bndbox']['xmax'])
     ymax = int(dic['annotation']['object']['bndbox']['ymax'])    
 
-    x_f0 = - (xmax - xmin) / 2 * SCALE
-    y_f0 = - (ymax - ymin) / 2 * SCALE
+    x_f0 = old_div(- (xmax - xmin), 2) * SCALE
+    y_f0 = old_div(- (ymax - ymin), 2) * SCALE
 
     x_0f0_1 = HALF_SZ + x_f0
     y_0f0_1 = HALF_SZ + y_f0
@@ -204,17 +207,17 @@ def target_sample(display = False):
 
     # sample x,y,z  a,b,g: 0~2*pi, -pi/2 ~ pi/2
     max_a = math.pi * 2
-    max_b = math.pi / 2
-    max_g = math.pi / 2
+    max_b = old_div(math.pi, 2)
+    max_g = old_div(math.pi, 2)
     max_distance = 2600
     distance_step = 200
     
     if display:
-        print(height, width, channels)
+        print((height, width, channels))
         print (f"estimate focal length: , {f},  pixel")
-        print(x1, y2, z3)
+        print((x1, y2, z3))
         print(V1[0])
-        print (V1, V2, V3, V4)
+        print((V1, V2, V3, V4))
 
 
     for item in sample_6para:
@@ -243,23 +246,23 @@ def target_sample(display = False):
         V3_ = transform6para(V3_, x, y, z, 0, 0, 0)
         V4_ = transform6para(V4_, x, y, z, 0, 0, 0)
 
-        x_f_1 = x_f0 * V1_[0] / V1_[2] * (-2000) / 92.3
-        y_f_1 = y_f0 * V1_[1] / V1_[2] * (2000) / 135.8
+        x_f_1 = old_div(x_f0 * V1_[0], V1_[2]) * (-2000) / 92.3
+        y_f_1 = old_div(y_f0 * V1_[1], V1_[2]) * (2000) / 135.8
         x_0f_1 = HALF_SZ + x_f_1
         y_0f_1 = HALF_SZ + y_f_1
 
-        x_f_2 = x_f0 * V2_[0] / V2_[2] * (-2000) / 92.3
-        y_f_2 = y_f0 * V2_[1] / V2_[2] * (2000) / 135.8
+        x_f_2 = old_div(x_f0 * V2_[0], V2_[2]) * (-2000) / 92.3
+        y_f_2 = old_div(y_f0 * V2_[1], V2_[2]) * (2000) / 135.8
         x_0f_2 = HALF_SZ + x_f_2
         y_0f_2 = HALF_SZ + y_f_2
 
-        x_f_3 = x_f0 * V3_[0] / V3_[2] * (-2000) / 92.3
-        y_f_3 = y_f0 * V3_[1] / V3_[2] * (2000) / 135.8
+        x_f_3 = old_div(x_f0 * V3_[0], V3_[2]) * (-2000) / 92.3
+        y_f_3 = old_div(y_f0 * V3_[1], V3_[2]) * (2000) / 135.8
         x_0f_3 = HALF_SZ + x_f_3
         y_0f_3 = HALF_SZ + y_f_3
 
-        x_f_4 = x_f0 * V4_[0] / V4_[2] * (-2000) / 92.3
-        y_f_4 = y_f0 * V4_[1] / V4_[2] * (2000) / 135.8
+        x_f_4 = old_div(x_f0 * V4_[0], V4_[2]) * (-2000) / 92.3
+        y_f_4 = old_div(y_f0 * V4_[1], V4_[2]) * (2000) / 135.8
         x_0f_4 = HALF_SZ + x_f_4
         y_0f_4 = HALF_SZ + y_f_4
 
@@ -269,9 +272,9 @@ def target_sample(display = False):
         M = cv2.getPerspectiveTransform(pts2,pts1)
         
         if display:
-            print(x, y, z, a, b, g)
+            print((x, y, z, a, b, g))
             # M is 3x3 matrix, take only the first 8
-            print("M element is ", [M[0][0], M[0][1], M[0][2], M[1][0], M[1][1], M[1][2], M[2][0], M[2][1]])
+            print(("M element is ", [M[0][0], M[0][1], M[0][2], M[1][0], M[1][1], M[1][2], M[2][0], M[2][1]]))
 
         # choose use M or M0
         sample_matrixes.append([M0[0][0], M0[0][1], M0[0][2], M0[1][0], M0[1][1], M0[1][2], M0[2][0], M0[2][1]])
