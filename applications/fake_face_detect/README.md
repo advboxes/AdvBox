@@ -14,12 +14,12 @@ ffmpeg -i /path/to/my/video.mp4 /path/to/output/video-frame-%d.png
 
 + Deepfakes检测
 ```shell
-curl -H "Expect:" "http://gwgp-h9xcyrmorux.n.bdcloudapi.com/rest/deepfakes/v1/detect"  -F "file=@ fake_deepfakes.jpg" 
+curl "http://gwgp-h9xcyrmorux.n.bdcloudapi.com/rest/deepfakes/v1/detect?access_token=github"  -F "file=@fake_deepfakes.jpg" 
 ```
 
 + 人脸融合检测
 ```shell
-curl -H "Expect:" "http://gwgp-h9xcyrmorux.n.bdcloudapi.com/rest/facemerge/v1/detect"  -F "file=@fake_merging.jpg" 
+curl "http://gwgp-h9xcyrmorux.n.bdcloudapi.com/rest/facemerge/v1/detect?access_token=github"  -F "file=@fake_merging.jpg" 
 ```
 
 # 接口描述
