@@ -72,7 +72,7 @@ The restful API is used to detect whether the face in the picture/video is a fal
 
 # How to cite
 
-If you instead use AdvBox in an academic publication, cite as:
+If you use AdvBox in an academic publication, please cite as:
 
 	@misc{goodman2020advbox,
 	    title={Advbox: a toolbox to generate adversarial examples that fool neural networks},
