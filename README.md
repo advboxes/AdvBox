@@ -44,9 +44,9 @@ Data poisoning
 
 # AI applications
 
-## Face Recogniztion Attack
+## Face Recognition Attack
 
-[Homepage of Face Recogniztion Attack](applications/face_recognition_attack/README.md)
+[Homepage of Face Recognition Attack](applications/face_recognition_attack/README.md)
 
 ## Stealth T-shirt
 On defcon, we demonstrated T-shirts that can disappear under smart cameras. Under this sub-project, we open-source the programs and deployment methods of smart cameras for demonstration.
