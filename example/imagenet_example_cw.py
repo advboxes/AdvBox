@@ -33,9 +33,9 @@ import functools
 from utility import add_arguments, print_arguments, generation_image
 
 #attack
-from advbox.adversary import Adversary
-from advbox.attacks.cw import CW_L2
-from advbox.models.paddle import PaddleModel
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.cw import CW_L2
+from adversarialbox.models.paddle import PaddleModel
 
 
 #通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况

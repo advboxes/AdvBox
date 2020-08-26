@@ -27,10 +27,10 @@ try:
 except ModuleNotFoundError as e:
     import paddle
 
-from advbox.adversary import Adversary
-from advbox.attacks.gradient_method import FGSM
-from advbox.attacks.gradient_method import FGSMT
-from advbox.models.paddle import PaddleModel
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.gradient_method import FGSM
+from adversarialbox.attacks.gradient_method import FGSMT
+from adversarialbox.models.paddle import PaddleModel
 from tutorials.mnist_model import mnist_cnn_model
 
 

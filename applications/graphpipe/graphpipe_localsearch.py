@@ -35,10 +35,10 @@ import requests
 
 from graphpipe import remote
 
-from advbox.adversary import Adversary
-from advbox.attacks.localsearch import LocalSearchAttack
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.localsearch import LocalSearchAttack
 
-from advbox.models.graphpipeBlackBox import graphpipeBlackBoxModel
+from adversarialbox.models.graphpipeBlackBox import graphpipeBlackBoxModel
 
 
 '''

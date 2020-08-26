@@ -39,10 +39,10 @@ import torch.nn as nn
 from torchvision import models
 
 
-from advbox.adversary import Adversary
-from advbox.attacks.gradient_method import FGSMT
-from advbox.attacks.gradient_method import FGSM
-from advbox.models.pytorch import PytorchModel
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.gradient_method import FGSMT
+from adversarialbox.attacks.gradient_method import FGSM
+from adversarialbox.models.pytorch import PytorchModel
 
 
 import numpy as np

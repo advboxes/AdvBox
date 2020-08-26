@@ -2,24 +2,24 @@ The minimum PaddlePaddle version needed for the code sample in this directory is
 
 ---
 
-# Advbox
+# Adversarialbox
 
-Advbox is a toolbox to generate adversarial examples that fool neural networks and Advbox can benchmark the robustness of machine learning models.
+Adversarialbox is a toolbox to generate adversarial examples that fool neural networks and Adversarialbox can benchmark the robustness of machine learning models.
 
-The Advbox is based on [PaddlePaddle](https://github.com/PaddlePaddle/Paddle) Fluid and is under continual development, always welcoming contributions of the latest method of adversarial attacks and defenses.
+The Adversarialbox is based on [PaddlePaddle](https://github.com/PaddlePaddle/Paddle) Fluid and is under continual development, always welcoming contributions of the latest method of adversarial attacks and defenses.
 
 
 ## Overview
 [Szegedy et al.](https://arxiv.org/abs/1312.6199) discovered an intriguing properties of deep neural networks in the context of image classification for the first time. They showed that despite the state-of-the-art deep networks are surprisingly susceptible to adversarial attacks in the form of small perturbations to images that remain (almost) imperceptible to human vision system. These perturbations are found by optimizing the input to maximize the prediction error and the images modified by these perturbations are called as `adversarial examples`. The profound implications of these results triggered a wide interest of researchers in adversarial attacks and their defenses for deep learning in general.
 
-Advbox is similar to [Foolbox](https://github.com/bethgelab/foolbox) and [CleverHans](https://github.com/tensorflow/cleverhans). CleverHans only supports TensorFlow framework while foolbox interfaces with many popular machine learning frameworks such as PyTorch, Keras, TensorFlow, Theano, Lasagne and MXNet. However, these two great libraries don't support PaddlePaddle, an easy-to-use, efficient, flexible and scalable deep learning platform which is originally developed by Baidu scientists and engineers for the purpose of applying deep learning to many products at Baidu.
+Adversarialbox is similar to [Foolbox](https://github.com/bethgelab/foolbox) and [CleverHans](https://github.com/tensorflow/cleverhans). CleverHans only supports TensorFlow framework while foolbox interfaces with many popular machine learning frameworks such as PyTorch, Keras, TensorFlow, Theano, Lasagne and MXNet. However, these two great libraries don't support PaddlePaddle, an easy-to-use, efficient, flexible and scalable deep learning platform which is originally developed by Baidu scientists and engineers for the purpose of applying deep learning to many products at Baidu.
 
 ## Usage
-Advbox provides many stable reference implementations of modern methods to generate adversarial examples such as FGSM, DeepFool, JSMA. When you want to benchmark the robustness of your neural networks , you can use the advbox to generate some adversarial examples and benchmark the networks. Some tips of using Advbox:
+Adversarialbox provides many stable reference implementations of modern methods to generate adversarial examples such as FGSM, DeepFool, JSMA. When you want to benchmark the robustness of your neural networks , you can use the adversarialbox to generate some adversarial examples and benchmark the networks. Some tips of using Adversarialbox:
 
 1. Train a model and save the parameters.
 2. Load the parameters which has been trained，then reconstruct the model.
-3. Use advbox to generate the adversarial samples.
+3. Use adversarialbox to generate the adversarial samples.
 
 
 #### Dependencies
@@ -28,12 +28,12 @@ Advbox provides many stable reference implementations of modern methods to gener
 
 #### Structure
 
-Network models, attack method's implements and the criterion that defines adversarial examples are three essential elements to generate adversarial examples. Misclassification is adopted as the adversarial criterion for briefness in Advbox.
+Network models, attack method's implements and the criterion that defines adversarial examples are three essential elements to generate adversarial examples. Misclassification is adopted as the adversarial criterion for briefness in Adversarialbox.
 
-The structure of Advbox module are as follows:
+The structure of Adversarialbox module are as follows:
 
     .
-    ├── advbox
+    ├── adversarialbox
     |   ├── __init__.py
     |   ├── attack
     |        ├── __init__.py
@@ -59,20 +59,20 @@ The structure of Advbox module are as follows:
     |   └── mnist_tutorial_deepfool.py
     └── README.md
 
-**advbox.attack**
+**adversarialbox.attack**
 
-Advbox implements several popular adversarial attacks which search adversarial examples. Each attack method uses a distance measure(L1, L2, etc.) to quantify the size of adversarial perturbations. Advbox is easy to craft adversarial example as some attack methods could perform internal hyperparameter tuning to find the minimum perturbation.
+Adversarialbox implements several popular adversarial attacks which search adversarial examples. Each attack method uses a distance measure(L1, L2, etc.) to quantify the size of adversarial perturbations. Adversarialbox is easy to craft adversarial example as some attack methods could perform internal hyperparameter tuning to find the minimum perturbation.
 
-**advbox.model**
+**adversarialbox.model**
 
-Advbox implements interfaces to PaddlePaddle. Additionally, other deep learning framworks such as TensorFlow can also be defined and employed. The module is use to compute predictions and gradients for given inputs in a specific framework.
+Adversarialbox implements interfaces to PaddlePaddle. Additionally, other deep learning framworks such as TensorFlow can also be defined and employed. The module is use to compute predictions and gradients for given inputs in a specific framework.
 
-**advbox.adversary**
+**adversarialbox.adversary**
 
 Adversary contains the original object, the target and the adversarial examples. It provides the misclassification as the criterion to accept a adversarial example.
 
 ## Tutorials
-The `./tutorials/` folder provides some tutorials to generate adversarial examples on the MNIST dataset. You can slightly modify the code to apply to other dataset. These attack methods are supported in Advbox:
+The `./tutorials/` folder provides some tutorials to generate adversarial examples on the MNIST dataset. You can slightly modify the code to apply to other dataset. These attack methods are supported in Adversarialbox:
 
 * [L-BFGS](https://arxiv.org/abs/1312.6199)
 * [FGSM](https://arxiv.org/abs/1412.6572)

@@ -29,11 +29,11 @@ import numpy as np
 from PIL import Image
 #pip install Pillow
 
-from advbox.adversary import Adversary
-#from advbox.attacks.gradient_method import FGSM
-#from advbox.attacks.gradient_method import FGSMT
-from advbox.attacks.deepfool import DeepFoolAttack
-from advbox.models.tensorflow import TensorflowModel
+from adversarialbox.adversary import Adversary
+#from adversarialbox.attacks.gradient_method import FGSM
+#from adversarialbox.attacks.gradient_method import FGSMT
+from adversarialbox.attacks.deepfool import DeepFoolAttack
+from adversarialbox.models.tensorflow import TensorflowModel
 from tutorials.mnist_model_tf import mnist_cnn_model
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data

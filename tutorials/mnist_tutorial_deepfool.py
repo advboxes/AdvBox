@@ -27,9 +27,9 @@ try:
 except ModuleNotFoundError as e:
     import paddle
 
-from advbox.adversary import Adversary
-from advbox.attacks.deepfool import DeepFoolAttack
-from advbox.models.paddle import PaddleModel
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.deepfool import DeepFoolAttack
+from adversarialbox.models.paddle import PaddleModel
 from tutorials.mnist_model import mnist_cnn_model
 
 

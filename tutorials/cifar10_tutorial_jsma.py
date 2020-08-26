@@ -31,10 +31,10 @@ try:
 except ModuleNotFoundError as e:
     import paddle
 
-from advbox.adversary import Adversary
+from adversarialbox.adversary import Adversary
 
-from advbox.attacks.saliency import JSMA
-from advbox.models.paddle import PaddleModel
+from adversarialbox.attacks.saliency import JSMA
+from adversarialbox.models.paddle import PaddleModel
 
 from image_classification.resnet import resnet_cifar10
 

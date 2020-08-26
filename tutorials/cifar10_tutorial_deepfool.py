@@ -31,9 +31,9 @@ try:
 except ModuleNotFoundError as e:
     import paddle
 
-from advbox.adversary import Adversary
-from advbox.attacks.deepfool import DeepFoolAttack
-from advbox.models.paddle import PaddleModel
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.deepfool import DeepFoolAttack
+from adversarialbox.models.paddle import PaddleModel
 from image_classification.resnet import resnet_cifar10
 
 #通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况

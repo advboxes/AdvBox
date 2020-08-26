@@ -43,10 +43,10 @@ from mxnet import autograd
 
 
 
-from advbox.adversary import Adversary
-from advbox.attacks.gradient_method import FGSMT
-from advbox.attacks.gradient_method import FGSM
-from advbox.models.mxnet import MxNetModel
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.gradient_method import FGSMT
+from adversarialbox.attacks.gradient_method import FGSM
+from adversarialbox.models.mxnet import MxNetModel
 
 
 

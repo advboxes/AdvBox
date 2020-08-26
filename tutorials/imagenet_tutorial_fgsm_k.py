@@ -29,10 +29,10 @@ import numpy as np
 from PIL import Image
 #pip install Pillow
 
-from advbox.adversary import Adversary
-from advbox.attacks.gradient_method import FGSM
-from advbox.attacks.gradient_method import FGSMT
-from advbox.models.keras import KerasModel
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.gradient_method import FGSM
+from adversarialbox.attacks.gradient_method import FGSMT
+from adversarialbox.models.keras import KerasModel
 
 from keras.applications.resnet50 import ResNet50
 #from keras.applications.inception_v3 import InceptionV3

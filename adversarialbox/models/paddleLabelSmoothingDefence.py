@@ -1,17 +1,3 @@
-#coding=utf-8
-# Copyright 2017 - 2018 Baidu Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """
 Paddle model
 """
@@ -26,7 +12,7 @@ import paddle.fluid as fluid
 
 from .base import Model
 from .paddle  import PaddleModel
-from advbox.defences.label_smoothing import LabelSmoothingDefence
+from adversarialbox.defences.label_smoothing import LabelSmoothingDefence
 
 #通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
 #比如在mac上不设置该环境变量，在GPU服务器上设置 export WITH_GPU=1

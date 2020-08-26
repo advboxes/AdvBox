@@ -27,10 +27,10 @@ A Lightweight Adv SDK For PaddlePaddle to generate adversarial examples.
 [Homepage of AdvSDK](advsdk/README.md) 
 
 
-## AdvBox
-Advbox is a toolbox to generate adversarial examples that fool neural networks in PaddlePaddle、PyTorch、Caffe2、MxNet、Keras、TensorFlow and Advbox can benchmark the robustness of machine learning models.Advbox give a command line tool to generate adversarial examples with Zero-Coding.
+## AdversarialBox
+Adversarialbox is a toolbox to generate adversarial examples that fool neural networks in PaddlePaddle、PyTorch、Caffe2、MxNet、Keras、TensorFlow and Advbox can benchmark the robustness of machine learning models.Advbox give a command line tool to generate adversarial examples with Zero-Coding. It is inspired and based on FoolBox v1. 
 
-[Homepage of AdvBox](advbox.md)
+[Homepage of AdversarialBox](adversarialbox.md)
 
 ## AdvDetect
 AdvDetect is a toolbox to detect adversarial examples from massive data.

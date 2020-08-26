@@ -33,9 +33,9 @@ from torch.autograd import Variable
 import torch.utils.data.dataloader as Data
 
 
-from advbox.adversary import Adversary
-from advbox.attacks.gradient_method import FGSM
-from advbox.models.pytorch import PytorchModel
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.gradient_method import FGSM
+from adversarialbox.models.pytorch import PytorchModel
 from tutorials.mnist_model_pytorch import Net
 
 

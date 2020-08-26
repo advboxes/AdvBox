@@ -25,7 +25,7 @@ import time
 
 sys.path.append("../../")
 
-from  advbox.attacks.tf.tools import  deepfool
+from  adversarialbox.attacks.tf.tools import  deepfool
 
 
 sys.path.append("../thirdparty/facenet/src")

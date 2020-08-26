@@ -45,13 +45,13 @@ except ModuleNotFoundError as e:
 from PIL import Image
 
 
-from advbox.adversary import Adversary
-from advbox.attacks.localsearch import LocalSearchAttack
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.localsearch import LocalSearchAttack
 
 from image_classification.alexnet import AlexNet
 
-#from advbox.models.paddle import PaddleModel
-from advbox.models.paddleBlackBox import PaddleBlackBoxModel
+#from adversarialbox.models.paddle import PaddleModel
+from adversarialbox.models.paddleBlackBox import PaddleBlackBoxModel
 
 
 

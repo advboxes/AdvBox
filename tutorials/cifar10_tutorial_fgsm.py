@@ -31,9 +31,9 @@ try:
 except ModuleNotFoundError as e:
     import paddle
 
-from advbox.adversary import Adversary
-from advbox.attacks.gradient_method import FGSM
-from advbox.models.paddle import PaddleModel
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.gradient_method import FGSM
+from adversarialbox.models.paddle import PaddleModel
 
 from image_classification.resnet import resnet_cifar10
 

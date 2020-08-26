@@ -1,16 +1,18 @@
-# Advbox
+# Adversarialbox
 
-[中文版](advbox-ch.md)
+[中文版](adversarialbox-ch.md)
 
 ![logo](pic/logo.png)
 
-Advbox is a toolbox to generate adversarial examples that fool neural networks in PaddlePaddle、PyTorch、Caffe2、MxNet、Keras、TensorFlow and Advbox can benchmark the robustness of machine learning models.
+Adversarialbox is a toolbox to generate adversarial examples that fool neural networks in PaddlePaddle、PyTorch、Caffe2、MxNet、Keras、TensorFlow and Adversarialbox can benchmark the robustness of machine learning models.
 
-Advbox give a command line tool to generate adversarial examples with Zero-Coding.
+Adversarialbox give a command line tool to generate adversarial examples with Zero-Coding.
 
 ## Supported attack and defense methods
 
 ### White-box attack  methods
+
+This portion of the code is based on FoolBox v1. 
 
 - L-BFGS
 - FGSM
@@ -74,7 +76,7 @@ For the most recent version of the library, either download the source code or c
 
 ## Zero-Coding tools example
 
-Advbox give a command line tool to generate adversarial examples with Zero-Coding.
+Adversarialbox give a command line tool to generate adversarial examples with Zero-Coding.
 
 Take Tensorflow as an example, Tensorflow provides a rich [pre-training models](https://github.com/tensorflow/models),we attack image classification model squeezenet.
 

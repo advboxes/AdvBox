@@ -35,7 +35,7 @@ import paddle.fluid as fluid
 import numpy as np
 
 
-from advbox.defences.gaussian_augmentation import GaussianAugmentationDefence
+from adversarialbox.defences.gaussian_augmentation import GaussianAugmentationDefence
 
 #通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
 #比如在mac上不设置该环境变量，在GPU服务器上设置 export WITH_GPU=1

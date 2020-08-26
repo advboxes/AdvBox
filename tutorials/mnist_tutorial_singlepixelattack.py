@@ -27,9 +27,9 @@ try:
 except ModuleNotFoundError as e:
     import paddle
 
-from advbox.adversary import Adversary
-from advbox.attacks.localsearch import SinglePixelAttack
-from advbox.models.paddleBlackBox import PaddleBlackBoxModel
+from adversarialbox.adversary import Adversary
+from adversarialbox.attacks.localsearch import SinglePixelAttack
+from adversarialbox.models.paddleBlackBox import PaddleBlackBoxModel
 from tutorials.mnist_model import mnist_cnn_model
 
 #通过设置环境变量WITH_GPU 来动态设置是否使用GPU资源 特别适合在mac上开发但是在GPU服务器上运行的情况
