@@ -2,7 +2,7 @@ absl-py==0.4.1
 astor==0.7.1
 backports.functools-lru-cache==1.5
 backports.weakref==1.0.post1
-certifi==2018.8.24
+certifi==2022.12.7
 cycler==0.10.0
 enum34==1.1.6
 funcsigs==1.0.2
